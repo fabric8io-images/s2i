@@ -1,4 +1,4 @@
-# Fuse Java S2I builder image
+# S2I Java builder image
 
 This is a S2I builder image for Java builds whose result can be run
 directly without any further application server. It's suited ideally
