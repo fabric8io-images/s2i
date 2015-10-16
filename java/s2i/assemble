@@ -55,7 +55,7 @@ function mvn_settings_with_mirror {
     <mirror>
       <id>s2i-mirror</id>
       <url>$1</url>
-      <mirrorOf>central</mirrorOf>
+      <mirrorOf>external:*</mirrorOf>
     </mirror>
   </mirrors>
 </settings>
