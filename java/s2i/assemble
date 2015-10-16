@@ -1,0 +1,138 @@
+#!/bin/sh
+
+# Enable debugging on highest log level
+if [ x"${BUILD_LOG_LEVEL}" = 5 ]; then
+  set -x
+fi
+
+# Which version of hawt app to use
+hawt_app_version="2.2.48"
+
+# ==============================================================================
+
+# Global S2I variable setup
+source `dirname "$0"`/s2i-setup
+
+# Maven arguments setting up the environment
+maven_env_args="-Dmaven.repo.local=${S2I_ARTIFACTS_DIR}/m2"
+
+# =========================================================================
+# Helper functions:
+
+function check_error() {
+  local label=$1
+  local error=$2
+  if [ ${error} -ne 0 ]; then
+    echo "Aborting due to error code $error for $label"
+    exit ${error}
+  fi
+}
+
+
+function get_output_dir() {
+  # Where artifacts are created within the build
+  local dir=${OUTPUT_DIR:-${S2I_SOURCE_DIR}/target}
+  # If output_dir is not absolute then use it relative to S2I_SOURCE_DIR
+  if [ "${dir:0:1}" != "/" ]; then
+     dir="${S2I_SOURCE_DIR}/${dir}"
+  fi
+  echo ${dir}
+}
+
+
+function copy_dir() {
+  local src=$1
+  local dest=$2
+
+  cp -r ${src}/* ${dest}
+  check_error "copying ${src} to ${dest}" $?
+}
+
+function mvn_settings_with_mirror {
+  cat <<EOT
+<settings>
+  <mirrors>
+    <mirror>
+      <id>s2i-mirror</id>
+      <url>$1</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>
+EOT
+}
+
+function setup_maven() {
+  if [ x"${MAVEN_MIRROR_URL}" != x ]; then
+    echo "`mvn_settings_with_mirror ${MAVEN_MIRROR_URL}`" > ${S2I_SOURCE_DIR}/mvn-mirrors-settings.xml
+    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/mvn-mirrors-settings.xml"
+  elif [ -f "${S2I_SOURCE_DIR}/.m2/settings.xml" ]; then
+    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/.m2/settings.xml"
+  fi
+}
+
+function build_maven() {
+  # Where artefacts are created during build
+  local output_dir=$1
+
+  # Where to put the artefacts
+  local app_dir=$2
+
+  # Default args: no tests
+  local hawt_app_args="io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build";
+  if [ x"${JAVA_MAIN_CLASS}" != x ]; then
+    hawt_app_args="-Dhawt-app.javaMainClass=${JAVA_MAIN_CLASS} ${hawt_app_args}"
+  fi
+
+  local maven_args="${MAVEN_ARGS:-package ${hawt_app_args} -DskipTests -e}"
+  local maven_dep_args=""
+
+  # If module is specified, only build this module
+  if [ x"$MAVEN_MODULE" != x ]; then
+    maven_args="${maven_args} -pl $MAVEN_MODULE -am"
+    maven_dep_args="-pl $MAVEN_MODULE -am"
+  fi
+
+  echo "Found pom.xml ... attempting to build with mvn ${maven_env_args} ${maven_args} ${MAVEN_EXTRA_ARGS}"
+
+  local old=$(pwd)
+  cd ${S2I_SOURCE_DIR}
+  check_error "changing directory to ${S2I_SOURCE_DIR}" $?
+
+  # =========
+  # Run Maven
+  mvn ${maven_env_args} --version
+  mvn ${maven_env_args} ${maven_args} ${MAVEN_EXTRA_ARGS}
+  check_error "Maven build" $?
+
+  # ==============
+  # Copy artefacts
+  echo "Copying Maven artifacts from ${output_dir} to ${app_dir} ..."
+  copy_dir ${output_dir} ${app_dir}
+
+  # cleanup maven build artifacts to reduce image size
+  echo "Cleaning up maven build artifacts using mvn clean..."
+  mvn ${maven_env_args} clean
+
+  if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
+    rm -rf "${S2I_ARTIFACTS_DIR}/m2"
+    check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
+  fi
+
+  cd $old
+}
+
+# =========================================================================
+# Main
+
+if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
+  # If a pom.xml is present use maven
+  setup_maven
+  build_maven $(get_output_dir) ${DEPLOYMENTS_DIR}
+else
+  # Assuming that the source already contains compiled artefacts
+  echo "Copying binaries from ${output_dir} to ${S2I_ARTIFACTS_DIR} ..."
+  copy_dir $(get_output_dir) ${DEPLOYMENTS_DIR}
+fi
+
+echo "... done"

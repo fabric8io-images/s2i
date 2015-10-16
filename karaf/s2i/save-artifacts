@@ -1,0 +1,10 @@
+#!/bin/sh -e
+
+pushd ${HOME} > /dev/null
+
+# /opt/maven/repository is the maven repo dir
+if [ -d ".m2" ]; then
+   tar cf - ./.m2
+fi
+
+popd > /dev/null

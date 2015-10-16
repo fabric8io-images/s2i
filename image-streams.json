@@ -1,0 +1,69 @@
+{
+  "kind": "ImageStreamList",
+  "apiVersion": "v1",
+  "metadata": {},
+  "items": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "fuse-java",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "dockerImageRepository": "fabric8/sti-java",
+        "tags": [
+          {
+            "name": "latest"
+          },
+          {
+            "name": "1.0.7",
+            "annotations": {
+              "description": "Build and run Fuse Java applications",
+              "iconClass": "icon-fuse-java",
+              "tags": "builder,java,fuse",
+              "supports": "java:8,java",
+              "version": "1.0.7",
+              "sampleRepo": "https://github.com/rhuss/sti-camel-cdi"
+            },
+            "from": {
+              "Kind": "ImageStreamTag",
+              "Name": "latest"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "fuse-karaf",
+        "creationTimestamp": null
+      },
+      "spec": {
+        "dockerImageRepository": "fabric8/sti-karaf",
+        "tags": [
+          {
+            "name": "latest"
+          },
+          {
+            "name": "1.0.7",
+            "annotations": {
+              "description": "Build and run Fuse Karaf applications",
+              "iconClass": "icon-fuse-karaf",
+              "tags": "builder,fuse,karaf,osgi",
+              "supports": "karaf",
+              "version": "1.0.7",
+              "sampleRepo": "https://github.com/dhirajsb/camel-hello-world"
+            },
+            "from": {
+              "Kind": "ImageStreamTag",
+              "Name": "latest"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

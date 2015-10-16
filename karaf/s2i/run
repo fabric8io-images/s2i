@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Output from assemble script
+DEPLOY_DIR=/opt/jboss
+
+echo "Executing ${DEPLOY_DIR}/karaf/bin/karaf server ..."
+if [ -z "${KARAF_OPTS}" ]; then
+  KARAF_OPTS=$(/opt/jolokia/jolokia-opts)
+  export KARAF_OPTS
+fi
+${DEPLOY_DIR}/karaf/bin/karaf server
