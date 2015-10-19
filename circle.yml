@@ -11,14 +11,15 @@ machine:
 
 dependencies:
   pre:
-    - npm install -g fish-pepper
-    - npm update
+#    - npm install -g fish-pepper
+#   - npm update
     - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
   override:
 
 test:
   override:
-    - fish-pepper -h
+    - echo Hello
+#    - fish-pepper -h
 
 deployment:
   latest:
@@ -39,5 +40,3 @@ deployment:
       - docker push fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
       - cd karaf && docker build -t fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
       - docker push fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
-
-
