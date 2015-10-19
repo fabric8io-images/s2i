@@ -27,7 +27,7 @@ deployment:
       - docker push fabric8/s2i-karaf:latest
   release:
     owner: fabric8io-images
-    tag: /v[0-9]+(\.[0-9]+)*/
+    tag: /v[0-9]+(\.[0-9]+){2}/
     commands:
       - cd java && docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/} .
       - docker push fabric8/s2i-java:${CIRCLE_TAG/#v/}
