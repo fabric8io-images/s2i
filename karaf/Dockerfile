@@ -6,7 +6,7 @@ ENV MAVEN_VERSION=3.3.3 \
     JOLOKIA_VERSION=1.3.2 \
     PATH=/usr/local/s2i:$PATH \
     AB_JOLOKIA_CONFIG=/opt/jolokia/jolokia.properties \
-    AB_JOLOKIA_AUTH_OPENSHIFT="cn=OpenShift API Server"
+    AB_JOLOKIA_AUTH_OPENSHIFT="cn=system:master-proxy"
 
 
 # Expose jolokia port

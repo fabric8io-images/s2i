@@ -58,9 +58,8 @@ if [ -z ${AB_JOLOKIA_OFF+x} ]; then
       if [ $(is_in_jolokia_opts "clientPrincipal") != "yes" ]; then
          if [  x"${AB_JOLOKIA_AUTH_OPENSHIFT}" != x"${AB_JOLOKIA_AUTH_OPENSHIFT/=/}" ]; then
             # Supposed to contain a principal name to check
-            auth_opts="${auth_opts},clientPrincipal=${AB_JOLOKIA_AUTH_OPENSHIFT}"
+            auth_opts="${auth_opts},clientPrincipal=`echo ${AB_JOLOKIA_AUTH_OPENSHIFT} | sed -e 's/ /\\\\ /g'`"
          else
-            # TODO: Set this to a sensible default value
             auth_opts="${auth_opts},clientPrincipal=cn=system:master-proxy"
          fi
       fi
