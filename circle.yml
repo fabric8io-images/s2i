@@ -36,7 +36,7 @@ deployment:
     owner: fabric8io
     tag: /^v.*/
     commands:
-      - cd java && docker build -t fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
-      - docker push fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
-      - cd karaf && docker build -t fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
-      - docker push fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
+      - "cd java && docker build -t fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//') ."
+      - "docker push fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//')"
+      - "cd karaf && docker build -t fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//') ."
+      - "docker push fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//')"
