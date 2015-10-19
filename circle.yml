@@ -1,20 +1,14 @@
 machine:
-  node:
-    version: 4.1.0
   services:
     - docker
 
 dependencies:
   pre:
-#    - npm install -g fish-pepper
-#   - npm update
     - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-  override:
 
 test:
   override:
     - echo Heureka
-#    - fish-pepper -h
 
 deployment:
   latest:
@@ -26,8 +20,8 @@ deployment:
       - cd karaf && ( docker build -t fabric8/s2i-karaf:latest . | cat - )
       - docker push fabric8/s2i-karaf:latest | cat -
   release:
-    owner: fabric8io-images
     tag: /v[0-9]+(\.[0-9]+){2}/
+    owner: fabric8io-images
     commands:
       - cd java && ( docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/} . | cat - )
       - docker push fabric8/s2i-java:${CIRCLE_TAG/#v/} | cat -
