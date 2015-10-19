@@ -25,13 +25,9 @@ deployment:
     branch: master
     owner: fabric8io
     commands:
-      - docker build -t fabric8/s2i-java:latest .
-          pwd:
-            java
+      - cd java && docker build -t fabric8/s2i-java:latest .
       - docker push fabric8/s2i-java:latest
-      - docker build -t fabric8/s2i-karaf:latest .
-          pwd:
-            karaf
+      - cd karaf && docker build -t fabric8/s2i-karaf:latest .
       - docker push fabric8/s2i-karaf:latest
 
   release:
@@ -39,13 +35,9 @@ deployment:
     owner: fabric8io
     tag: /^v.*/
     commands:
-      - docker build -t fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
-          pwd:
-            java
+      - cd java && docker build -t fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
       - docker push fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
-      - docker build -t fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
-          pwd:
-            karaf
+      - cd karaf && docker build -t fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
       - docker push fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
 
 
