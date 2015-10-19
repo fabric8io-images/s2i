@@ -1,0 +1,47 @@
+general:
+  branches:
+    only:
+      - master
+
+machine:
+  node:
+    version: 4.1.0
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - npm install -g fish-pepper
+    - npm update
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+  override:
+
+test:
+  override:
+    - fish-pepper -h
+
+deployment:
+  latest:
+    branch: master
+    owner: fabric8io
+    commands:
+      - docker build -t fabric8/s2i-java:latest .
+          pwd: java
+      - docker push fabric8/s2i-java:latest
+      - docker build -t fabric8/s2i-karaf:latest .
+          pwd: karaf
+      - docker push fabric8/s2i-karaf:latest
+
+  release:
+    branch: master
+    owner: fabric8io
+    tag: /^v.*/
+    commands:
+      - docker build -t fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
+          pwd: java
+      - docker push fabric8/s2i-java:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
+      - docker build -t fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//') .
+          pwd: karaf
+      - docker push fabric8/s2i-karaf:$(git describe --abbrev=0 --tags | sed -e 's/^v//')
+
+
