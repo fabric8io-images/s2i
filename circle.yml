@@ -13,7 +13,7 @@ dependencies:
 
 test:
   override:
-    - true
+    - echo Heureka
 #    - fish-pepper -h
 
 deployment:
