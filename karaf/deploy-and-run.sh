@@ -29,4 +29,4 @@ ln -s "${DEPLOY_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOY_DIR}/karaf"
 sed -i 's/^\(.*rootLogger.*\)out/\1stdout/' ${DEPLOY_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
 # Launch Karaf using S2I script
-/usr/local/s2i/run
+exec /usr/local/s2i/run
