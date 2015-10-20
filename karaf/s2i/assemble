@@ -108,6 +108,10 @@ tar xzf "$KARAF_ASSEMBLY_ARCHIVE" -C ${DEPLOY_DIR}
 KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.tar.gz}
 ln -s "${DEPLOY_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOY_DIR}/karaf"
 
+# make karaf home and data directories world writeable for OpenShift
+chmod a+rwx "${DEPLOY_DIR}/karaf"
+chmod -R a+rwx "${DEPLOY_DIR}/karaf/data"
+
 # cleanup maven build artifacts to reduce image size
 if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   echo "Cleaning up maven build artifacts using mvn clean..."
