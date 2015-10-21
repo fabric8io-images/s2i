@@ -42,7 +42,7 @@ if [ -z ${AB_JOLOKIA_OFF+x} ]; then
       sep=","
    fi
    if [ -n "$AB_JOLOKIA_HTTPS" ]; then
-      opts="${opts}${jsep}protocol=https"
+      opts="${opts}${sep}protocol=https"
       use_https=1
       sep=","
    fi
