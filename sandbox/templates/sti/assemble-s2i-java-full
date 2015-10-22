@@ -28,10 +28,42 @@ function check_error() {
   fi
 }
 
+# Ge a single pom property
+function get_pom_property() {
+  local property=$1
+  local extra_args="${MAVEN_EXTRA_ARGS}"
+
+  if [ "x${MAVEN_MODULE}" != x ]; then
+    extra_args="${extra_args} -pl ${MAVEN_MODULE}"
+  fi
+  # Use maven-help-plugin to extract a property
+  # It's a bit hackish to get rid of the boiler plate. The first line without a `[....]` prefix
+  # and without a space in the logout is supposed to be the variable value. Won't work
+  # for paths with space in it.
+  local old_dir=$(pwd)
+  cd ${S2I_SOURCE_DIR}
+  mvn help:evaluate \
+            ${maven_env_args} \
+            ${extra_args} \
+            -Dexpression="${property}" | \
+            grep -v '^\[.*\]' | \
+            grep -v ' ' | \
+            head -n 1
+  cd ${old_dir}
+}
+
 function get_output_dir() {
   # Where artifacts are created within the build
-  local dir=${OUTPUT_DIR:-${S2I_SOURCE_DIR}/target}
-
+  local dir
+  if [ x${OUTPUT_DIR} = x ] && [ x${MAVEN_MODULE} != x ]; then
+    dir=$(get_pom_property "project.build.directory")
+    if [ x"${dir}" = x ]; then
+      echo "Please specify build directory OUTPUT_DIR explicitly since no build dir has been found"
+      exit 1
+    fi
+  else
+    dir=${OUTPUT_DIR:-${S2I_SOURCE_DIR}/target}
+  fi
   # If output_dir is not absolute then use it relative to S2I_SOURCE_DIR
   if [ "${dir:0:1}" != "/" ]; then
     dir="${S2I_SOURCE_DIR}/${dir}"
@@ -39,7 +71,7 @@ function get_output_dir() {
   # Normalize dir
   dir=$(echo ${dir} | tr -s /)
   dir=${dir%/}
-  # The parent must exist but target/ won't exist yet
+  # The parent must exist because target/ won't exist yet
   if [ ! -d $(dirname "${dir}"}) ]; then
     echo "Please specify a build directory OUTPUT_DIR (tried '$(dirname "${dir}")' which does not exist)"
     exit 1
@@ -92,7 +124,7 @@ function build_maven() {
   fi
 
   # Default args: no tests, if a module is specified, only build this module
-  local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_main_arg} -e}
+  local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_main_arg} -e ${MAVEN_MODULE:+ -pl $MAVEN_MODULE -am}}
   echo "Found pom.xml ... attempting to build with mvn ${maven_env_args} ${maven_args} ${MAVEN_EXTRA_ARGS}"
 
   local old_dir=$(pwd)
@@ -106,13 +138,13 @@ function build_maven() {
   check_error "Maven build" $?
 
   # ==================================================================
-  # Check for hawt-app dir and if not present run hawt-app explicitly
+  # Check for hawt-app dir and if not present run hawt-app explicitely
   if [ ! -d "${output_dir}/hawt-app" ]; then
      if [ x"${JAVA_MAIN_CLASS}" = x ]; then
        echo "No JAVA_MAIN_CLASS specified and no hawt-app-maven-plugin configured in the pom.xml"
        exit 1
      fi
-     mvn ${maven_env_args} ${hawtapp_main_arg} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build ${MAVEN_EXTRA_ARGS}"
+     mvn ${maven_env_args} ${hawtapp_main_arg} ${MAVEN_MODULE:+-pl $MAVEN_MODULE -am} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build ${MAVEN_EXTRA_ARGS}"
   fi
 
   # ==============
@@ -143,7 +175,7 @@ if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   echo "Detected Maven build"
   # If a pom.xml is present use maven
   setup_maven
-  build_maven $(build_dir) ${DEPLOYMENTS_DIR}
+  build_maven  ${build_dir} ${DEPLOYMENTS_DIR}
 else
   # Assuming that the source already contains compiled artefacts
   echo "Copying binaries from ${output_dir} to ${S2I_ARTIFACTS_DIR} ..."

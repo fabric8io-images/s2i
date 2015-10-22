@@ -13,14 +13,11 @@ behaviour of this builder image:
 ## Build Time
 
 * **MAVEN_ARGS** Arguments to use when calling maven (default: `package hawt-app:build -DskipTests -e`). Please be sure to 
-  run the `hawt-app:build` goal, otherwise the startup scripts won't work
-* **MAVEN_MODULE** For a multi-module maven build this variable can pick a single module via its maven coordinates 
-  (e.g. `io.fabric8.jube.images.fabric8:quickstart-java-simple-fatjar`)a
+  run the `hawt-app:build` goal when not already bound to the `package` execution phase, otherwise the startup scripts won't work when. 
 * **MAVEN_EXTRA_ARGS** Additional Maven  arguments, useful for temporary adding arguments like `-X`. These are added to `${MAVEN_ARGS}`
 * **MAVEN_MIRROR_URL** If set to a Maven repository URL this URL is taken as a mirror for Maven central
-* **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artefact is build. This is useful for keeping
-  the created application image small, but prevents *incremental* builds. Setting this variable implies also that dependent
-  artifacts are copied into the application directory.
+* **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artifact is built. This is useful for keeping
+  the created application image small, but prevents *incremental* builds. The default is `false`
 
 ## Run Time
 
