@@ -12,11 +12,10 @@ behaviour of this builder image:
 
 ## Build Time
 
-* **MAVEN_ARGS** Arguments to use when calling maven (default: `package hawt-app:build -DskipTests -e`). Please be sure to 
-  run the `hawt-app:build` goal when not already bound to the `package` execution phase, otherwise the startup scripts won't work when. 
+* **MAVEN_ARGS** Arguments to use when calling maven, replacing the default `package hawt-app:build -DskipTests -e`. Please be sure to 
+  run the `hawt-app:build` goal (when not already bound to the `package` execution phase), otherwise the startup scripts won't work. 
 * **MAVEN_BUILD_DIR** Path to `target/` where the jar files are created
 * **MAVEN_EXTRA_ARGS** Additional Maven  arguments, useful for temporary adding arguments like `-X`. These are added to `${MAVEN_ARGS}`
-* **MAVEN_MIRROR_URL** If set to a Maven repository URL this URL is taken as a mirror for Maven central
 * **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artifact is built. This is useful for keeping
   the created application image small, but prevents *incremental* builds. The default is `false`
 

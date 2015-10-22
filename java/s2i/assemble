@@ -55,29 +55,6 @@ function copy_dir() {
   check_error "copying ${src} to ${dest}" $?
 }
 
-function mvn_settings_with_mirror {
-  cat <<EOT
-<settings>
-  <mirrors>
-    <mirror>
-      <id>s2i-mirror</id>
-      <url>$1</url>
-      <mirrorOf>external:*</mirrorOf>
-    </mirror>
-  </mirrors>
-</settings>
-EOT
-}
-
-function setup_maven() {
-  if [ x"${MAVEN_MIRROR_URL}" != x ]; then
-    echo "`mvn_settings_with_mirror ${MAVEN_MIRROR_URL}`" > ${S2I_SOURCE_DIR}/mvn-mirrors-settings.xml
-    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/mvn-mirrors-settings.xml"
-  elif [ -f "${S2I_SOURCE_DIR}/.m2/settings.xml" ]; then
-    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/.m2/settings.xml"
-  fi
-}
-
 function build_maven() {
   # Where artefacts are created during build
   local output_dir=$1
@@ -142,7 +119,6 @@ check_error "Cannot get output dir: $build_dir" $?
 if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   echo "Detected Maven build"
   # If a pom.xml is present use maven
-  setup_maven
   build_maven $(build_dir) ${DEPLOYMENTS_DIR}
 else
   # Assuming that the source already contains compiled artefacts
