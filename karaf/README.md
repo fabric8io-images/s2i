@@ -71,12 +71,12 @@ Jolokia can be influenced with the following environment variables:
 
 ## Working with multimodule projects
 
-The example above is pretty handy for multimodule projects. Another useful option is the OUTPUT_DIR environment variable. This variable defines where in the source tree the output will be generated.
+The example above is pretty handy for multimodule projects. Another useful option is the MAVEN_BUILD_DIR environment variable. This variable defines where in the source tree the output will be generated.
 By default the image assumes ./target. If its another directory we need to specify the option.
 
 A more complete version of the previous example would then be:
 
-	sti build -e "OUTPUT_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> dhirajsb/fuse-sti <target image name>
+	sti build -e "MAVEN_BUILD_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> dhirajsb/fuse-sti <target image name>
 
 ### Real world examples:
 

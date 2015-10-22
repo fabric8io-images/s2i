@@ -30,10 +30,10 @@ LOCAL_SOURCE_DIR=${HOME}/source
 mkdir -p ${LOCAL_SOURCE_DIR}
 
 # The dir that contains the build output
-if [ -z "${OUTPUT_DIR}" ]; then
-  OUTPUT_DIR="${LOCAL_SOURCE_DIR}/target"
-elif [[ ${OUTPUT_DIR} != /* ]]; then
-  OUTPUT_DIR="${LOCAL_SOURCE_DIR}/${OUTPUT_DIR}"
+if [ -z "${MAVEN_BUILD_DIR}" ]; then
+  MAVEN_BUILD_DIR="${LOCAL_SOURCE_DIR}/target"
+elif [[ ${MAVEN_BUILD_DIR} != /* ]]; then
+  MAVEN_BUILD_DIR="${LOCAL_SOURCE_DIR}/${MAVEN_BUILD_DIR}"
 fi
 
 # Output will result in /opt/jboss folder
@@ -75,30 +75,30 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     error_exit "Aborting due to error code ${ERR} from mvn command" ${ERR}
   fi
 
-  echo "Copying built artifacts from ${OUTPUT_DIR} into ${DEPLOY_DIR}..."
+  echo "Copying built artifacts from ${MAVEN_BUILD_DIR} into ${DEPLOY_DIR}..."
   popd &> /dev/null
 else
-  if [ -z "${OUTPUT_DIR}" ]; then
-    OUTPUT_DIR="${LOCAL_SOURCE_DIR}"
+  if [ -z "${MAVEN_BUILD_DIR}" ]; then
+    MAVEN_BUILD_DIR="${LOCAL_SOURCE_DIR}"
   fi
   echo "Copying binaries in source directory into ${DEPLOY_DIR}..."
 fi
 
 # locate karaf assembly
 if [ -z "${KARAF_ASSEMBLY}" ]; then
-  if [ ! -d "${OUTPUT_DIR}" ]; then
-    error_exit "Missing directory ${OUTPUT_DIR}"
+  if [ ! -d "${MAVEN_BUILD_DIR}" ]; then
+    error_exit "Missing directory ${MAVEN_BUILD_DIR}"
   fi
-  pushd ${OUTPUT_DIR} &> /dev/null
-  # there should be only one *.tar.gz in ${OUTPUT_DIR}
+  pushd ${MAVEN_BUILD_DIR} &> /dev/null
+  # there should be only one *.tar.gz in ${MAVEN_BUILD_DIR}
   NUM_ARCHIVE_FILES=`ls -1 | grep "^.*.tar.gz$" | wc -l`
   if [ $NUM_ARCHIVE_FILES -ne 1 ]; then
-    error_exit "Missing or more than one assembly archive file *.tar.gz in ${OUTPUT_DIR}"
+    error_exit "Missing or more than one assembly archive file *.tar.gz in ${MAVEN_BUILD_DIR}"
   fi
   KARAF_ASSEMBLY=`ls -1 *.tar.gz`
   popd &> /dev/null
 fi
-KARAF_ASSEMBLY_ARCHIVE=${OUTPUT_DIR}/${KARAF_ASSEMBLY}
+KARAF_ASSEMBLY_ARCHIVE=${MAVEN_BUILD_DIR}/${KARAF_ASSEMBLY}
 if [ ! -f "${KARAF_ASSEMBLY_ARCHIVE}" ]; then
   error_exit "Missing assembly archive file ${KARAF_ASSEMBLY_ARCHIVE}"
 fi

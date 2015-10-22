@@ -30,9 +30,9 @@ function check_error() {
 
 function get_output_dir() {
   # Where artifacts are created within the build
-  local dir=${OUTPUT_DIR:-${S2I_SOURCE_DIR}/target}
+  local dir=${MAVEN_BUILD_DIR:-${S2I_SOURCE_DIR}/target}
 
-  # If output_dir is not absolute then use it relative to S2I_SOURCE_DIR
+  # If MAVEN_BUILDd is not absolute then use it relative to S2I_SOURCE_DIR
   if [ "${dir:0:1}" != "/" ]; then
     dir="${S2I_SOURCE_DIR}/${dir}"
   fi
@@ -41,7 +41,7 @@ function get_output_dir() {
   dir=${dir%/}
   # The parent must exist but target/ won't exist yet
   if [ ! -d $(dirname "${dir}"}) ]; then
-    echo "Please specify a build directory OUTPUT_DIR (tried '$(dirname "${dir}")' which does not exist)"
+    echo "Please specify a build directory MAVEN_BUILD_DIR (tried '$(dirname "${dir}")' which does not exist)"
     exit 1
   fi
   echo ${dir}
