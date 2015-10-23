@@ -16,6 +16,17 @@ function restore_saved_artifacts() {
   fi
 }
 
+# Helper functions:
+
+function check_error() {
+  local label=$1
+  local error=$2
+  if [ ${error} -ne 0 ]; then
+    echo "Aborting due to error code $error for $label"
+    exit ${error}
+  fi
+}
+
 # echo error message and exit with error code
 function error_exit() {
   echo $1
@@ -118,6 +129,12 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   pushd ${LOCAL_SOURCE_DIR} &> /dev/null
   mvn clean
   popd
+fi
+
+# remove repo if desired
+if [ ! -z "${MAVEN_CLEAR_REPO}" ]; then
+  rm -rf "~/.m2"
+  check_error "Cannot remove local Maven repository ~/.m2" $?
 fi
 
 # send log output to stdout
