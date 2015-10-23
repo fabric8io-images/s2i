@@ -6,14 +6,14 @@ An image that can be used with Openshift's [Source To Image](https://docs.opensh
 
 ## Usage:
 
-Using sti command:
+Using s2i command:
 
-	sti build <git repo url> dhirajsb/fuse-sti <target image name>
+	s2i build <git repo url> fabric8/s2i-karaf <target image name>
 	docker run <target image name>
 
 Using oc command:
 
-    oc new-app --strategy=source dhirajsb/fuse-sti~<git repo url>
+    oc new-app --strategy=source fabric8/s2i-karaf~<git repo url>
 
 ## Configuring the Karaf4 or hawt-app assembly
 
@@ -45,7 +45,7 @@ Hawt-App:
 
 You can override the `MAVEN_ARGS` like in the example below we tell maven to just build the project with groupId "some.groupId" and artifactId "some.artifactId" and all its module dependencies.
 
-	sti build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> dhirajsb/fuse-sti <target image name>
+	sti build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 
 You can also just override the `MAVEN_EXTRA_ARGS` environment variable with:
 
@@ -71,21 +71,21 @@ Jolokia can be influenced with the following environment variables:
 
 ## Working with multimodule projects
 
-The example above is pretty handy for multimodule projects. Another useful option is the MAVEN_BUILD_DIR environment variable. This variable defines where in the source tree the output will be generated.
+The example above is pretty handy for multimodule projects. 
+
+Another useful option is the MAVEN_BUILD_DIR environment variable. This variable defines where in the source tree the output will be generated.
 By default the image assumes ./target. If its another directory we need to specify the option.
 
 A more complete version of the previous example would then be:
 
-	sti build -e "MAVEN_BUILD_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> dhirajsb/fuse-sti <target image name>
+	s2i build -e "MAVEN_BUILD_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 
 ### Real world examples:
 
-Using sti:
+Using s2i:
 
-	sti build git://github.com/dhirajsb/camel-hello-world dhirajsb/fuse-sti dhirajsb/camel-hello-world --loglevel=5
-	sti build git://github.com/dhirajsb/hawtapp-camel-hello-world dhirajsb/fuse-sti dhirajsb/hawtapp-camel-hello-world --loglevel=5
+  s2i build git://github.com/dhirajsb/camel-hello-world fabric8/s2i-karaf dhirajsb/camel-hello-world --loglevel=5
 
 Using oc new-app:
 
-    oc new-app --strategy=source dhirajsb/fuse-sti~git://github.com/dhirajsb/camel-hello-world
-    oc new-app --strategy=source dhirajsb/fuse-sti~git://github.com/dhirajsb/hawtapp-camel-hello-world
+    oc new-app --strategy=source fabric8/s2i-karaf~git://github.com/dhirajsb/camel-hello-world

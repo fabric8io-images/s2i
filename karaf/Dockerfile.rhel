@@ -46,8 +46,10 @@ COPY ./deploy-and-run.sh /opt/karaf/bin/
 RUN chmod a+x /opt/karaf/bin/deploy-and-run.sh
 
 # Necessary to permit running with a randomised UID
-RUN chmod -R a+rwX /opt/jboss \
- && chmod -R a+rwX /opt/karaf
+RUN chmod -R a+rwX /opt/karaf \
+ && mkdir /opt/jboss \
+ && chown jboss /opt/jboss \
+ && chmod -R a+rwX /opt/jboss
 
 # STI requires a numeric, non-0 UID
 USER 1000
