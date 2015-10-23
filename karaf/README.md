@@ -47,9 +47,9 @@ You can override the `MAVEN_ARGS` like in the example below we tell maven to jus
 
 	sti build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> dhirajsb/fuse-sti <target image name>
 
-You can also just override the `MAVEN_DEBUG_ARGS` environment variable with:
+You can also just override the `MAVEN_EXTRA_ARGS` environment variable with:
 
-    -e "MAVEN_DEBUG_ARGS=-X"
+    -e "MAVEN_EXTRA_ARGS=-X"
 
 ## Jolokia configuration
 
