@@ -79,7 +79,7 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   echo "Found pom.xml... attempting to build with 'mvn ${MAVEN_ARGS}'"
 
   mvn --version
-  mvn ${MAVEN_ARGS} ${MAVEN_DEBUG_ARGS}
+  mvn ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}
 
   ERR=$?
   if [ ${ERR} -ne 0 ]; then
