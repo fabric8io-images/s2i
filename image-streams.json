@@ -11,7 +11,7 @@
         "creationTimestamp": null
       },
       "spec": {
-        "dockerImageRepository": "fabric8/sti-java",
+        "dockerImageRepository": "fabric8/s2i-java",
         "tags": [
           {
             "name": "latest"
@@ -42,7 +42,7 @@
         "creationTimestamp": null
       },
       "spec": {
-        "dockerImageRepository": "fabric8/sti-karaf",
+        "dockerImageRepository": "fabric8/s2i-karaf",
         "tags": [
           {
             "name": "latest"
