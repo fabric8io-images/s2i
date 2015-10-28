@@ -60,7 +60,8 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     MAVEN_ARGS=${DEFAULT_KARAF_MAVEN_ARGS}
   fi
 
-  echo "Found pom.xml... attempting to build with 'mvn ${MAVEN_ARGS}'"
+  echo "Found pom.xml... "
+  echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}'"
 
   mvn ${maven_env_args} --version
   mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}

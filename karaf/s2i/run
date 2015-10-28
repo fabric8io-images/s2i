@@ -9,4 +9,8 @@ if [ -z "${KARAF_OPTS}" ]; then
   KARAF_OPTS=$(/opt/jolokia/jolokia-opts)
   export KARAF_OPTS
 fi
+
+# send log output to stdout
+sed -i 's/^\(.*rootLogger.*\)out/\1stdout/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
+
 exec ${DEPLOYMENTS_DIR}/karaf/bin/karaf server
