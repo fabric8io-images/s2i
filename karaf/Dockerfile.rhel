@@ -44,12 +44,9 @@ COPY s2i /usr/local/s2i
 # Karaf specific code
 
 # Copy deploy-and-run.sh for standalone images
-# TODO: If quickstarts can be adapted change this to /deploy-and-run.sh
-COPY ./deploy-and-run.sh /opt/karaf/bin/deploy-and-run.sh
-RUN chmod a+x /opt/karaf/bin/deploy-and-run.sh
-
 # Necessary to permit running with a randomised UID
-RUN mkdir /deployments \
+COPY ./deploy-and-run.sh /deployments/deploy-and-run.sh
+RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod -R a+rwX /deployments
 
 # STI requires a numeric, non-0 UID
