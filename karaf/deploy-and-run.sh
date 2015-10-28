@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DIR=${DEPLOY_DIR:-/maven}
+DIR=${DEPLOYMENTS_DIR:-/deployments}
 
 # Output will result in /opt/jboss folder
 DEPLOY_DIR=/opt/jboss

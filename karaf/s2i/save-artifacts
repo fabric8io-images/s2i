@@ -1,10 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
 
-pushd ${HOME} > /dev/null
+. `dirname "$0"`/s2i-setup
 
-# /opt/maven/repository is the maven repo dir
-if [ -d ".m2" ]; then
-   tar cf - ./.m2
+# Tar up maven repository for reuse in an incremental build
+if [ -d "${S2I_ARTIFACTS_DIR}/m2" ]; then
+   cd ${S2I_ARTIFACTS_DIR}
+   tar cf - m2
+   cd -
 fi
-
-popd > /dev/null

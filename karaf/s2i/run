@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Output from assemble script
-DEPLOY_DIR=/opt/jboss
+# Global S2I variable setup
+source `dirname "$0"`/s2i-setup
 
-echo "Executing ${DEPLOY_DIR}/karaf/bin/karaf server ..."
+# Output from assemble script
+echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
 if [ -z "${KARAF_OPTS}" ]; then
   KARAF_OPTS=$(/opt/jolokia/jolokia-opts)
   export KARAF_OPTS
 fi
-exec ${DEPLOY_DIR}/karaf/bin/karaf server
+exec ${DEPLOYMENTS_DIR}/karaf/bin/karaf server

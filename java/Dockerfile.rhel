@@ -39,8 +39,8 @@ COPY s2i /usr/local/s2i
 ADD README.md /usr/local/s2i/usage.txt
 
 # Necessary to permit running with a randomised UID
-RUN mkdir /opt/src /deployments \
- && chmod -R a+rwX /opt/src /deployments
+RUN mkdir /deployments \
+ && chmod -R a+rwX /deployments
 
 # S2I requires a numeric, non-0 UID
 USER 1000

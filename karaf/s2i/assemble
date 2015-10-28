@@ -1,23 +1,14 @@
 #!/bin/bash
 
+# Global S2I variable setup
+source `dirname "$0"`/s2i-setup
+
+# Maven arguments setting up the environment
+maven_env_args="-Dmaven.repo.local=${S2I_ARTIFACTS_DIR}/m2"
+
 DEFAULT_KARAF_MAVEN_ARGS="install -DskipTests -e"
 
-# restore maven dependencies downloaded in a previous build,
-# so they do not have to be downloaded again.
-# /tmp/artifacts will only be present in the incremental build scenario
-# in which the target image name is an existing docker image which contains
-# dependencies from a prior build execution.
-function restore_saved_artifacts() {
-  if [ -d /tmp/artifacts/ ]; then
-    echo -n "Restoring saved artifacts from prior build..."
-    mv /tmp/artifacts/.m2 ${HOME}/.
-  else 
-    echo -n "Can't find saved artifacts. Ignoring..."
-  fi
-}
-
 # Helper functions:
-
 function check_error() {
   local label=$1
   local error=$2
@@ -36,8 +27,10 @@ function error_exit() {
   exit $2
 }
 
-# Source code provided to S2I is at ${HOME}/source
-LOCAL_SOURCE_DIR=${HOME}/source
+echo "=================================================================="
+echo "Starting S2I Karaf Build ....."
+
+LOCAL_SOURCE_DIR=${S2I_SOURCE_DIR}
 mkdir -p ${LOCAL_SOURCE_DIR}
 
 # The dir that contains the build output
@@ -47,26 +40,17 @@ elif [[ ${MAVEN_BUILD_DIR} != /* ]]; then
   MAVEN_BUILD_DIR="${LOCAL_SOURCE_DIR}/${MAVEN_BUILD_DIR}"
 fi
 
-# Output will result in /opt/jboss folder
-DEPLOY_DIR=/opt/jboss
-mkdir -p ${DEPLOY_DIR}
-
-# Copy the source for compilation
-cp -ad /tmp/src/* ${LOCAL_SOURCE_DIR}
+# Output will result in ${DEPLOYMENTS_DIR} folder
+mkdir -p ${DEPLOYMENTS_DIR}
 
 # If a pom.xml is present, this is a normal build scenario
 # so run maven.
 if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
-
-  # restore any maven dependencies which will be present if this is an
-  # incremental build
-  restore_saved_artifacts
-
-  # copy source directory/.m2/settings.xml file
+  # Use a custom settings.xml if given
   CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/.m2/settings.xml"
   if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
     echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}..."
-    cp "${CUSTOM_MAVEN_SETTINGS}" ~/.m2/settings.xml
+    maven_env_args="${maven_env_args} -s ${LOCAL_SOURCE_DIR}/.m2/settings.xml"
   fi
 
   pushd ${LOCAL_SOURCE_DIR} &> /dev/null
@@ -78,21 +62,21 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
 
   echo "Found pom.xml... attempting to build with 'mvn ${MAVEN_ARGS}'"
 
-  mvn --version
-  mvn ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}
+  mvn ${maven_env_args} --version
+  mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}
 
   ERR=$?
   if [ ${ERR} -ne 0 ]; then
     error_exit "Aborting due to error code ${ERR} from mvn command" ${ERR}
   fi
 
-  echo "Copying built artifacts from ${MAVEN_BUILD_DIR} into ${DEPLOY_DIR}..."
+  echo "Copying built artifacts from ${MAVEN_BUILD_DIR} into ${DEPLOYMENTS_DIR}..."
   popd &> /dev/null
 else
   if [ -z "${MAVEN_BUILD_DIR}" ]; then
     MAVEN_BUILD_DIR="${LOCAL_SOURCE_DIR}"
   fi
-  echo "Copying binaries in source directory into ${DEPLOY_DIR}..."
+  echo "Copying binaries in source directory into ${DEPLOYMENTS_DIR}..."
 fi
 
 # locate karaf assembly
@@ -115,29 +99,28 @@ if [ ! -f "${KARAF_ASSEMBLY_ARCHIVE}" ]; then
 fi
 
 # extract custom assembly to DEPLOY_DIR
-tar xzf "$KARAF_ASSEMBLY_ARCHIVE" -C ${DEPLOY_DIR}
+tar xzf "$KARAF_ASSEMBLY_ARCHIVE" -C ${DEPLOYMENTS_DIR}
 KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.tar.gz}
-ln -s "${DEPLOY_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOY_DIR}/karaf"
+ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 
 # make karaf home and data directories world writeable for OpenShift
-chmod a+rwx "${DEPLOY_DIR}/karaf"
-chmod -R a+rwx "${DEPLOY_DIR}/karaf/data"
+chmod a+rwx "${DEPLOYMENTS_DIR}/karaf"
+chmod -R a+rwx "${DEPLOYMENTS_DIR}/karaf/data"
 
 # cleanup maven build artifacts to reduce image size
 if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   echo "Cleaning up maven build artifacts using mvn clean..."
   pushd ${LOCAL_SOURCE_DIR} &> /dev/null
-  mvn clean
+  mvn ${maven_env_args} clean
   popd
 fi
 
-# remove repo if desired
-if [ ! -z "${MAVEN_CLEAR_REPO}" ]; then
-  rm -rf "~/.m2"
-  check_error "Cannot remove local Maven repository ~/.m2" $?
+if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
+    rm -rf "${S2I_ARTIFACTS_DIR}/m2"
+    check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
 fi
 
 # send log output to stdout
-sed -i 's/^\(.*rootLogger.*\)out/\1stdout/' ${DEPLOY_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
+sed -i 's/^\(.*rootLogger.*\)out/\1stdout/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
 echo "...done!"

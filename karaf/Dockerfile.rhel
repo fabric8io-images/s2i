@@ -15,7 +15,9 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
-      io.openshift.tags="builder,karaf"
+      io.openshift.s2i.destination="/tmp" \
+      io.openshift.tags="builder,karaf" \
+      org.jboss.deployments-dir="/deployments"
 
 # Temporary switch to root
 USER root
@@ -42,14 +44,13 @@ COPY s2i /usr/local/s2i
 # Karaf specific code
 
 # Copy deploy-and-run.sh for standalone images
-COPY ./deploy-and-run.sh /opt/karaf/bin/
+# TODO: If quickstarts can be adapted change this to /deploy-and-run.sh
+COPY ./deploy-and-run.sh /opt/karaf/bin/deploy-and-run.sh
 RUN chmod a+x /opt/karaf/bin/deploy-and-run.sh
 
 # Necessary to permit running with a randomised UID
-RUN chmod -R a+rwX /opt/karaf \
- && mkdir /opt/jboss \
- && chown jboss /opt/jboss \
- && chmod -R a+rwX /opt/jboss
+RUN mkdir /deployments \
+ && chmod -R a+rwX /deployments
 
 # STI requires a numeric, non-0 UID
 USER 1000

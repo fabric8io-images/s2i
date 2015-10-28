@@ -1,21 +1,18 @@
 # S2I Java builder image
 
-This is a S2I builder image for Java builds whose result can be run
-directly without any further application server. It's suited ideally
-for microservices with a flat classpath (but not for "far jars") 
+This is a S2I builder image for Java builds whose result can be run directly without any further application server. 
+It's suited ideally for microservices with a flat classpath (but not for "far jars")  
 
-This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia) 
-agent. See below how to configure this.
+This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia)  agent. See below 
+how to configure this. 
 
-The following environment variables can be used to influence the
-behaviour of this builder image:
+The following environment variables can be used to influence the behaviour of this builder image: 
 
 ## Build Time
 
-* **MAVEN_ARGS** Arguments to use when calling maven, replacing the default `package hawt-app:build -DskipTests -e`. Please be sure to 
-  run the `hawt-app:build` goal (when not already bound to the `package` execution phase), otherwise the startup scripts won't work. 
+* **MAVEN_ARGS** Arguments to use when calling maven, replacing the default `package hawt-app:build -DskipTests -e`. Please be sure to run the `hawt-app:build` goal (when not already bound to the `package` execution phase), otherwise the startup scripts won't work. 
 * **MAVEN_BUILD_DIR** Path to `target/` where the jar files are created
-* **MAVEN_EXTRA_ARGS** Additional Maven  arguments, useful for temporary adding arguments like `-X`. These are added to `${MAVEN_ARGS}`
+* **MAVEN_EXTRA_ARGS** Additional Maven  arguments, useful for temporary adding arguments like `-X` or `-am -pl ..` for multi module builds. These are added to `${MAVEN_ARGS}` 
 * **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artifact is built. This is useful for keeping
   the created application image small, but prevents *incremental* builds. The default is `false`
 
@@ -30,8 +27,8 @@ The run script can be influenced by the following environment variables:
 * **JAVA_MAIN_ARGS** Arguments that will be passed to you application's main method.  **Default:** the arguments passed to the `bin/run` script.
 * **JAVA_MAIN_CLASS** The main class to use if not configured within the plugin
 
-The environment variables are best set in `.sti/environment` top in
-you project. This file is picked up bei S2I during building and running.  
+The environment variables are best set in `.sti/environment` top in you project. This file is picked up bei S2I 
+during building and running.   
 
 #### Jolokia configuration
 
@@ -46,10 +43,9 @@ you project. This file is picked up bei S2I during building and running.
 * **AB_JOLOKIA_HTTPS** : Switch on secure communication with https. By default self signed server certificates are generated
   if no `serverCert` configuration is given in `AB_JOLOKIA_OPTS`
 * **AB_JOLOKIA_ID** : Agent ID to use (`$HOSTNAME` by default, which is the container id)
-* **AB_JOLOKIA_OPTS**  : Additional options to be appended to the agent opts. They should be given in the format 
-  "key=value,key=value,..."
+* **AB_JOLOKIA_OPTS**  : Additional options to be appended to the agent opts. They should be given in the format "key=value,key=value,..."
 * **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on client authentication for OpenShift TSL communication. The value of this 
-  parameter can be a relative distinguished name which must be contained in a presented client certificate. Enabling this
-  parameter will automatically switch Jolokia into https communication mode. The default CA cert is set to 
-  `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt` 
+parameter can be a relative distinguished name which must be contained in a presented client certificate. Enabling 
+this parameter will automatically switch Jolokia into https communication mode. The default CA cert is set to 
+`/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`    
 
