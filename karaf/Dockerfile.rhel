@@ -51,5 +51,6 @@ RUN chmod a+x /deployments/deploy-and-run.sh \
 
 # STI requires a numeric, non-0 UID
 USER 1000
+WORKDIR /tmp
 
 CMD ["usage"]

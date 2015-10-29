@@ -49,7 +49,8 @@ COPY ./deploy-and-run.sh /deployments/deploy-and-run.sh
 RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod -R a+rwX /deployments
 
-# STI requires a numeric, non-0 UID
+# S2I requires a numeric, non-0 UID
 USER 1000
+WORKDIR /tmp
 
 CMD ["usage"]
