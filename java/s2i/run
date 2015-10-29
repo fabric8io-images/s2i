@@ -10,4 +10,4 @@ JAVA_OPTIONS="${JAVA_OPTIONS:+${JAVA_OPTIONS} }$(/opt/jolokia/jolokia-opts)"
 # Temporary options variable until the harmonization hawt-app PR #5 has been applied (hopefully)
 JVM_ARGS="${JVM_ARGS:+${JVM_ARGS} }${JAVA_OPTIONS}"
 export JAVA_OPTIONS JVM_ARGS
-${DEPLOYMENTS_DIR}/bin/run.sh
+exec ${DEPLOYMENTS_DIR}/bin/run.sh
