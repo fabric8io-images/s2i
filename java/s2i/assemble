@@ -104,11 +104,6 @@ function build_maven() {
   echo "Copying Maven artifacts from ${build_dir}/hawt-app to ${app_dir} ..."
   copy_dir "${build_dir}/hawt-app" ${app_dir}
 
-  # =============================
-  # cleanup maven build artifacts
-  echo "Cleaning up maven build artifacts using mvn clean..."
-  mvn ${maven_env_args} clean
-
   # ======================
   # Remove repo if desired
   if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
