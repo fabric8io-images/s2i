@@ -67,7 +67,7 @@ Jolokia can be influenced with the following environment variables:
 * **AB_JOLOKIA_ID** : Agent ID to use (`$HOSTNAME` by default, which is the container id)
 * **AB_JOLOKIA_OPTS**  : Additional options to be appended to the agent opts. They should be given in the format 
   "key=value,key=value,..."
-* **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on authentication for OpenShift. 
+* **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on authentication for OpenShift. It is set to true by default and can be disabled by setting to false.
 
 ## Working with multimodule projects
 

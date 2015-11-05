@@ -108,14 +108,6 @@ ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 chmod a+rwx "${DEPLOYMENTS_DIR}/karaf"
 chmod -R a+rwx "${DEPLOYMENTS_DIR}/karaf/data"
 
-# cleanup maven build artifacts to reduce image size
-if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
-  echo "Cleaning up maven build artifacts using mvn clean..."
-  pushd ${LOCAL_SOURCE_DIR} &> /dev/null
-  mvn ${maven_env_args} clean
-  popd
-fi
-
 if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
     rm -rf "${S2I_ARTIFACTS_DIR}/m2"
     check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
