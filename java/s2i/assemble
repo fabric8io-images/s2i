@@ -62,6 +62,12 @@ function copy_dir() {
   check_error "copying ${src} to ${dest}" $?
 }
 
+function setup_maven() {
+  if [ -f "${S2I_SOURCE_DIR}/.m2/settings.xml" ]; then
+    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/.m2/settings.xml"
+  fi
+}
+
 function build_maven() {
   # Where artifacts are created during build
   local build_dir=$1
@@ -124,6 +130,7 @@ check_error "Cannot get output dir: $build_dir" $?
 if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   echo "Detected Maven build"
   # If a pom.xml is present use maven
+  setup_maven
   build_maven ${build_dir} ${DEPLOYMENTS_DIR}
 else
   # Assuming that the source already contains compiled artefacts
