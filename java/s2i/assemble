@@ -102,7 +102,7 @@ function build_maven() {
        echo "No JAVA_MAIN_CLASS specified and no hawt-app-maven-plugin configured in the pom.xml"
        exit 1
      fi
-     mvn ${maven_env_args} ${hawtapp_main_arg} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build ${MAVEN_EXTRA_ARGS}"
+     mvn ${maven_env_args} ${hawtapp_main_arg} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build" ${MAVEN_EXTRA_ARGS}
   fi
 
   # ==============
