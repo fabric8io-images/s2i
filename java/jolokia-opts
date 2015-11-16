@@ -46,12 +46,9 @@ if [ -z ${AB_JOLOKIA_OFF+x} ]; then
       use_https=1
       sep=","
    fi
-   # Integration with OpenShift client cert auth
+   # Integration with OpenShift client cert auth is enabled
    # enable it by default if not explicitly turned off by setting to 'false'
-   if [ -z "$AB_JOLOKIA_AUTH_OPENSHIFT" ]; then
-      AB_JOLOKIA_AUTH_OPENSHIFT=true
-   fi
-   if [ "$AB_JOLOKIA_AUTH_OPENSHIFT" != "false" ]; then
+   if [ "x${AB_JOLOKIA_AUTH_OPENSHIFT}" != "xfalse" ]; then
       auth_opts="useSslClientAuthentication=true,extraClientCheck=true"
       if [ -z ${use_https+x} ]; then
         auth_opts="${auth_opts},protocol=https"
@@ -71,7 +68,7 @@ if [ -z ${AB_JOLOKIA_OFF+x} ]; then
       sep=","
    fi
    # Add extra opts to the end
-   if [ -n "$AB_JOLOKIA_OPTS" ]; then
+   if [ -n "${AB_JOLOKIA_OPTS}" ]; then
       opts="${opts}${sep}${AB_JOLOKIA_OPTS}"
       sep=","
    fi

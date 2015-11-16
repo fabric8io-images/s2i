@@ -8,8 +8,8 @@ An image that can be used with Openshift's [Source To Image](https://docs.opensh
 
 Using s2i command:
 
-	s2i build <git repo url> fabric8/s2i-karaf <target image name>
-	docker run <target image name>
+    s2i build <git repo url> fabric8/s2i-karaf <target image name>
+    docker run <target image name>
 
 Using oc command:
 
@@ -45,7 +45,7 @@ Hawt-App:
 
 You can override the `MAVEN_ARGS` like in the example below we tell maven to just build the project with groupId "some.groupId" and artifactId "some.artifactId" and all its module dependencies.
 
-	sti build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
+    s2i build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 
 You can also just override the `MAVEN_EXTRA_ARGS` environment variable with:
 
@@ -67,7 +67,11 @@ Jolokia can be influenced with the following environment variables:
 * **AB_JOLOKIA_ID** : Agent ID to use (`$HOSTNAME` by default, which is the container id)
 * **AB_JOLOKIA_OPTS**  : Additional options to be appended to the agent opts. They should be given in the format 
   "key=value,key=value,..."
-* **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on authentication for OpenShift. It is set to true by default and can be disabled by setting to false.
+* **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on client authentication for OpenShift TSL communication. The value of this 
+parameter can be a relative distinguished name which must be contained in a presented client certificate. Enabling 
+this parameter will automatically switch Jolokia into https communication mode. The default CA cert is set to 
+`/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`. It is set to `true` by default and can be disabled by setting 
+to `false`.
 
 ## Working with multimodule projects
 
@@ -78,13 +82,13 @@ By default the image assumes ./target. If its another directory we need to speci
 
 A more complete version of the previous example would then be:
 
-	s2i build -e "MAVEN_BUILD_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
+    s2i build -e "MAVEN_BUILD_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 
 ### Real world examples:
 
 Using s2i:
 
-  s2i build git://github.com/dhirajsb/camel-hello-world fabric8/s2i-karaf dhirajsb/camel-hello-world --loglevel=5
+    s2i build git://github.com/dhirajsb/camel-hello-world fabric8/s2i-karaf dhirajsb/camel-hello-world --loglevel=5
 
 Using oc new-app:
 
