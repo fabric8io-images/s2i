@@ -89,7 +89,7 @@ if [ -z "${KARAF_ASSEMBLY}" ]; then
   # there should be only one *.tar.gz in ${MAVEN_BUILD_DIR}
   NUM_ARCHIVE_FILES=`ls -1 | grep "^.*.tar.gz$" | wc -l`
   if [ $NUM_ARCHIVE_FILES -ne 1 ]; then
-    error_exit "Missing or more than one assembly archive file *.tar.gz in ${MAVEN_BUILD_DIR}"
+    error_exit "Missing one or more than one assembly archive file *.tar.gz in ${MAVEN_BUILD_DIR}"
   fi
   KARAF_ASSEMBLY=`ls -1 *.tar.gz`
   popd &> /dev/null
