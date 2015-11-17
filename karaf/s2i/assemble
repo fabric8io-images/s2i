@@ -114,6 +114,6 @@ if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
 fi
 
 # send log output to stdout
-sed -i 's/^\(.*rootLogger.*\)out/\1stdout/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
+sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
 echo "...done!"
