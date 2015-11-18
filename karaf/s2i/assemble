@@ -3,6 +3,9 @@
 # Global S2I variable setup
 source `dirname "$0"`/s2i-setup
 
+# Indicate to subprocesses that we are doing an assemble
+export S2I_ASSEMBLE=true
+
 # Maven arguments setting up the environment
 maven_env_args="-Dmaven.repo.local=${S2I_ARTIFACTS_DIR}/m2"
 
