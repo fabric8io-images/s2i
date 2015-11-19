@@ -104,9 +104,11 @@ tar xzf "$KARAF_ASSEMBLY_ARCHIVE" -C ${DEPLOYMENTS_DIR}
 KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.tar.gz}
 ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 
-# make karaf home and data directories world writeable for OpenShift
+# make karaf home, data and etc directories, and etc/*.cfg files world writeable for OpenShift
 chmod a+rwx "${DEPLOYMENTS_DIR}/karaf"
 chmod -R a+rwx "${DEPLOYMENTS_DIR}/karaf/data"
+chmod a+rwx "${DEPLOYMENTS_DIR}/karaf/etc"
+chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/*.cfg"
 
 if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
     rm -rf "${S2I_ARTIFACTS_DIR}/m2"
