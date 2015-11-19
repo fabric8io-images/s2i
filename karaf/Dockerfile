@@ -2,10 +2,11 @@ FROM jboss/base-jdk:8
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV MAVEN_VERSION=3.3.3 \
-    JOLOKIA_VERSION=1.3.2.redhat-1 \
-    PATH=/usr/local/s2i:$PATH \
-    AB_JOLOKIA_CONFIG=/opt/jolokia/jolokia.properties
+ENV MAVEN_VERSION="3.3.3" \
+    JOLOKIA_VERSION="1.3.2.redhat-1" \
+    PATH="/usr/local/s2i:$PATH" \
+    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
+    HOME="/tmp"
 
 # Expose jolokia port
 EXPOSE 8778
@@ -23,14 +24,15 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 USER root
 
 # Install maven
-ADD apache-maven-${MAVEN_VERSION}-bin.tar.gz /opt/
-RUN ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
+RUN curl "http://www.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
  && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 # Jolokia agent
 ADD jolokia-opts /opt/jolokia/
 ADD jolokia.properties /opt/jolokia/
-ADD https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar
+ADD "https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar" /opt/jolokia/jolokia.jar
 RUN chmod 444 /opt/jolokia/jolokia.jar \
  && chmod 755 /opt/jolokia/jolokia-opts
 EXPOSE 8778

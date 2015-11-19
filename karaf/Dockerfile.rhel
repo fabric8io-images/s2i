@@ -1,17 +1,18 @@
-FROM jboss-base-7/jdk8:1.1-3
+FROM jboss-base-7/jdk8:1.2-4
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV MAVEN_VERSION=3.3.3 \
-    JOLOKIA_VERSION=1.3.2.redhat-1 \
-    PATH=/usr/local/s2i:$PATH \
-    AB_JOLOKIA_CONFIG=/opt/jolokia/jolokia.properties
+ENV MAVEN_VERSION="3.0.5-16.el7" \
+    JOLOKIA_VERSION="1.3.2.redhat-1" \
+    PATH="/usr/local/s2i:$PATH" \
+    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
+    HOME="/tmp"
 
 # Expose jolokia port
 EXPOSE 8778
 
-LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="1.3.2.redhat-1" \
+LABEL io.fabric8.s2i.version.maven="${MAVEN_VERSION}" \
+      io.fabric8.s2i.version.jolokia="${JOLOKIA_VERSION}" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
@@ -23,9 +24,11 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 USER root
 
 # Install maven
-ADD apache-maven-${MAVEN_VERSION}-bin.tar.gz /opt/
-RUN ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
- && ln -s /opt/maven/bin/mvn /usr/bin/mvn
+ADD jboss.repo /etc/yum.repos.d/jboss.repo
+RUN yum install -y --disablerepo=\* --enablerepo=jboss maven \
+ && rpm -e --nodeps java-1.7.0-openjdk-devel \
+ && yum clean all \
+ && rm /etc/yum.repos.d/jboss.repo
 
 # Jolokia agent
 ADD jolokia-opts /opt/jolokia/

@@ -5,9 +5,6 @@ if [ x"${BUILD_LOG_LEVEL}" = x5 ]; then
   set -x
 fi
 
-# Indicate to subprocesses that we are doing an assemble
-export S2I_ASSEMBLE=true
-
 # Which version of hawt app to use
 hawt_app_version="2.2.53"
 
