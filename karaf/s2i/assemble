@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Enable debugging on highest log level
-if [ x"${BUILD_LOG_LEVEL}" = x5 ]; then
+if [ x"${BUILD_LOGLEVEL}" = x5 ]; then
   set -x
 fi
 
@@ -66,10 +66,10 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   fi
 
   echo "Found pom.xml... "
-  echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}'"
+  echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
 
   mvn ${maven_env_args} --version
-  mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}
+  mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}
 
   ERR=$?
   if [ ${ERR} -ne 0 ]; then

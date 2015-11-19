@@ -47,9 +47,9 @@ You can override the `MAVEN_ARGS` like in the example below we tell maven to jus
 
     s2i build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 
-You can also just override the `MAVEN_EXTRA_ARGS` environment variable with:
+You can also just override the `MAVEN_ARGS_APPEND` environment variable with:
 
-    -e "MAVEN_EXTRA_ARGS=-X"
+    -e "MAVEN_ARGS_APPEND=-X"
 
 ## Jolokia configuration
 

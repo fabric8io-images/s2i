@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Enable debugging on highest log level
-if [ x"${BUILD_LOG_LEVEL}" = x5 ]; then
+if [ x"${BUILD_LOGLEVEL}" = x5 ]; then
   set -x
 fi
 
@@ -29,7 +29,7 @@ function check_error() {
 function get_output_dir() {
   # If multi module build and no MAVEN_BUILD_DIR is set --> error
   if [ x"${MAVEN_BUILD_DIR}" = x ]; then
-    echo "${MAVEN_ARGS} ${MAVEN_EXTRA_ARGS}" | grep -q ' -pl'
+    echo "${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
     if [ $? -eq 0 ]; then
        echo "\$MAVEN_BUILD_DIR must be set for multi module Maven builds"
        exit 1
@@ -83,7 +83,7 @@ function build_maven() {
 
   # Default args: no tests, if a module is specified, only build this module
   local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_main_arg} -e}
-  echo "Found pom.xml ... attempting to build with mvn ${maven_env_args} ${maven_args} ${MAVEN_EXTRA_ARGS}"
+  echo "Found pom.xml ... attempting to build with mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}"
 
   local old_dir=$(pwd)
   cd ${S2I_SOURCE_DIR}
@@ -92,7 +92,7 @@ function build_maven() {
   # =========
   # Run Maven
   mvn ${maven_env_args} --version
-  mvn ${maven_env_args} ${maven_args} ${MAVEN_EXTRA_ARGS}
+  mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
 
   # ==================================================================
@@ -102,7 +102,7 @@ function build_maven() {
        echo "No JAVA_MAIN_CLASS specified and no hawt-app-maven-plugin configured in the pom.xml"
        exit 1
      fi
-     mvn ${maven_env_args} ${hawtapp_main_arg} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build" ${MAVEN_EXTRA_ARGS}
+     mvn ${maven_env_args} ${hawtapp_main_arg} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build" ${MAVEN_ARGS_APPEND}
   fi
 
   # ==============

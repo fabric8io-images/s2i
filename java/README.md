@@ -11,8 +11,9 @@ The following environment variables can be used to influence the behaviour of th
 ## Build Time
 
 * **MAVEN_ARGS** Arguments to use when calling maven, replacing the default `package hawt-app:build -DskipTests -e`. Please be sure to run the `hawt-app:build` goal (when not already bound to the `package` execution phase), otherwise the startup scripts won't work. 
+* **MAVEN_ARGS_APPEND** Additional Maven  arguments, useful for temporary adding arguments like `-X` or `-am -pl ..` 
 * **MAVEN_BUILD_DIR** Path to `target/` where the jar files are created
-* **MAVEN_EXTRA_ARGS** Additional Maven  arguments, useful for temporary adding arguments like `-X` or `-am -pl ..` for multi module builds. These are added to `${MAVEN_ARGS}` 
+for multi module builds. These are added to `${MAVEN_ARGS}` 
 * **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artifact is built. This is useful for keeping
   the created application image small, but prevents *incremental* builds. The default is `false`
 
