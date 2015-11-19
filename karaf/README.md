@@ -77,12 +77,13 @@ to `false`.
 
 The example above is pretty handy for multimodule projects. 
 
-Another useful option is the MAVEN_BUILD_DIR environment variable. This variable defines where in the source tree the output will be generated.
+Another useful option is the ARTIFACT_DIR environment variable. This variable defines where in the source tree the 
+output will be generated.
 By default the image assumes ./target. If its another directory we need to specify the option.
 
 A more complete version of the previous example would then be:
 
-    s2i build -e "MAVEN_BUILD_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
+    s2i build -e "ARTIFACT_DIR=path/to/module/target,MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 
 ### Real world examples:
 

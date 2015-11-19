@@ -1,10 +1,5 @@
 #!/bin/sh
 
-# Enable debugging on highest log level
-if [ x"${BUILD_LOGLEVEL}" = x5 ]; then
-  set -x
-fi
-
 # Which version of hawt app to use
 hawt_app_version="2.2.53"
 
@@ -27,19 +22,19 @@ function check_error() {
 }
 
 function get_output_dir() {
-  # If multi module build and no MAVEN_BUILD_DIR is set --> error
-  if [ x"${MAVEN_BUILD_DIR}" = x ]; then
+  # If multi module build and no ARTIFACT_DIR is set --> error
+  if [ x"${ARTIFACT_DIR}" = x ]; then
     echo "${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
     if [ $? -eq 0 ]; then
-       echo "\$MAVEN_BUILD_DIR must be set for multi module Maven builds"
+       echo "\$ARTIFACT_DIR must be set for multi module Maven builds"
        exit 1
     fi
   fi
 
   # Where artifacts are created within the build
-  local dir=${MAVEN_BUILD_DIR:-${S2I_SOURCE_DIR}/target}
+  local dir=${ARTIFACT_DIR:-${S2I_SOURCE_DIR}/target}
 
-  # If MAVEN_BUILDd is not absolute then use it relative to S2I_SOURCE_DIR
+  # If $ARTIFACT_DIR is not absolute then use it relative to S2I_SOURCE_DIR
   if [ "${dir:0:1}" != "/" ]; then
     dir="${S2I_SOURCE_DIR}/${dir}"
   fi
@@ -48,7 +43,7 @@ function get_output_dir() {
   dir=${dir%/}
   # The parent must exist but target/ won't exist yet
   if [ ! -d $(dirname "${dir}"}) ]; then
-    echo "Please specify a build directory MAVEN_BUILD_DIR (tried '$(dirname "${dir}")' which does not exist)"
+    echo "Please specify a build directory $ARTIFACT_DIR (tried '$(dirname "${dir}")' which does not exist)"
     exit 1
   fi
   echo ${dir}
@@ -133,9 +128,10 @@ if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   setup_maven
   build_maven ${build_dir} ${DEPLOYMENTS_DIR}
 else
+  binary_dir="${ARTIFACT_DIR:-${S2I_SOURCE_DIR}/deployments}"
   # Assuming that the source already contains compiled artefacts
-  echo "Copying binaries from ${output_dir} to ${S2I_ARTIFACTS_DIR} ..."
-  copy_dir ${build_dir} ${DEPLOYMENTS_DIR}
+  echo "Copying binaries from ${binary_dir} to ${S2I_ARTIFACTS_DIR} ..."
+  copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
 fi
 
 echo "... done"
