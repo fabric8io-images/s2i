@@ -30,7 +30,7 @@ function error_exit() {
 echo "=================================================================="
 echo "Starting S2I Karaf Build ....."
 
-LOCAL_SOURCE_DIR="${S2I_SOURCE_DIR}""
+LOCAL_SOURCE_DIR="${S2I_SOURCE_DIR}"
 mkdir -p ${LOCAL_SOURCE_DIR}
 
 # The dir that contains the build output
