@@ -17,7 +17,7 @@ KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.tar.gz}
 ln -s "${DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DIR}/karaf"
 
 # send log output to stdout
-sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
+sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
 # Launch Karaf using S2I script
 exec /usr/local/s2i/run
