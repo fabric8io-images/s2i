@@ -33,13 +33,6 @@ echo "Starting S2I Karaf Build ....."
 LOCAL_SOURCE_DIR="${S2I_SOURCE_DIR}"
 mkdir -p ${LOCAL_SOURCE_DIR}
 
-# The dir that contains the build output
-if [ -z "${ARTIFACT_DIR}" ]; then
-  ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/target"
-elif [[ ${ARTIFACT_DIR} != /* ]]; then
-  ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
-fi
-
 # Output will result in ${DEPLOYMENTS_DIR} folder
 mkdir -p ${DEPLOYMENTS_DIR}
 
@@ -71,13 +64,22 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     error_exit "Aborting due to error code ${ERR} from mvn command" ${ERR}
   fi
 
+  # The dir that contains the build output
+  if [ -z "${ARTIFACT_DIR}" ]; then
+    ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/target"
+  elif [[ ${ARTIFACT_DIR} != /* ]]; then
+    ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
+  fi
+
   echo "Copying built artifacts from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."
   popd &> /dev/null
 else
+  # Locate the binary assembly using ${ARTIFACT_DIR} or default to /deployments
   if [ -z "${ARTIFACT_DIR}" ]; then
-    ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/deployments"
+    ARTIFACT_DIR="deployments"
   fi
-  echo "Copying binaries in source directory into ${DEPLOYMENTS_DIR}..."
+  ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
+  echo "Copying binary assembly from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."
 fi
 
 # locate karaf assembly
@@ -108,7 +110,9 @@ ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 chmod a+rwx "${DEPLOYMENTS_DIR}/karaf"
 chmod -R a+rwx "${DEPLOYMENTS_DIR}/karaf/data"
 chmod a+rwx "${DEPLOYMENTS_DIR}/karaf/etc"
-chmod a+rw ${DEPLOYMENTS_DIR}/karaf/etc/*.cfg
+chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/"*.cfg
+# make etc/config.properties writable to avoid warnings about unwritable shutdown command
+chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/config.properties"
 
 if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
     rm -rf "${S2I_ARTIFACTS_DIR}/m2"
