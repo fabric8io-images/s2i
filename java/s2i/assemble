@@ -23,9 +23,9 @@ function get_output_dir() {
 
   # If multi module build and no ARTIFACT_DIR is set --> error
   if [ x"${ARTIFACT_DIR}" = x ]; then
-    echo "${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
+    echo " ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
     if [ $? -eq 0 ]; then
-       echo "\$ARTIFACT_DIR must be set for multi module Maven builds"
+       echo "ARTIFACT_DIR must be set for multi module Maven builds"
        exit 1
     fi
     dir="${S2I_SOURCE_DIR}/target"

@@ -66,6 +66,11 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
 
   # The dir that contains the build output
   if [ -z "${ARTIFACT_DIR}" ]; then
+    echo " ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
+    if [ $? -eq 0 ]; then
+       echo "ARTIFACT_DIR must be set for multi module Maven builds"
+       exit 1
+    fi
     ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/target"
   elif [ "${ARTIFACT_DIR:0:1}" != "/" ]; then
     ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
