@@ -73,7 +73,7 @@ function build_maven() {
   # Use main class if given
   local hawtapp_arg=""
   if [ x"${JAVA_MAIN_CLASS}" != x ]; then
-    hawtapp_arg= "-Dhawt-app.javaMainClass=${JAVA_MAIN_CLASS} io.fabric8:hawt-app-maven-plugin:${HAWTAPP_VERSION}:build"
+    hawtapp_arg="-Dhawt-app.javaMainClass=${JAVA_MAIN_CLASS} io.fabric8:hawt-app-maven-plugin:${HAWTAPP_VERSION}:build"
   fi
 
   # Default args: no tests, if a module is specified, only build this module
