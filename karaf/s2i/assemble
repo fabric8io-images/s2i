@@ -42,7 +42,7 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   # Use a custom settings.xml if given
   CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/.m2/settings.xml"
   if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
-    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}..."
+    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
     maven_env_args="${maven_env_args} -s ${LOCAL_SOURCE_DIR}/.m2/settings.xml"
   fi
 
@@ -67,8 +67,11 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   # The dir that contains the build output
   if [ -z "${ARTIFACT_DIR}" ]; then
     ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/target"
-  elif [[ ${ARTIFACT_DIR} != /* ]]; then
+  elif [ "${ARTIFACT_DIR:0:1}" != "/" ]; then
     ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
+  else
+    echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
+    exit 1
   fi
 
   echo "Copying built artifacts from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."

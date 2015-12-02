@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Which version of hawt app to use
-hawt_app_version="2.2.53"
-
 # Global S2I variable setup
 source `dirname "$0"`/s2i-setup
 
@@ -22,6 +19,8 @@ function check_error() {
 }
 
 function get_output_dir() {
+  local dir=""
+
   # If multi module build and no ARTIFACT_DIR is set --> error
   if [ x"${ARTIFACT_DIR}" = x ]; then
     echo "${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
@@ -29,15 +28,15 @@ function get_output_dir() {
        echo "\$ARTIFACT_DIR must be set for multi module Maven builds"
        exit 1
     fi
+    dir="${S2I_SOURCE_DIR}/target"
+  else
+    if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
+       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to source dir"
+       exit 1
+    fi
+    dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
   fi
 
-  # Where artifacts are created within the build
-  local dir=${ARTIFACT_DIR:-${S2I_SOURCE_DIR}/target}
-
-  # If $ARTIFACT_DIR is not absolute then use it relative to S2I_SOURCE_DIR
-  if [ "${dir:0:1}" != "/" ]; then
-    dir="${S2I_SOURCE_DIR}/${dir}"
-  fi
   # Normalize dir
   dir=$(echo ${dir} | tr -s /)
   dir=${dir%/}
@@ -60,6 +59,7 @@ function copy_dir() {
 function setup_maven() {
   if [ -f "${S2I_SOURCE_DIR}/.m2/settings.xml" ]; then
     maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/.m2/settings.xml"
+    echo "Using custom maven settings from ${S2I_SOURCE_DIR}/.m2/settings.xml"
   fi
 }
 
@@ -71,13 +71,13 @@ function build_maven() {
   local app_dir=$2
 
   # Use main class if given
-  local hawtapp_main_arg=""
+  local hawtapp_arg=""
   if [ x"${JAVA_MAIN_CLASS}" != x ]; then
-    hawtapp_main_arg="-Dhawt-app.javaMainClass=${JAVA_MAIN_CLASS}"
+    hawtapp_arg= "-Dhawt-app.javaMainClass=${JAVA_MAIN_CLASS} io.fabric8:hawt-app-maven-plugin:${HAWTAPP_VERSION}:build"
   fi
 
   # Default args: no tests, if a module is specified, only build this module
-  local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_main_arg} -e}
+  local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_arg} -e}
   echo "Found pom.xml ... attempting to build with mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}"
 
   local old_dir=$(pwd)
@@ -89,16 +89,6 @@ function build_maven() {
   mvn ${maven_env_args} --version
   mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
-
-  # ==================================================================
-  # Check for hawt-app dir and if not present run hawt-app explicitly
-  if [ ! -d "${build_dir}/hawt-app" ]; then
-     if [ x"${JAVA_MAIN_CLASS}" = x ]; then
-       echo "No JAVA_MAIN_CLASS specified and no hawt-app-maven-plugin configured in the pom.xml"
-       exit 1
-     fi
-     mvn ${maven_env_args} ${hawtapp_main_arg} "io.fabric8:hawt-app-maven-plugin:${hawt_app_version}:build" ${MAVEN_ARGS_APPEND}
-  fi
 
   # ==============
   # Copy artifacts
