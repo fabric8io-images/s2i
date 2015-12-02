@@ -53,17 +53,6 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     MAVEN_ARGS=${DEFAULT_KARAF_MAVEN_ARGS}
   fi
 
-  echo "Found pom.xml... "
-  echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
-
-  mvn ${maven_env_args} --version
-  mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}
-
-  ERR=$?
-  if [ ${ERR} -ne 0 ]; then
-    error_exit "Aborting due to error code ${ERR} from mvn command" ${ERR}
-  fi
-
   # The dir that contains the build output
   if [ -z "${ARTIFACT_DIR}" ]; then
     echo " ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
@@ -77,6 +66,17 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   else
     echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
     exit 1
+  fi
+
+  echo "Found pom.xml... "
+  echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
+
+  mvn ${maven_env_args} --version
+  mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}
+
+  ERR=$?
+  if [ ${ERR} -ne 0 ]; then
+    error_exit "Aborting due to error code ${ERR} from mvn command" ${ERR}
   fi
 
   echo "Copying built artifacts from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."
