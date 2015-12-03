@@ -31,7 +31,7 @@ function get_output_dir() {
     dir="${S2I_SOURCE_DIR}/target"
   else
     if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
-       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to source dir"
+       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
        exit 1
     fi
     dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
@@ -42,7 +42,7 @@ function get_output_dir() {
   dir=${dir%/}
   # The parent must exist but target/ won't exist yet
   if [ ! -d $(dirname "${dir}"}) ]; then
-    echo "Please specify a build directory $ARTIFACT_DIR (tried '$(dirname "${dir}")' which does not exist)"
+    echo "Please specify an existing build directory ARTIFACT_DIR (tried '$(dirname "${dir}")' which does not exist)"
     exit 1
   fi
   echo ${dir}
@@ -78,7 +78,9 @@ function build_maven() {
 
   # Default args: no tests, if a module is specified, only build this module
   local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_arg} -e}
-  echo "Found pom.xml ... attempting to build with mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}"
+
+  echo "Found pom.xml ... "
+  echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
 
   local old_dir=$(pwd)
   cd ${S2I_SOURCE_DIR}
@@ -113,7 +115,7 @@ echo "Starting S2I Java Build ....."
 build_dir=$(get_output_dir)
 check_error "Cannot get output dir: $build_dir" $?
 if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
-  echo "Detected Maven build"
+  echo "Maven build detected"
   # If a pom.xml is present use maven
   setup_maven
   build_maven ${build_dir} ${DEPLOYMENTS_DIR}

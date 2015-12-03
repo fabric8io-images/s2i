@@ -39,6 +39,8 @@ mkdir -p ${DEPLOYMENTS_DIR}
 # If a pom.xml is present, this is a normal build scenario
 # so run maven.
 if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
+  echo "Maven build detected"
+
   # Use a custom settings.xml if given
   CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/.m2/settings.xml"
   if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
@@ -68,7 +70,7 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     exit 1
   fi
 
-  echo "Found pom.xml... "
+  echo "Found pom.xml ... "
   echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
 
   mvn ${maven_env_args} --version
@@ -87,13 +89,13 @@ else
     ARTIFACT_DIR="deployments"
   fi
   ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
-  echo "Copying binary assembly from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."
+  echo "Copying binary assembly from ${ARTIFACT_DIR} to ${DEPLOYMENTS_DIR} ..."
 fi
 
 # locate karaf assembly
 if [ -z "${KARAF_ASSEMBLY}" ]; then
   if [ ! -d "${ARTIFACT_DIR}" ]; then
-    error_exit "Missing directory ${ARTIFACT_DIR}"
+    error_exit "Please specify an existing build directory ARTIFACT_DIR (tried '${ARTIFACT_DIR}' which does not exist)"
   fi
   pushd ${ARTIFACT_DIR} &> /dev/null
   # there should be only one *.tar.gz in ${ARTIFACT_DIR}
