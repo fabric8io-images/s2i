@@ -92,6 +92,13 @@ function build_maven() {
   mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
 
+  # ======================
+  # After-build validation
+  if [ ! -d "${build_dir}/hawt-app" ] && [ x"${JAVA_MAIN_CLASS}" = x ]; then
+    echo "No JAVA_MAIN_CLASS specified and no hawt-app-maven-plugin configured in the pom.xml"
+    exit 1
+  fi
+
   # ==============
   # Copy artifacts
   echo "Copying Maven artifacts from ${build_dir}/hawt-app to ${app_dir} ..."
