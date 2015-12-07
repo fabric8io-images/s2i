@@ -44,7 +44,7 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   # Use a custom settings.xml if given
   CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/configuration/settings.xml"
   if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
-    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}..."
+    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
     maven_env_args="${maven_env_args} -s ${CUSTOM_MAVEN_SETTINGS}"
   fi
 
