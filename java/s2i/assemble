@@ -57,9 +57,9 @@ function copy_dir() {
 }
 
 function setup_maven() {
-  if [ -f "${S2I_SOURCE_DIR}/.m2/settings.xml" ]; then
-    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/.m2/settings.xml"
-    echo "Using custom maven settings from ${S2I_SOURCE_DIR}/.m2/settings.xml"
+  if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
+    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/configuration/settings.xml"
+    echo "Using custom maven settings from ${S2I_SOURCE_DIR}/configuration/settings.xml"
   fi
 }
 
