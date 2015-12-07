@@ -105,8 +105,8 @@ function setup_maven() {
   if [ x"${MAVEN_MIRROR_URL}" != x ]; then
     echo "`mvn_settings_with_mirror ${MAVEN_MIRROR_URL}`" > ${S2I_SOURCE_DIR}/mvn-mirrors-settings.xml
     maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/mvn-mirrors-settings.xml"
-  elif [ -f "${S2I_SOURCE_DIR}/.m2/settings.xml" ]; then
-    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/.m2/settings.xml"
+  elif [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
+    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/configuration/settings.xml"
   fi
 }
 

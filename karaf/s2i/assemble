@@ -42,10 +42,10 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   echo "Maven build detected"
 
   # Use a custom settings.xml if given
-  CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/.m2/settings.xml"
+  CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/configuration/settings.xml"
   if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
-    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
-    maven_env_args="${maven_env_args} -s ${LOCAL_SOURCE_DIR}/.m2/settings.xml"
+    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}..."
+    maven_env_args="${maven_env_args} -s ${CUSTOM_MAVEN_SETTINGS}"
   fi
 
   pushd ${LOCAL_SOURCE_DIR} &> /dev/null
