@@ -5,8 +5,7 @@ MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 ENV MAVEN_VERSION="3.3.3" \
     JOLOKIA_VERSION="1.3.2" \
     PATH="/usr/local/s2i:$PATH" \
-    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
-    HOME="/tmp"
+    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties"
 
 # Expose jolokia port
 EXPOSE 8778
@@ -49,8 +48,7 @@ COPY ./deploy-and-run.sh /deployments/deploy-and-run.sh
 RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod -R a+rwX /deployments
 
-# S2I requires a numeric, non-0 UID
-USER 1000
-WORKDIR /tmp
+# S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
+USER 185
 
 CMD ["usage"]

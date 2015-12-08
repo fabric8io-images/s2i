@@ -4,8 +4,7 @@ ENV MAVEN_VERSION="3.3.3" \
     JOLOKIA_VERSION="1.3.2" \
     HAWTAPP_VERSION="2.2.53" \
     PATH=$PATH:"/usr/local/s2i" \
-    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
-    HOME="/tmp"
+    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties"
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
@@ -42,9 +41,8 @@ ADD README.md /usr/local/s2i/usage.txt
 RUN mkdir /deployments \
  && chmod -R "a+rwX" /deployments
 
-# S2I requires a numeric, non-0 UID
-USER 1000
-WORKDIR /tmp
+# S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
+USER 185
 
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)
