@@ -5,7 +5,8 @@ MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 ENV MAVEN_VERSION="3.3.3" \
     JOLOKIA_VERSION="1.3.2" \
     PATH="/usr/local/s2i:$PATH" \
-    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties"
+    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
+    AB_JOLOKIA_AUTH_OPENSHIFT="true"
 
 # Expose jolokia port
 EXPOSE 8778
