@@ -25,5 +25,10 @@ deployment:
     commands:
       - cd java && ( docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/} . | cat - )
       - docker push fabric8/s2i-java:${CIRCLE_TAG/#v/} | cat -
+      - docker tag fabric8/s2i-java:${CIRCLE_TAG/#v/} fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+      - docker push fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
       - cd karaf && ( docker build -t fabric8/s2i-karaf:${CIRCLE_TAG/#v/} . | cat - )
       - docker push fabric8/s2i-karaf:${CIRCLE_TAG/#v/} | cat -
+      - docker tag fabric8/s2i-karaf:${CIRCLE_TAG/#v/} fabric8/s2i-karaf:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+      - docker push fabric8/s2i-karaf:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+
