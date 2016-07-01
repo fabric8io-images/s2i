@@ -51,8 +51,9 @@ function get_output_dir() {
 function copy_dir() {
   local src=$1
   local dest=$2
-
-  cp -r ${src}/* ${dest}
+  
+  # Copy recursively and preserve ownership: -a
+  cp -a ${src}/* ${dest}
   check_error "copying ${src} to ${dest}" $?
 }
 
