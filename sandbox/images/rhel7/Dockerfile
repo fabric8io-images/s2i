@@ -18,7 +18,7 @@ RUN yum install -y \
     java-1.8.0-openjdk-headless \
     java-1.8.0-openjdk-devel.x86_64 \
  && yum clean all -y \
- && curl http://www.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz | \
+ && curl https://archive.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz | \
     tar -xzf - -C /opt \
  && ln -s /opt/apache-maven-3.3.3 /opt/maven \
  && ln -s /opt/maven/bin/mvn /usr/bin/mvn

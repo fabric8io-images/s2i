@@ -17,7 +17,7 @@ RUN yum install -y \
     java-1.8.0-openjdk-headless \
     java-1.8.0-openjdk-devel.x86_64 \
  && yum clean all -y \
- && RUN curl http://www.apache.org/dist/maven/maven-{{= fp.version.mavenMajor}}/{{= fp.version.maven }}/binaries/apache-maven-{{= fp.version.maven }}-bin.tar.gz | \
+ && RUN curl https://archive.apache.org/dist/maven/maven-{{= fp.version.mavenMajor}}/{{= fp.version.maven }}/binaries/apache-maven-{{= fp.version.maven }}-bin.tar.gz | \
     tar -xzf - -C /opt \
  && ln -s /opt/apache-maven-{{= fp.version.maven }} /opt/maven \
  && ln -s /opt/maven/bin/mvn /usr/bin/mvn
