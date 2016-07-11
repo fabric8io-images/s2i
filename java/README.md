@@ -1,7 +1,7 @@
 # S2I Java builder image
 
 This is a S2I builder image for Java builds whose result can be run directly without any further application server.
-It's suited ideally for microservices with a flat classpath (but not for "far jars")  
+It's suited ideally for microservices with a flat classpath (including "far jars").
 
 This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia)  agent. See below  
 how to configure this.
