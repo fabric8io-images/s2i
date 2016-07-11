@@ -14,10 +14,7 @@ export JAVA_OPTIONS JVM_ARGS
 if [ -f "${DEPLOYMENTS_DIR}/bin/run.sh" ]; then
     echo "Starting Hawtapp Application ..."
     exec ${DEPLOYMENTS_DIR}/bin/run.sh
-elif [ -f "${DEPLOYMENTS_DIR}/run-java.sh" ]; then
-    echo "Starting Java Application ..."
-    exec ${DEPLOYMENTS_DIR}/run-java.sh
 else
-    echo "Could not find a suitable runner for the image. Closing ..."
-    exit 1
+    echo "Starting Java Application ..."
+    exec /opt/run-java/run-java.sh
 fi

@@ -40,6 +40,7 @@ ADD README.md /usr/local/s2i/usage.txt
 
 # Adding run-java.sh for fat-jar apps
 COPY run-java /opt/run-java
+RUN chmod 755 /opt/run-java/*
 
 # Necessary to permit running with a randomised UID
 RUN mkdir /deployments \

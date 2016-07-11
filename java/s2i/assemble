@@ -124,14 +124,6 @@ function build_maven() {
     echo "Copying fat-jar to ${app_dir} ..."
     copy_fat_jar ${build_dir} ${app_dir}
     check_error "copying fat jar from ${build_dir} to ${app_dir}" $?
-
-    echo "Copying java-run scripts into app folder ..."
-    cp -r /opt/run-java/* ${app_dir}
-    check_error "cannot copy java-run scripts from /usr/local/run-java to ${app_dir}" $?
-
-    echo "Changing permissions of bin scripts ..."
-    chmod 755 ${app_dir}/*.sh ${app_dir}/java-container-options
-    check_error "cannot change permissions on  run-java files in ${app_dir}" $?
   fi
 
   # ======================
