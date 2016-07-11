@@ -38,6 +38,9 @@ EXPOSE 8778
 COPY s2i /usr/local/s2i
 ADD README.md /usr/local/s2i/usage.txt
 
+# Adding run-java.sh for fat-jar apps
+COPY run-java /opt/run-java
+
 # Necessary to permit running with a randomised UID
 RUN mkdir /deployments \
  && chmod -R "a+rwX" /deployments
