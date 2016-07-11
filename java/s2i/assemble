@@ -54,8 +54,35 @@ function copy_dir() {
   
   # Copy recursively and preserve ownership: -a
   cp -a ${src}/* ${dest}
-  check_error "copying ${src} to ${dest}" $?
 }
+
+function copy_fat_jar() {
+  local dir=$1
+  local dest=$2
+
+  # Filter out temporary jars from the shade plugin which start with 'original-'
+  local old_dir=$(pwd)
+  cd ${dir}
+  if [ $? = 0 ]; then
+    local nr_jars=`ls *.jar 2>/dev/null | grep -v '^original-' | wc -l | tr -d '[[:space:]]'`
+    if [ ${nr_jars} = 1 ]; then
+      local fat_jar=$(ls *.jar | grep -v '^original-')
+
+      # Copy and preserve ownership: -a
+      cd ${old_dir}
+      cp -a ${dir}/${fat_jar} ${dest}
+      return
+    fi
+    echo "ERROR: Found ${nr_jars} jars in ${dir} (1 expected): $(ls *.jar | grep -v '^original' | tr '\n' ' ')"
+    cd ${old_dir}
+    exit 1
+  else
+    cd ${old_dir}
+    echo "ERROR: No directory ${dir} found for auto detection"
+    exit 1
+  fi
+}
+
 
 function setup_maven() {
   if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
@@ -71,14 +98,8 @@ function build_maven() {
   # Where to put the artifacts
   local app_dir=$2
 
-  # Use main class if given
-  local hawtapp_arg=""
-  if [ x"${JAVA_MAIN_CLASS}" != x ]; then
-    hawtapp_arg="-Dhawt-app.javaMainClass=${JAVA_MAIN_CLASS} io.fabric8:hawt-app-maven-plugin:${HAWTAPP_VERSION}:build"
-  fi
-
   # Default args: no tests, if a module is specified, only build this module
-  local maven_args=${MAVEN_ARGS:-package -DskipTests ${hawtapp_arg} -e}
+  local maven_args=${MAVEN_ARGS:-package -DskipTests -e}
 
   echo "Found pom.xml ... "
   echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
@@ -93,17 +114,25 @@ function build_maven() {
   mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
 
-  # ======================
-  # After-build validation
-  if [ ! -d "${build_dir}/hawt-app" ] && [ x"${JAVA_MAIN_CLASS}" = x ]; then
-    echo "No JAVA_MAIN_CLASS specified and no hawt-app-maven-plugin configured in the pom.xml"
-    exit 1
-  fi
-
   # ==============
   # Copy artifacts
-  echo "Copying Maven artifacts from ${build_dir}/hawt-app to ${app_dir} ..."
-  copy_dir "${build_dir}/hawt-app" ${app_dir}
+  if [ -d "${build_dir}/hawt-app" ]; then
+    echo "Hawtapp plugin detected. Copying Maven artifacts from ${build_dir}/hawt-app to ${app_dir} ..."
+    copy_dir "${build_dir}/hawt-app" ${app_dir}
+    check_error "copying ${build_dir}/hawt-app to ${app_dir}" $?
+  else
+    echo "Copying fat-jar to ${app_dir} ..."
+    copy_fat_jar ${build_dir} ${app_dir}
+    check_error "copying fat jar from ${build_dir} to ${app_dir}" $?
+
+    echo "Copying java-run scripts into app folder ..."
+    cp -r /opt/run-java/* ${app_dir}
+    check_error "cannot copy java-run scripts from /usr/local/run-java to ${app_dir}" $?
+
+    echo "Changing permissions of bin scripts ..."
+    chmod 755 ${app_dir}/*.sh ${app_dir}/java-container-options
+    check_error "cannot change permissions on  run-java files in ${app_dir}" $?
+  fi
 
   # ======================
   # Remove repo if desired
@@ -132,6 +161,7 @@ else
   # Assuming that the source already contains compiled artefacts
   echo "Copying binaries from ${binary_dir} to ${S2I_ARTIFACTS_DIR} ..."
   copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
+  check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
 fi
 
 echo "... done"
