@@ -8,7 +8,7 @@ builder images for [OpenShift](http://www.openshift.com).
 #### Java S2I Builder image
 
 The S2I Java builder can be used to use generate Java S2I builds for
-flat classpath applications. It supports fat-jar packaged applications, leveraging the [run-java-sh project](https://github.com/fabric8io-images/run-java-sh),
+flat classpath applications. It supports flat-classpath and fat-jar packaged applications, leveraging the [run-java-sh project](https://github.com/fabric8io/run-java-sh),
 as well as applications using the [hawt-app Maven plugin](https://github.com/fabric8io/fabric8/tree/master/hawt-app-maven-plugin)
 for fetching dependencies and building up an appropriate classpath.
 

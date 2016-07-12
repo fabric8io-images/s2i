@@ -12,9 +12,9 @@ JVM_ARGS="${JVM_ARGS:+${JVM_ARGS} }${JAVA_OPTIONS}"
 export JAVA_OPTIONS JVM_ARGS
 
 if [ -f "${DEPLOYMENTS_DIR}/bin/run.sh" ]; then
-    echo "Starting Hawtapp Application ..."
+    echo "Starting the application using the bundled bin/run.sh ..."
     exec ${DEPLOYMENTS_DIR}/bin/run.sh
 else
-    echo "Starting Java Application ..."
+    echo "Starting the Java application ..."
     exec /opt/run-java/run-java.sh
 fi
