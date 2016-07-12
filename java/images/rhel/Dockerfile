@@ -1,15 +1,14 @@
-FROM jboss/base-jdk:8
+FROM jboss-base-7/jdk8:1.2-10
 
-ENV MAVEN_VERSION="3.3.3" \
-    JOLOKIA_VERSION="1.3.2" \
-    HAWTAPP_VERSION="2.2.53" \
+ENV MAVEN_VERSION="3.3.3-1.el7" \
+    JOLOKIA_VERSION="1.3.2.redhat-1" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
 
 # Some version information
-LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="1.3.2" \
+LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
+      io.fabric8.s2i.version.jolokia="1.3.2.redhat-1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -21,26 +20,32 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 USER root
 
 # Install maven
-RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | \
-    tar -xzf - -C /opt \
- && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
- && ln -s /opt/maven/bin/mvn /usr/bin/mvn
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/3.3.3/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
+ && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
 
 # Jolokia agent
 ADD jolokia-opts /opt/jolokia/
 ADD jolokia.properties /opt/jolokia/
-ADD "http://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar"
+ADD https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar
 RUN chmod 444 /opt/jolokia/jolokia.jar \
  && chmod 755 /opt/jolokia/jolokia-opts
 EXPOSE 8778
 
 # S2I scripts + README
 COPY s2i /usr/local/s2i
+RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
 
-# Adding run-java.sh for fat-jar apps
-COPY run-java /opt/run-java
-RUN chmod 755 /opt/run-java/*
+
+# Add run script as /opt/run-java/run-java.sh and make it executable
+COPY run-java.sh /opt/run-java/run-java.sh
+COPY java-container-options /opt/run-java/java-container-options
+RUN chmod 755 /opt/run-java/run-java.sh /opt/run-java/java-container-options
+
+# Adding run-env.sh to set app dir
+COPY run-env.sh /opt/run-java/run-env.sh
+RUN chmod 755 /opt/run-java/run-env.sh
 
 # Necessary to permit running with a randomised UID
 RUN mkdir /deployments \

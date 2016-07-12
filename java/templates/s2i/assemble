@@ -56,33 +56,23 @@ function copy_dir() {
   cp -a ${src}/* ${dest}
 }
 
-function copy_fat_jar() {
-  local dir=$1
-  local dest=$2
+function copy_artifacts() {
+    local dir=$1
+    local dest=$2
 
-  # Filter out temporary jars from the shade plugin which start with 'original-'
-  local old_dir=$(pwd)
-  cd ${dir}
-  if [ $? = 0 ]; then
-    local nr_jars=`ls *.jar 2>/dev/null | grep -v '^original-' | wc -l | tr -d '[[:space:]]'`
-    if [ ${nr_jars} = 1 ]; then
-      local fat_jar=$(ls *.jar | grep -v '^original-')
+    cd ${dir}
 
-      # Copy and preserve ownership: -a
-      cd ${old_dir}
-      cp -a ${dir}/${fat_jar} ${dest}
-      return
+    local cp_args=${ARTIFACT_COPY_ARGS}
+    if [ x"${cp_args}" = x ]; then
+        if [ -d "hawt-app" ]; then
+            cp_args="-r hawt-app/*"
+        else
+            cp_args="*.jar"
+        fi
     fi
-    echo "ERROR: Found ${nr_jars} jars in ${dir} (1 expected): $(ls *.jar | grep -v '^original' | tr '\n' ' ')"
-    cd ${old_dir}
-    exit 1
-  else
-    cd ${old_dir}
-    echo "ERROR: No directory ${dir} found for auto detection"
-    exit 1
-  fi
+    echo "Running: cp ${cp_args} ${dest}"
+    cp ${cp_args} ${dest}
 }
-
 
 function setup_maven() {
   if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
@@ -116,16 +106,11 @@ function build_maven() {
 
   # ==============
   # Copy artifacts
-  if [ -d "${build_dir}/hawt-app" ]; then
-    echo "Hawtapp plugin detected. Copying Maven artifacts from ${build_dir}/hawt-app to ${app_dir} ..."
-    copy_dir "${build_dir}/hawt-app" ${app_dir}
-    check_error "copying ${build_dir}/hawt-app to ${app_dir}" $?
-  else
-    echo "Copying fat-jar to ${app_dir} ..."
-    copy_fat_jar ${build_dir} ${app_dir}
-    check_error "copying fat jar from ${build_dir} to ${app_dir}" $?
-  fi
+  echo "Copying Maven artifacts from ${build_dir} to ${app_dir} ..."
+  copy_artifacts ${build_dir} ${app_dir}
+  check_error "copying artifacts from ${build_dir} to ${app_dir}" $?
 
+  # ======================
   # ======================
   # Remove repo if desired
   if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
