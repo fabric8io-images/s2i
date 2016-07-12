@@ -27,7 +27,7 @@ RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
 # Jolokia agent
 ADD jolokia-opts /opt/jolokia/
 ADD jolokia.properties /opt/jolokia/
-ADD https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar
+ADD https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar
 RUN chmod 444 /opt/jolokia/jolokia.jar \
  && chmod 755 /opt/jolokia/jolokia-opts
 EXPOSE 8778
