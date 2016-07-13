@@ -4,7 +4,7 @@ machine:
 
 dependencies:
   pre:
-    - test -n "$DOCKER_USER" && docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - [ -n "$CI_PULL_REQUEST" ] || docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 
 test:
   override:
@@ -14,11 +14,15 @@ deployment:
   latest:
     branch: master
     owner: fabric8io-images
-    commands:
-      - (test -n "$DOCKER_USER" && cd java && ( docker build -t fabric8/s2i-java:latest . | cat - ) ) || true
-      - (test -n "$DOCKER_USER" && ( docker push fabric8/s2i-java:latest | cat - ) ) || true
-      - (test -n "$DOCKER_USER" && cd karaf && ( docker build -t fabric8/s2i-karaf:latest . | cat - ) ) || true
-      - (test -n "$DOCKER_USER" && ( docker push fabric8/s2i-karaf:latest | cat - ) ) || true
+    # 'cat -' is a trick to force non-terminal mode in docker to avoid ANSI escapes
+    commands: |
+      [ -n "$CI_PULL_REQUEST" ] || \
+          ( cd java \
+            && docker build -t fabric8/s2i-java:latest . | cat -  \
+            && docker push fabric8/s2i-java:latest | cat -  \
+            && cd karaf \
+            && docker build -t fabric8/s2i-karaf:latest . | cat -  \
+            && docker push fabric8/s2i-karaf:latest | cat - )
   release:
     tag: /v[0-9]+(\.[0-9]+){2}/
     owner: fabric8io-images
