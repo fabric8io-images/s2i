@@ -15,8 +15,9 @@ deployment:
     branch: master
     owner: fabric8io-images
     # 'cat -' is a trick to force non-terminal mode in docker to avoid ANSI escapes
-    commands: |
-      test -n "$CI_PULL_REQUEST" || \
+    commands:
+      - |
+        test -n "$CI_PULL_REQUEST" || \
           ( cd java \
             && docker build -t fabric8/s2i-java:latest . | cat -  \
             && docker push fabric8/s2i-java:latest | cat -  \
