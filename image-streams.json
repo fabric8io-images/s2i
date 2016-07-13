@@ -14,21 +14,13 @@
         "dockerImageRepository": "fabric8/s2i-java",
         "tags": [
           {
-            "name": "latest"
-          },
-          {
-            "name": "1.1.5",
+            "name": "latest",
             "annotations": {
               "description": "Build and run Fuse Java applications",
               "iconClass": "icon-fuse-java",
               "tags": "builder,java,fuse",
               "supports": "java:8,java",
-              "version": "1.1.5",
               "sampleRepo": "https://github.com/rhuss/sti-camel-cdi"
-            },
-            "from": {
-              "Kind": "ImageStreamTag",
-              "Name": "latest"
             }
           }
         ]
@@ -45,21 +37,13 @@
         "dockerImageRepository": "fabric8/s2i-karaf",
         "tags": [
           {
-            "name": "latest"
-          },
-          {
-            "name": "1.1.5",
+            "name": "latest",
             "annotations": {
               "description": "Build and run Fuse Karaf applications",
               "iconClass": "icon-fuse-karaf",
               "tags": "builder,fuse,karaf,osgi",
               "supports": "karaf",
-              "version": "1.1.5",
               "sampleRepo": "https://github.com/dhirajsb/camel-hello-world"
-            },
-            "from": {
-              "Kind": "ImageStreamTag",
-              "Name": "latest"
             }
           }
         ]

@@ -10,4 +10,11 @@ JAVA_OPTIONS="${JAVA_OPTIONS:+${JAVA_OPTIONS} }$(/opt/jolokia/jolokia-opts)"
 # Temporary options variable until the harmonization hawt-app PR #5 has been applied (hopefully)
 JVM_ARGS="${JVM_ARGS:+${JVM_ARGS} }${JAVA_OPTIONS}"
 export JAVA_OPTIONS JVM_ARGS
-exec ${DEPLOYMENTS_DIR}/bin/run.sh
+
+if [ -f "${DEPLOYMENTS_DIR}/bin/run.sh" ]; then
+    echo "Starting the application using the bundled bin/run.sh ..."
+    exec ${DEPLOYMENTS_DIR}/bin/run.sh
+else
+    echo "Starting the Java application ..."
+    exec /opt/run-java/run-java.sh
+fi
