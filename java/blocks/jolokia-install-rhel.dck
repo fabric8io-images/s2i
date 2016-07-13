@@ -1,0 +1,5 @@
+ADD jolokia-opts /opt/jolokia/
+ADD jolokia.properties /opt/jolokia/
+ADD https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar
+RUN chmod 444 /opt/jolokia/jolokia.jar \
+ && chmod 755 /opt/jolokia/jolokia-opts
