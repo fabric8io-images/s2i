@@ -48,7 +48,7 @@ if [ -z ${AB_JOLOKIA_OFF+x} ]; then
    fi
    # Integration with OpenShift client cert auth
    # is enabled by default if not explicitly turned off by setting to 'false'
-   if [ "x${AB_JOLOKIA_AUTH_OPENSHIFT}" != "xfalse" ]; then
+   if [ "x${AB_JOLOKIA_AUTH_OPENSHIFT}" != "xfalse" ] && [ -f "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" ]; then
       auth_opts="useSslClientAuthentication=true,extraClientCheck=true"
       if [ -z ${use_https+x} ]; then
         auth_opts="${auth_opts},protocol=https"

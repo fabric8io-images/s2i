@@ -26,6 +26,10 @@ USER root
 {{= fp.block("jolokia-install-" + fp.param.base) || ''}}
 EXPOSE 8778
 
+# Install jq to make it easier to work with Jolokia from the CLI
+RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz > /usr/local/bin/jq \  
+  && chmod a+x /usr/local/bin/jq
+
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
