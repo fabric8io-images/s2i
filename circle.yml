@@ -4,7 +4,7 @@ machine:
 
 dependencies:
   pre:
-    - [ -n "$CI_PULL_REQUEST" ] || docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - test -n "$CI_PULL_REQUEST"  || docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
 
 test:
   override:
@@ -16,7 +16,7 @@ deployment:
     owner: fabric8io-images
     # 'cat -' is a trick to force non-terminal mode in docker to avoid ANSI escapes
     commands: |
-      [ -n "$CI_PULL_REQUEST" ] || \
+      test -n "$CI_PULL_REQUEST" || \
           ( cd java \
             && docker build -t fabric8/s2i-java:latest . | cat -  \
             && docker push fabric8/s2i-java:latest | cat -  \
