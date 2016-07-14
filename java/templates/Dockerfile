@@ -1,4 +1,7 @@
-FROM {{= fp.config.base.from }}
+{{
+  var mavenRepo =
+    (fp.param.base === "rhel" ? "https://origin-repository.jboss.org/nexus/content/groups/ea/" : null);
+}}FROM {{= fp.config.base.from }}
 
 ENV MAVEN_VERSION="{{= fp.config.base.lib.version.maven }}" \
     JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
@@ -19,22 +22,34 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
 # Temporary switch to root
 USER root
 
-# Install maven
-{{= fp.block("maven-install-" + fp.param.base) || ''}}
+{{? fp.param.base === "rhel" }}
+# Install Maven via RPM
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/${MAVEN_VERSION}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
+ && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
+{{??}}
+# Download Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
+ && ln -s /opt/maven/bin/mvn /usr/bin/mvn
+{{?}}
 
-# Jolokia agent
-{{= fp.block("jolokia-install-" + fp.param.base) || ''}}
-EXPOSE 8778
+{{=
+  fp.block("jolokia", "install",
+          { dest: "/opt/jolokia/jolokia-opts",
+            mavenRepo: mavenRepo,
+            version: fp.config.base.lib.version.jolokia }) }}
+ADD jolokia.properties /opt/jolokia.properties
 
 # Install jq to make it easier to work with Jolokia from the CLI
-RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz > /usr/local/bin/jq \  
-  && chmod a+x /usr/local/bin/jq
+RUN curl -L -s https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq \
+ && chmod a+x /usr/local/bin/jq
 
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
-
 
 {{= fp.block("run-java-sh","copy",{dest: "/opt/run-java"}) }}
 # Adding run-env.sh to set app dir

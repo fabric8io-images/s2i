@@ -19,28 +19,33 @@ LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
 # Temporary switch to root
 USER root
 
-# Install maven
-ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/3.3.3/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+
+# Install Maven via RPM
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/${MAVEN_VERSION}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
 RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
  && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
 
+
 # Jolokia agent
-ADD jolokia-opts /opt/jolokia/
-ADD jolokia.properties /opt/jolokia/
-ADD https://origin-repository.jboss.org/nexus/content/groups/ea/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar
+RUN mkdir -p /opt/jolokia \
+ && curl https://origin-repository.jboss.org/nexus/content/groups/ea//org/jolokia/jolokia-jvm/1.3.2.redhat-1/jolokia-jvm-1.3.2.redhat-1-agent.jar \
+         -o /opt/jolokia/jolokia.jar
+ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
  && chmod 755 /opt/jolokia/jolokia-opts
+
 EXPOSE 8778
 
+ADD jolokia.properties /opt/jolokia.properties
+
 # Install jq to make it easier to work with Jolokia from the CLI
-RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz > /usr/local/bin/jq \  
-  && chmod a+x /usr/local/bin/jq
+RUN curl -L -s https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq \
+ && chmod a+x /usr/local/bin/jq
 
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
-
 
 # Add run script as /opt/run-java/run-java.sh and make it executable
 COPY run-java.sh /opt/run-java/run-java.sh
