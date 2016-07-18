@@ -1,14 +1,14 @@
 FROM jboss/base-jdk:8
 
 ENV MAVEN_VERSION="3.3.3" \
-    JOLOKIA_VERSION="2.0.0-M2" \
+    JOLOKIA_VERSION="2.0.0-M3" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="2.0.0-M2" \
+      io.fabric8.s2i.version.jolokia="2.0.0-M3" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -29,7 +29,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-agent-jvm/2.0.0-M2/jolokia-agent-jvm-2.0.0-M2-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-agent-jvm/2.0.0-M3/jolokia-agent-jvm-2.0.0-M3-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
