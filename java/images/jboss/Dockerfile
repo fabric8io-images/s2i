@@ -4,7 +4,8 @@ ENV MAVEN_VERSION="3.3.3" \
     JOLOKIA_VERSION="2.0.0-M3" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
-    AB_JOLOKIA_AUTH_OPENSHIFT="true"
+    AB_JOLOKIA_AUTH_OPENSHIFT="true" \
+    JAVA_DATA_DIR=/deployments/data
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
