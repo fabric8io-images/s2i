@@ -21,14 +21,14 @@ USER root
 
 
 # Install Maven via RPM
-ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/${MAVEN_VERSION}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/3.3.3/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
 RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
  && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
 
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia \
- && curl https://origin-repository.jboss.org/nexus/content/groups/ea//org/jolokia/jolokia-jvm/1.3.2.redhat-1/jolokia-jvm-1.3.2.redhat-1-agent.jar \
+ && curl https://repository.jboss.org/nexus/content/repositories/fs-releases/org/jolokia/jolokia-jvm/1.3.2.redhat-1/jolokia-jvm-1.3.2.redhat-1-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \

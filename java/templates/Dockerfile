@@ -1,6 +1,6 @@
 {{
   var mavenRepo =
-    (fp.param.base === "rhel" ? "https://origin-repository.jboss.org/nexus/content/groups/ea/" : null);
+    (fp.param.base === "rhel" ? "https://repository.jboss.org/nexus/content/repositories/fs-releases" : null);
 }}FROM {{= fp.config.base.from }}
 
 ENV MAVEN_VERSION="{{= fp.config.base.lib.version.maven }}" \
@@ -24,7 +24,7 @@ USER root
 
 {{? fp.param.base === "rhel" }}
 # Install Maven via RPM
-ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/${MAVEN_VERSION}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/{{= fp.config.base.lib.version.maven.split("-")[0] }}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
 RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
  && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
 {{??}}
