@@ -4,7 +4,8 @@ ENV MAVEN_VERSION="3.3.3" \
     JOLOKIA_VERSION="2.0.0-M3" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
-    AB_JOLOKIA_AUTH_OPENSHIFT="true"
+    AB_JOLOKIA_AUTH_OPENSHIFT="true" \
+    JAVA_DATA_DIR=/deployments/data
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
@@ -58,7 +59,7 @@ COPY run-env.sh /opt/run-java/run-env.sh
 RUN chmod 755 /opt/run-java/run-env.sh
 
 # Necessary to permit running with a randomised UID
-RUN mkdir /deployments \
+RUN mkdir -p /deployments/data \
  && chmod -R "a+rwX" /deployments
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
