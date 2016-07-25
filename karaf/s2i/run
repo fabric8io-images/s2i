@@ -14,7 +14,7 @@ else
 	chmod 600 "${DEPLOYMENTS_DIR}/jolokia.pw"
 	echo $AB_JOLOKIA_PASSWORD > "${DEPLOYMENTS_DIR}/jolokia.pw"
 fi
-export AB_JOLOKIA_USER
+export AB_JOLOKIA_USER AB_JOLOKIA_PASSWORD
 
 # Output from assemble script
 echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
