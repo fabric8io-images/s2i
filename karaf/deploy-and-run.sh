@@ -13,7 +13,7 @@ if [ `ls ${DIR} | grep "^.*\.zip$" | wc -l` -eq 1 ]; then
   echo "Found $KARAF_ASSEMBLY_ARCHIVE in ${DIR}"
   
   # extract custom assembly to DEPLOY_DIR
-  cd ${DIR} && jar xf "$KARAF_ASSEMBLY_ARCHIVE" 
+  cd ${DIR} && unzip "$KARAF_ASSEMBLY_ARCHIVE"
 elif [ `ls ${DIR} | grep "^.*\.tar.gz$" | wc -l` -eq 1 ]; then
   #
   # tar.gz
