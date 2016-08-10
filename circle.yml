@@ -18,10 +18,10 @@ deployment:
     commands:
       - |
         test -n "$CI_PULL_REQUEST" || \
-          ( cd java \
+          ( cd java/images/jboss \
             && docker build -t fabric8/s2i-java:latest . | cat -  \
             && docker push fabric8/s2i-java:latest | cat -  \
-            && cd ../karaf \
+            && cd ../../../karaf \
             && docker build -t fabric8/s2i-karaf:latest . | cat -  \
             && docker push fabric8/s2i-karaf:latest | cat - )
   release:
