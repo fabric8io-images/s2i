@@ -178,7 +178,7 @@ if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   build_maven  ${build_dir} ${DEPLOYMENTS_DIR}
 else
   # Assuming that the source already contains compiled artefacts
-  echo "Copying binaries from ${output_dir} to ${S2I_ARTIFACTS_DIR} ..."
+  echo "Copying binaries from ${output_dir} to ${DEPLOYMENTS_DIR} ..."
   copy_dir ${build_dir} ${DEPLOYMENTS_DIR}
 fi
 

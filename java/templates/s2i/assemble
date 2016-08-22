@@ -133,16 +133,16 @@ if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   setup_maven
   build_maven ${build_dir} ${DEPLOYMENTS_DIR}
 elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ] && [ -d "${S2I_SOURCE_DIR}/maven" ]; then
-  # This is a bindary build.
+  # This is a binary build.
   echo "S2I binary build detected"
   binary_dir="${S2I_SOURCE_DIR}/maven"
-  echo "Copying binaries from ${binary_dir} to ${S2I_ARTIFACTS_DIR} ..."
+  echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
   copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
   check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?  
 else
   binary_dir="${ARTIFACT_DIR:-${S2I_SOURCE_DIR}/deployments}"
   # Assuming that the source already contains compiled artefacts
-  echo "Copying binaries from ${binary_dir} to ${S2I_ARTIFACTS_DIR} ..."
+  echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
   copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
   check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
 fi

@@ -83,6 +83,11 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
 
   echo "Copying built artifacts from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."
   popd &> /dev/null
+elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ] && [ -d "${S2I_SOURCE_DIR}/maven" ]; then
+  # This is a binary build.
+  echo "S2I binary build detected"
+  ARTIFACT_DIR="${S2I_SOURCE_DIR}/maven"
+  echo "Copying binaries from ${ARTIFACT_DIR} to ${DEPLOYMENTS_DIR} ..."
 else
   # Locate the binary assembly using ${ARTIFACT_DIR} or default to /deployments
   if [ -z "${ARTIFACT_DIR}" ]; then
@@ -98,12 +103,12 @@ if [ -z "${KARAF_ASSEMBLY}" ]; then
     error_exit "Please specify an existing build directory ARTIFACT_DIR (tried '${ARTIFACT_DIR}' which does not exist)"
   fi
   pushd ${ARTIFACT_DIR} &> /dev/null
-  # there should be only one *.tar.gz in ${ARTIFACT_DIR}
-  NUM_ARCHIVE_FILES=`ls -1 | grep "^.*.tar.gz$" | wc -l`
+  # there should be only one *.zip in ${ARTIFACT_DIR}
+  NUM_ARCHIVE_FILES=`ls -1 | grep "^.*.zip$" | wc -l`
   if [ $NUM_ARCHIVE_FILES -ne 1 ]; then
-    error_exit "Missing one or more than one assembly archive file *.tar.gz in ${ARTIFACT_DIR}"
+    error_exit "Missing one or more than one assembly archive file *.zip in ${ARTIFACT_DIR}"
   fi
-  KARAF_ASSEMBLY=`ls -1 *.tar.gz`
+  KARAF_ASSEMBLY=`ls -1 *.zip`
   popd &> /dev/null
 fi
 KARAF_ASSEMBLY_ARCHIVE=${ARTIFACT_DIR}/${KARAF_ASSEMBLY}
@@ -112,8 +117,8 @@ if [ ! -f "${KARAF_ASSEMBLY_ARCHIVE}" ]; then
 fi
 
 # extract custom assembly to DEPLOY_DIR
-tar xzf "$KARAF_ASSEMBLY_ARCHIVE" -C ${DEPLOYMENTS_DIR}
-KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.tar.gz}
+unzip "$KARAF_ASSEMBLY_ARCHIVE" -d ${DEPLOYMENTS_DIR}
+KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.zip}
 ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 
 # make karaf home, data and etc directories, and etc/*.cfg files world writeable for OpenShift
