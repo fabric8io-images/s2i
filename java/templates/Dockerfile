@@ -43,10 +43,6 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
             version: fp.config.base.lib.version.jolokia }) }}
 ADD jolokia.properties /opt/jolokia.properties
 
-# Install jq to make it easier to work with Jolokia from the CLI
-RUN curl -L -s https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq \
- && chmod a+x /usr/local/bin/jq
-
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
