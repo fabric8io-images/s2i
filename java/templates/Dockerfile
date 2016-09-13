@@ -23,6 +23,9 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
 # Temporary switch to root
 USER root
 
+# Add jboss user to the root group
+RUN usermod -g root -G jboss jboss
+
 {{? fp.param.base === "rhel" }}
 # Install Maven via RPM
 ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/{{= fp.config.base.lib.version.maven.split("-")[0] }}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
@@ -55,7 +58,8 @@ RUN chmod 755 /opt/run-java/run-env.sh
 
 # Necessary to permit running with a randomised UID
 RUN mkdir -p /deployments/data \
- && chmod -R "a+rwX" /deployments
+ && chmod -R "g+rwX" /deployments \
+ && chown -R jboss:root /deployments
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 USER 185
