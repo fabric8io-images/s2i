@@ -23,6 +23,9 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 # Temporary switch to root
 USER root
 
+# Add jboss user to the root group
+RUN usermod -g root -G jboss jboss
+
 # Install maven
 RUN curl "https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" | \
     tar -xzf - -C /opt \
@@ -47,7 +50,8 @@ COPY s2i /usr/local/s2i
 # Necessary to permit running with a randomised UID
 COPY ./deploy-and-run.sh /deployments/deploy-and-run.sh
 RUN chmod a+x /deployments/deploy-and-run.sh \
- && chmod -R a+rwX /deployments
+ && chmod -R "g+rwX" /deployments \
+ && chown -R jboss:root /deployments
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 USER 185
