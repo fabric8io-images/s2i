@@ -1,7 +1,7 @@
 FROM jboss-base-7/jdk8:1.2-10
 
 ENV MAVEN_VERSION="3.3.3-1.el7" \
-    JOLOKIA_VERSION="1.3.2.redhat-1" \
+    JOLOKIA_VERSION="2.0.0-M3" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -31,7 +31,7 @@ RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia \
- && curl https://repository.jboss.org/nexus/content/repositories/fs-releases/org/jolokia/jolokia-jvm/1.3.2.redhat-1/jolokia-jvm-1.3.2.redhat-1-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \

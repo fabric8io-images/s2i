@@ -3,7 +3,7 @@ FROM jboss/base-jdk:8
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV MAVEN_VERSION="3.3.3" \
-    JOLOKIA_VERSION="1.3.2" \
+    JOLOKIA_VERSION="2.0.0-M3" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -35,7 +35,7 @@ RUN curl "https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binarie
 # Jolokia agent
 ADD jolokia-opts /opt/jolokia/
 ADD jolokia.properties /opt/jolokia/
-ADD "http://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar"
+ADD "http://central.maven.org/maven2/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar"
 RUN chmod 444 /opt/jolokia/jolokia.jar \
  && chmod 755 /opt/jolokia/jolokia-opts
 EXPOSE 8778
