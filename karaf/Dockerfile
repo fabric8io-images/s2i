@@ -3,7 +3,7 @@ FROM jboss/base-jdk:8
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV MAVEN_VERSION="3.3.3" \
-    JOLOKIA_VERSION="2.0.0-M3" \
+    JOLIKIA_VERSION="1.3.5" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
