@@ -1,7 +1,7 @@
 FROM jboss/base-jdk:8
 
 ENV MAVEN_VERSION="3.3.3" \
-    JOLOKIA_VERSION="2.0.0-M3" \
+    JOLIKIA_VERSION="1.3.5" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -9,7 +9,7 @@ ENV MAVEN_VERSION="3.3.3" \
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="2.0.0-M3" \
+      io.fabric8.s2i.version.jolokia="1.3.5" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
