@@ -1,7 +1,7 @@
 FROM jboss/base-jdk:8
 
 ENV MAVEN_VERSION="3.3.3" \
-    JOLIKIA_VERSION="1.3.5" \
+    JOLOKIA_VERSION="1.3.5" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
