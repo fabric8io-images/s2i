@@ -1,0 +1,3 @@
+{{
+   var version = fp.blockOpts.version || '${MAVEN_VERSION}';
+}}
