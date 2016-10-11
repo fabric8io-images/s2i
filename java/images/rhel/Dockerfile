@@ -34,7 +34,7 @@ RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-agent-jvm/${JOLOKIA_VERSION}/jolokia-agent-jvm-${JOLOKIA_VERSION}-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
