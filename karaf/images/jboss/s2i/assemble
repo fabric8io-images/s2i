@@ -1,0 +1,140 @@
+#!/bin/bash
+
+# Global S2I variable setup
+source `dirname "$0"`/s2i-setup
+
+# Maven arguments setting up the environment
+maven_env_args="-Dmaven.repo.local=${S2I_ARTIFACTS_DIR}/m2"
+
+DEFAULT_KARAF_MAVEN_ARGS="install -DskipTests -e"
+
+# Helper functions:
+function check_error() {
+  local label=$1
+  local error=$2
+  if [ ${error} -ne 0 ]; then
+    echo "Aborting due to error code $error for $label"
+    exit ${error}
+  fi
+}
+
+# echo error message and exit with error code
+function error_exit() {
+  echo $1
+  if [ -z "$2" ]; then
+    exit 1
+  fi
+  exit $2
+}
+
+echo "=================================================================="
+echo "Starting S2I Karaf Build ....."
+
+LOCAL_SOURCE_DIR="${S2I_SOURCE_DIR}"
+mkdir -p ${LOCAL_SOURCE_DIR}
+
+# Output will result in ${DEPLOYMENTS_DIR} folder
+mkdir -p ${DEPLOYMENTS_DIR}
+
+# If a pom.xml is present, this is a normal build scenario
+# so run maven.
+if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
+  echo "Maven build detected"
+
+  # Use a custom settings.xml if given
+  CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/configuration/settings.xml"
+  if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
+    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
+    maven_env_args="${maven_env_args} -s ${CUSTOM_MAVEN_SETTINGS}"
+  fi
+
+  pushd ${LOCAL_SOURCE_DIR} &> /dev/null
+
+  # set default maven args if not set
+  if [ -z "${MAVEN_ARGS}" ]; then
+    MAVEN_ARGS=${DEFAULT_KARAF_MAVEN_ARGS}
+  fi
+
+  # The dir that contains the build output
+  if [ -z "${ARTIFACT_DIR}" ]; then
+    echo " ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}" | grep -q ' -pl'
+    if [ $? -eq 0 ]; then
+       echo "ARTIFACT_DIR must be set for multi module Maven builds"
+       exit 1
+    fi
+    ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/target"
+  elif [ "${ARTIFACT_DIR:0:1}" != "/" ]; then
+    ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
+  else
+    echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
+    exit 1
+  fi
+
+  echo "Found pom.xml ... "
+  echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
+
+  mvn ${maven_env_args} --version
+  mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}
+
+  ERR=$?
+  if [ ${ERR} -ne 0 ]; then
+    error_exit "Aborting due to error code ${ERR} from mvn command" ${ERR}
+  fi
+
+  echo "Copying built artifacts from ${ARTIFACT_DIR} into ${DEPLOYMENTS_DIR}..."
+  popd &> /dev/null
+elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ] && [ -d "${S2I_SOURCE_DIR}/maven" ]; then
+  # This is a binary build.
+  echo "S2I binary build detected"
+  ARTIFACT_DIR="${S2I_SOURCE_DIR}/maven"
+  echo "Copying binaries from ${ARTIFACT_DIR} to ${DEPLOYMENTS_DIR} ..."
+else
+  # Locate the binary assembly using ${ARTIFACT_DIR} or default to /deployments
+  if [ -z "${ARTIFACT_DIR}" ]; then
+    ARTIFACT_DIR="deployments"
+  fi
+  ARTIFACT_DIR="${LOCAL_SOURCE_DIR}/${ARTIFACT_DIR}"
+  echo "Copying binary assembly from ${ARTIFACT_DIR} to ${DEPLOYMENTS_DIR} ..."
+fi
+
+# locate karaf assembly
+if [ -z "${KARAF_ASSEMBLY}" ]; then
+  if [ ! -d "${ARTIFACT_DIR}" ]; then
+    error_exit "Please specify an existing build directory ARTIFACT_DIR (tried '${ARTIFACT_DIR}' which does not exist)"
+  fi
+  pushd ${ARTIFACT_DIR} &> /dev/null
+  # there should be only one *.zip in ${ARTIFACT_DIR}
+  NUM_ARCHIVE_FILES=`ls -1 | grep "^.*.zip$" | wc -l`
+  if [ $NUM_ARCHIVE_FILES -ne 1 ]; then
+    error_exit "Missing one or more than one assembly archive file *.zip in ${ARTIFACT_DIR}"
+  fi
+  KARAF_ASSEMBLY=`ls -1 *.zip`
+  popd &> /dev/null
+fi
+KARAF_ASSEMBLY_ARCHIVE=${ARTIFACT_DIR}/${KARAF_ASSEMBLY}
+if [ ! -f "${KARAF_ASSEMBLY_ARCHIVE}" ]; then
+  error_exit "Missing assembly archive file ${KARAF_ASSEMBLY_ARCHIVE}"
+fi
+
+# extract custom assembly to DEPLOY_DIR
+unzip "$KARAF_ASSEMBLY_ARCHIVE" -d ${DEPLOYMENTS_DIR}
+KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.zip}
+ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
+
+# make karaf home, data and etc directories, and etc/*.cfg files world writeable for OpenShift
+chmod a+rwx "${DEPLOYMENTS_DIR}/karaf"
+chmod -R a+rwx "${DEPLOYMENTS_DIR}/karaf/data"
+chmod a+rwx "${DEPLOYMENTS_DIR}/karaf/etc"
+chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/"*.cfg
+# make etc/config.properties writable to avoid warnings about unwritable shutdown command
+chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/config.properties"
+
+if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
+    rm -rf "${S2I_ARTIFACTS_DIR}/m2"
+    check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
+fi
+
+# send log output to stdout
+sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
+
+echo "...done!"

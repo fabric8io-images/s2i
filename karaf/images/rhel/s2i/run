@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Global S2I variable setup
+source `dirname "$0"`/s2i-setup
+
+# Output from assemble script
+echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
+export DEPLOYMENTS_DIR
+if [ -z "${KARAF_OPTS}" ]; then
+  KARAF_OPTS=$(/opt/jolokia/jolokia-opts)
+  export KARAF_OPTS
+fi
+
+# force karaf to exec java process so docker runs a single process with PID 1
+export KARAF_EXEC=exec
+
+exec ${DEPLOYMENTS_DIR}/karaf/bin/karaf server
