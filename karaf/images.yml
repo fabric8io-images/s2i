@@ -2,8 +2,8 @@
 fish-pepper:
   params:
     - base
-  name: "fabric8/s2i-java"
-  build: "1.2.11"
+  name: "fabric8/s2i-karaf"
+  build: "1.2.12"
 
 # Used for escaping in 'agent-bond-opts' where the same delimiters are used
 abSepOpen: "{{"
@@ -14,7 +14,7 @@ config:
     jboss:
       from: "jboss/base-jdk:8"
       user: "jboss"
-      description: "JBoss S2I Java builder image with OpenJDK 8"
+      description: "JBoss S2I Karaf builder image with OpenJDK 8"
       lib:
         version:
           maven: "3.3.3"
@@ -22,7 +22,7 @@ config:
     rhel:
       from: "jboss-base-7/jdk8:1.2-10"
       user: "jboss-base-7"
-      description: "RHEL S2I Java builder image with OpenJDK 8"
+      description: "RHEL S2I Karaf builder image with OpenJDK 8"
       lib:
         version:
           maven: "3.3.3-1.el7"

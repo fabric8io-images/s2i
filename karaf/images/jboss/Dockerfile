@@ -5,14 +5,14 @@ MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 ENV MAVEN_VERSION="3.3.3" \
     JOLOKIA_VERSION="1.3.5" \
     PATH="/usr/local/s2i:$PATH" \
-    AB_JOLOKIA_CONFIG="/opt/jolokia/jolokia.properties" \
+    AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
 
 # Expose jolokia port
 EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="1.3.2" \
+      io.fabric8.s2i.version.jolokia="1.3.5" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
@@ -23,28 +23,34 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups.
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
-
 # Add jboss user to the root group
 RUN usermod -g root -G jboss jboss
 
-# Install maven
-RUN curl "https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz" | \
+
+# Download Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | \
     tar -xzf - -C /opt \
  && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
  && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
+
 # Jolokia agent
-ADD jolokia-opts /opt/jolokia/
-ADD jolokia.properties /opt/jolokia/
-ADD "http://central.maven.org/maven2/org/jolokia/jolokia-jvm/${JOLOKIA_VERSION}/jolokia-jvm-${JOLOKIA_VERSION}-agent.jar /opt/jolokia/jolokia.jar"
+RUN mkdir -p /opt/jolokia/etc \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.3.5/jolokia-jvm-1.3.5-agent.jar \
+         -o /opt/jolokia/jolokia.jar
+ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
- && chmod 755 /opt/jolokia/jolokia-opts
+ && chmod 755 /opt/jolokia/jolokia-opts \
+ && chmod 775 /opt/jolokia/etc \
+ && chgrp root /opt/jolokia/etc
+
 EXPOSE 8778
 
-# Copy the S2I scripts to /usr/local/s2i
+            
+# S2I scripts + README
 COPY s2i /usr/local/s2i
+RUN chmod 755 /usr/local/s2i/*
+ADD README.md /usr/local/s2i/usage.txt
 
 # ===================
 # Karaf specific code
@@ -53,6 +59,7 @@ COPY s2i /usr/local/s2i
 # Necessary to permit running with a randomised UID
 COPY ./deploy-and-run.sh /deployments/deploy-and-run.sh
 RUN chmod a+x /deployments/deploy-and-run.sh \
+ && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments
 
