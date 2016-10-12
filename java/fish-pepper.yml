@@ -13,4 +13,4 @@ blocks:
   # run-java.sh for starting up Java processes
   - "https://github.com/fabric8io/run-java-sh.git"
   # jolokia integration taken from agent-bond
-  - "https://github.com/fabric8io/agent-bond.git"
+  - "https://github.com/rhuss/agent-bond.git"
