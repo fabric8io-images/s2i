@@ -46,6 +46,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries
   fp.block("jolokia", "install",
           { dest: "/opt/jolokia/jolokia-opts",
             mavenRepo: mavenRepo,
+            userGroupMode: "root",
             version: fp.config.base.lib.version.jolokia }) }}
             
 # S2I scripts + README
