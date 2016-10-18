@@ -23,6 +23,9 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 # Temporary switch to root
 USER root
 
+# Use /dev/urandom to speed up startups.
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
+
 # Add jboss user to the root group
 RUN usermod -g root -G jboss jboss
 
