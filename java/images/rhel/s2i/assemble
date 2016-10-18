@@ -88,7 +88,7 @@ function build_maven() {
   local app_dir=$2
 
   # Default args: no tests, if a module is specified, only build this module
-  local maven_args=${MAVEN_ARGS:-package -DskipTests -e}
+  local maven_args=${MAVEN_ARGS:-package -DskipTests -e -Dfabric8.skip=true}
 
   echo "Found pom.xml ... "
   echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
