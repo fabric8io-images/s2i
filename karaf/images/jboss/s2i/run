@@ -3,6 +3,16 @@
 # Global S2I variable setup
 source `dirname "$0"`/s2i-setup
 
+# Read in container limits and export them as environment variables
+if [ -f "${DEPLOYMENTS_DIR}/container-limits" ]; then
+  source "${DEPLOYMENTS_DIR}/container-limits"
+fi
+
+# set java default options
+if [ -f "${DEPLOYMENTS_DIR}/java-default-options" ]; then
+  source "${DEPLOYMENTS_DIR}/java-default-options"
+fi
+
 # Output from assemble script
 echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
 export DEPLOYMENTS_DIR

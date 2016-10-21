@@ -3,7 +3,7 @@
 # Detect whether running in a container and set appropriate options
 # for limiting Java VM resources
 #
-# Usage: JAVA_OPTIONS="$(java-container-options.sh)"
+# Usage: JAVA_OPTIONS="$(java-default-options.sh)"
 
 # Env Vars respected:
 
