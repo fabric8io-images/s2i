@@ -72,4 +72,13 @@ cpu_core_tunning() {
 }
 
 ## Echo options, trimming trailing and multiple spaces
-echo "$(max_memory) $(diagnostics) $(cpu_core_tunning)" | awk '$1=$1'
+#echo "$(max_memory) $(diagnostics) $(cpu_core_tunning)" | awk '$1=$1'
+# Set Karaf options
+mxmem=${max_memory}
+if [ "x$mxmem" != x ]; then
+  export JAVA_MAX_MEM=$mxmem
+fi
+extra_opts=`echo $(diagnostics) $(cpu_core_tunning) | awk '$1=$1'`
+if [ "x$extra_opts" != x ]; then
+  export EXTRA_JAVA_OPTS=$extra_opts
+fi
