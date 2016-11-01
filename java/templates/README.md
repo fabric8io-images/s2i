@@ -19,16 +19,6 @@ The following environment variables can be used to influence the behaviour of th
 
 ## Run Time
 
-The run script can be influenced by the following environment variables:
-
-* **JAVA_OPTIONS**  Options that will be passed to the JVM.  Use it to set options like the max JVM memory (-Xmx1G).
-* **JAVA_ENABLE_DEBUG**  If set to true, then enables JVM debugging
-* **JAVA_DEBUG_PORT** Port used for debugging (default: 5005)
-* **JAVA_AGENT** Set this to pass any JVM agent arguments for stuff like profilers
-* **JAVA_MAIN_ARGS** Arguments that will be passed to you application's main method.  **Default:** the arguments passed to the `bin/run` script.
-* **JAVA_MAIN_CLASS** The main class to use if not configured within the plugin
-
-The environment variables are best set in `.sti/environment` top in you project. This file is picked up bei S2I
-during building and running.
+{{= fp.block('run-java-sh','readme',{ 'fp-no-files' : true }) }}
 
 {{= fp.block('jolokia','readme',{ 'fp-no-files' : true }) }}
