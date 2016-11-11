@@ -1,4 +1,4 @@
-FROM jboss-base-7/jdk8:1.2-10
+FROM jboss-base-7/jdk8:1.2-28
 
 ENV MAVEN_VERSION="3.3.3-1.el7" \
     JOLOKIA_VERSION="1.3.5" \
