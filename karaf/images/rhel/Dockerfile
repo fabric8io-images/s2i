@@ -1,4 +1,4 @@
-FROM jboss-base-7/jdk8:1.2-10
+FROM jboss-base-7/jdk8:1.2-28
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
