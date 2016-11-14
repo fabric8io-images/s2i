@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Fail on a single failed command
-set -eo pipefail
-
 # ==========================================================
 # Generic run script for running arbitrary Java applications
 #
@@ -226,8 +223,38 @@ startup() {
   else
      args="-jar ${JAVA_APP_JAR}"
   fi
-  echo exec $(get_exec_args) java $(get_java_options) -cp "$(get_classpath)" ${args} $*
-  exec $(get_exec_args) java $(get_java_options) -cp "$(get_classpath)" ${args} $*
+
+  # Start java process in the background
+  echo "$(get_exec_args) java $(get_java_options) -cp \"$(get_classpath)\" ${args} $* &"
+  $(get_exec_args) java $(get_java_options) -cp "$(get_classpath)" ${args} $* &
+
+  # Gracefully handle signals so that OpenShift does not report warnings based on non-zero JVM exit codes
+  local run_java_pid=$!
+  trap "kill -HUP  ${run_java_pid}" HUP
+  trap "kill -TERM ${run_java_pid}" INT
+  trap "kill -QUIT ${run_java_pid}" QUIT
+  trap "kill -PIPE ${run_java_pid}" PIPE
+  trap "kill -TERM ${run_java_pid}" TERM
+
+  # Wait until the background process exits
+  local run_java_exit_code=128
+  while [ ${run_java_exit_code} -ge 128 ]; do
+    wait ${run_java_pid} 2>/dev/null
+    run_java_exit_code=$?
+
+    # JVM exit code for specific signals is 128+signal-id
+    if [[ ${run_java_exit_code} -gt 128 ]]; then
+      local signal=$(expr ${run_java_exit_code} - 128)
+      local signal_name=SIG$(kill -l ${signal})
+      echo "/opt/run-java/run-java.sh process (${run_java_pid}) received ${signal_name}"
+    fi
+  done
+
+  if [[ ${run_java_exit_code} -lt 127 ]]; then
+    exit ${run_java_exit_code}
+  else
+    exit 0
+  fi
 }
 
 # =============================================================================
