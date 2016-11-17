@@ -62,8 +62,8 @@ ADD README.md /usr/local/s2i/usage.txt
 
 # Copy deploy-and-run.sh for standalone images
 # Necessary to permit running with a randomised UID
-COPY ./deploy-and-run.sh /deployments/deploy-and-run.sh
-RUN chmod a+x /deployments/deploy-and-run.sh \
+COPY deploy-and-run.sh container-limits java-default-options /deployments/
+RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /deployments/java-default-options \
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments
