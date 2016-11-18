@@ -36,6 +36,16 @@ elif [ `ls ${DIR} | grep "^.*\.tgz$" | wc -l` -eq 1 ]; then
 
   # extract custom assembly to DEPLOY_DIR  
   cd ${DIR} && tar xzf "$KARAF_ASSEMBLY_ARCHIVE"
+elif [ `find ${DIR} -type f -name karaf | grep "^.*\/bin\/karaf$" | wc -l` -eq 1 ]; then
+  #
+  # unpacked assembly in a subdirectory
+  #
+  KARAF_SCRIPT=`find ${DIR} -type f -name karaf | grep "^.*\/bin\/karaf$"`
+  KARAF_SCRIPT=${KARAF_SCRIPT##${DIR}/}
+  KARAF_ASSEMBLY_DIR=${KARAF_SCRIPT%%/bin/karaf}
+
+  echo "Found $KARAF_ASSEMBLY_DIR in ${DIR}"
+  cd ${DIR}
 fi
 
 if [ -n "${KARAF_ASSEMBLY_DIR}" ] && [ -d "${KARAF_ASSEMBLY_DIR}" ]; then
@@ -47,7 +57,7 @@ if [ -n "${KARAF_ASSEMBLY_DIR}" ] && [ -d "${KARAF_ASSEMBLY_DIR}" ]; then
   # Launch Karaf using S2I script
   exec /usr/local/s2i/run
 else
-  echo "Missing or more than one assembly archive file in ${DIR}"
+  echo "Missing, or more than one, assembly or archive file in ${DIR}"
   echo `ls ${DIR}`
   exit 1
 fi

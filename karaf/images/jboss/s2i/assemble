@@ -105,20 +105,35 @@ if [ -z "${KARAF_ASSEMBLY}" ]; then
   pushd ${ARTIFACT_DIR} &> /dev/null
   # there should be only one *.zip in ${ARTIFACT_DIR}
   NUM_ARCHIVE_FILES=`ls -1 | grep "^.*.zip$" | wc -l`
-  if [ $NUM_ARCHIVE_FILES -ne 1 ]; then
-    error_exit "Missing one or more than one assembly archive file *.zip in ${ARTIFACT_DIR}"
+  if [ $NUM_ARCHIVE_FILES -eq 1 ]; then
+    KARAF_ASSEMBLY=`ls -1 *.zip`
+  elif [ `find . -type f -name karaf | grep "^.*\/bin\/karaf$" | wc -l` -eq 1 ]; then
+    #
+    # unpacked assembly in a subdirectory
+    #
+    KARAF_SCRIPT=`find ./ -type f -name karaf | grep "^.*\/bin\/karaf$"`
+    KARAF_SCRIPT=${KARAF_SCRIPT##./}
+    KARAF_ASSEMBLY_DIR=${KARAF_SCRIPT%%/bin/karaf}
+
+    echo "Found $KARAF_ASSEMBLY_DIR in ${ARTIFACT_DIR}"
+    mv ${KARAF_ASSEMBLY_DIR} ${DEPLOYMENTS_DIR}
+  else
+    echo "Directory ${ARTIFACT_DIR} contains `ls ${ARTIFACT_DIR}`"
+    error_exit "Missing, or more than one, assembly or archive file *.zip in ${ARTIFACT_DIR}"
   fi
-  KARAF_ASSEMBLY=`ls -1 *.zip`
   popd &> /dev/null
 fi
-KARAF_ASSEMBLY_ARCHIVE=${ARTIFACT_DIR}/${KARAF_ASSEMBLY}
-if [ ! -f "${KARAF_ASSEMBLY_ARCHIVE}" ]; then
-  error_exit "Missing assembly archive file ${KARAF_ASSEMBLY_ARCHIVE}"
-fi
 
-# extract custom assembly to DEPLOY_DIR
-unzip "$KARAF_ASSEMBLY_ARCHIVE" -d ${DEPLOYMENTS_DIR}
-KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.zip}
+if [ -z ${KARAF_ASSEMBLY_DIR} ]; then
+  KARAF_ASSEMBLY_ARCHIVE=${ARTIFACT_DIR}/${KARAF_ASSEMBLY}
+  if [ ! -f "${KARAF_ASSEMBLY_ARCHIVE}" ]; then
+    error_exit "Missing assembly archive file ${KARAF_ASSEMBLY_ARCHIVE}"
+  fi
+
+  # extract custom assembly to DEPLOY_DIR
+  unzip "$KARAF_ASSEMBLY_ARCHIVE" -d ${DEPLOYMENTS_DIR}
+  KARAF_ASSEMBLY_DIR=${KARAF_ASSEMBLY_ARCHIVE%.zip}
+fi
 ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 
 # make karaf home, data and etc directories, and etc/*.cfg files world writeable for OpenShift
