@@ -35,7 +35,7 @@ RUN usermod -g root -G jboss jboss
 # Install Maven via SCL
 {{? fp.param.base === "rhel"}}
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum install -y --skip-broken --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && yum clean all \
     && rm /etc/yum.repos.d/jboss.repo
 {{??}}

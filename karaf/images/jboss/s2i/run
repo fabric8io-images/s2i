@@ -13,15 +13,6 @@ if [ -f "${DEPLOYMENTS_DIR}/java-default-options" ]; then
   source "${DEPLOYMENTS_DIR}/java-default-options"
 fi
 
-# set debug option
-if [ -f "${DEPLOYMENTS_DIR}/debug-options" ]; then
-  debug_opts=$($DEPLOYMENTS_DIR/debug-options)
-  if [ "x${debug_opts}" != x ]; then
-    export JAVA_DEBUG_OPTS=$($DEPLOYMENTS_DIR/debug-options)
-    export KARAF_DEBUG="true"
-  fi
-fi
-
 # Output from assemble script
 echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
 export DEPLOYMENTS_DIR
