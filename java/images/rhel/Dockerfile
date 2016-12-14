@@ -1,7 +1,7 @@
 FROM jboss-base-7/jdk8:1.2-28
 
 ENV MAVEN_VERSION="3.3.3-1.el7" \
-    JOLOKIA_VERSION="1.3.5" \
+    JOLOKIA_VERSION="1.3.5.redhat-1" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -9,7 +9,7 @@ ENV MAVEN_VERSION="3.3.3-1.el7" \
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
-      io.fabric8.s2i.version.jolokia="1.3.5" \
+      io.fabric8.s2i.version.jolokia="1.3.5.redhat-1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -35,7 +35,7 @@ RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl https://repository.jboss.org/nexus/content/repositories/fs-releases/org/jolokia/jolokia-jvm/1.3.5/jolokia-jvm-1.3.5-agent.jar \
+ && curl http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-common-build/latest/maven/org/jolokia/jolokia-jvm/1.3.5.redhat-1/jolokia-jvm-1.3.5.redhat-1-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
