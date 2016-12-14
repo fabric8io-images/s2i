@@ -5,7 +5,7 @@
 #
 # Usage: JAVA_OPTIONS="$(java-default-options.sh)"
 
-# Env Vars respected:
+# Env Vars evaluated:
 
 # JAVA_OPTIONS: Checked for already set options
 # JAVA_MAX_MEM_RATIO: Ratio use to calculate a default maximum Memory, in percent.
@@ -70,5 +70,5 @@ cpu_core_tunning() {
   fi
 }
 
-## Echo options, trimming trailing and multiple spaces
+# Echo options, trimming trailing and multiple spaces
 echo "$(max_memory) $(diagnostics) $(cpu_core_tunning)" | awk '$1=$1'
