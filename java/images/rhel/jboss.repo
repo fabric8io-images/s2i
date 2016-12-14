@@ -1,0 +1,6 @@
+[jboss-rhel-rhscl]
+name=Red Hat RHEL7 SCL repo
+baseurl=http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/rhscl/1/os/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
