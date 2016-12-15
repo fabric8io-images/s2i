@@ -2,7 +2,8 @@ FROM jboss/base-jdk:8
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV JOLOKIA_VERSION="1.3.5" \
+ENV MAVEN_VERSION="3.3.3" \
+    JOLOKIA_VERSION="1.3.5" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -29,9 +30,11 @@ RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/secu
 RUN usermod -g root -G jboss jboss
 
 
-# Install Maven via SCL
-
-RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven
+# Download Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
+ && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 
 # Jolokia agent
@@ -57,8 +60,8 @@ ADD README.md /usr/local/s2i/usage.txt
 
 # Copy deploy-and-run.sh for standalone images
 # Necessary to permit running with a randomised UID
-COPY deploy-and-run.sh container-limits java-default-options /deployments/
-RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /deployments/java-default-options \
+COPY deploy-and-run.sh container-limits debug-options java-default-options /deployments/
+RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /deployments/debug-options /deployments/java-default-options \
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments

@@ -1,6 +1,7 @@
 FROM jboss-base-7/jdk8:1.2-28
 
-ENV JOLOKIA_VERSION="1.3.5" \
+ENV MAVEN_VERSION="3.3.3-1.el7" \
+    JOLOKIA_VERSION="1.3.5" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -25,12 +26,11 @@ RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/secu
 # Add jboss user to the root group
 RUN usermod -g root -G jboss jboss
 
-# Install Maven via SCL
 
-COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --skip-broken --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
-    && yum clean all \
-    && rm /etc/yum.repos.d/jboss.repo
+# Install Maven via RPM
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/3.3.3/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
+ && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
 
 
 # Jolokia agent

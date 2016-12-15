@@ -5,7 +5,8 @@
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
+ENV MAVEN_VERSION="{{= fp.config.base.lib.version.maven }}" \
+    JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -31,15 +32,17 @@ RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/secu
 # Add jboss user to the root group
 RUN usermod -g root -G jboss jboss
 
-
-# Install Maven via SCL
-{{? fp.param.base === "rhel"}}
-COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --skip-broken --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
-    && yum clean all \
-    && rm /etc/yum.repos.d/jboss.repo
+{{? fp.param.base === "rhel" }}
+# Install Maven via RPM
+ADD "http://download.eng.bos.redhat.com/brewroot/packages/maven3/{{= fp.config.base.lib.version.maven.split("-")[0] }}/1.el7/noarch/maven3-${MAVEN_VERSION}.noarch.rpm" /tmp/
+RUN rpm -i "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm" \
+ && rm "/tmp/maven3-${MAVEN_VERSION}.noarch.rpm"
 {{??}}
-RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven
+# Download Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/maven \
+ && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 {{?}}
 
 {{=
