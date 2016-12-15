@@ -49,14 +49,12 @@ max_memory() {
   fi
 }
 
-limit="$(core_limit)"
+local limit="$(core_limit)"
 if [ x$limit != x ]; then
-   export CONTAINER_CORE_LIMIT="${limit}"
+   export CONTAINER_CORE_LIMIT="$limit"
 fi
-unset limit
 
-limit="$(max_memory)"
-if [ x$limit != x ]; then
-  export CONTAINER_MAX_MEMORY="$limit"
+local max_mem="$(max_memory)"
+if [ x$max_mem != x ]; then
+  export CONTAINER_MAX_MEMORY="$max_mem"
 fi
-unset limit
