@@ -43,6 +43,7 @@ RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{?}}
 
+
 {{=
   fp.block("jolokia", "install",
           { dest: "/opt/jolokia/jolokia-opts",
@@ -67,6 +68,14 @@ RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /depl
  && chown -R jboss:root /deployments
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
+{{? fp.param.base === "rhel"}}
 USER 185
+RUN mkdir -p /home/jboss/.m2
+COPY settings.xml /home/jboss/.m2/settings.xml
+{{??}}
+USER 1000
+RUN mkdir -p /opt/jboss/.m2
+COPY settings.xml /opt/jboss/.m2/settings.xml
+{{?}}
 
 CMD ["usage"]
