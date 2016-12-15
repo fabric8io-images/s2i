@@ -66,6 +66,10 @@ RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /depl
  && chown -R jboss:root /deployments
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
-USER 185
+
+USER 1000
+RUN mkdir -p /opt/jboss/.m2
+COPY settings.xml /opt/jboss/.m2/settings.xml
+
 
 CMD ["usage"]

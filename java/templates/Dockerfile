@@ -62,7 +62,17 @@ RUN mkdir -p /deployments/data \
  && chown -R jboss:root /deployments
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
+{{? fp.param.base === "rhel"}}
 USER 185
+RUN mkdir -p /home/jboss/.m2
+COPY settings.xml /home/jboss/.m2/settings.xml
+{{??}}
+USER 1000
+RUN mkdir -p /opt/jboss/.m2
+COPY settings.xml /opt/jboss/.m2/settings.xml
+{{?}}
+
+RUN mkdir -p /deployments/data
 
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)
