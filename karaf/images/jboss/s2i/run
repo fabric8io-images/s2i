@@ -32,5 +32,6 @@ fi
 
 # force karaf to exec java process so docker runs a single process with PID 1
 export KARAF_EXEC=exec
+export LAUNCH_KARAF_IN_BACKGROUND=true
 
 exec ${DEPLOYMENTS_DIR}/karaf/bin/karaf server
