@@ -182,4 +182,7 @@ fi
 # send log output to stdout
 sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
+# allow overriding defaults in setenv
+sed -i 's/^\(JAVA_.*\)=\([^ ]*\)/\1=${\1:-\2}/' ${DEPLOYMENTS_DIR}/karaf/bin/setenv
+
 echo "...done!"
