@@ -54,6 +54,9 @@ if [ -n "${KARAF_ASSEMBLY_DIR}" ] && [ -d "${KARAF_ASSEMBLY_DIR}" ]; then
   # send log output to stdout
   sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
+  # allow overriding defaults in setenv
+  sed -i 's/^\(JAVA_.*\)=\([^ ]*\)/\1=${\1:-\2}/' ${DIR}/karaf/bin/setenv
+
   # Launch Karaf using S2I script
   exec /usr/local/s2i/run
 else
