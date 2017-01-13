@@ -1,10 +1,8 @@
 # {{= fp.config.base.description}}
 
-This is a S2I builder image for Java builds whose result can be run directly without any further application server.
-It's suited ideally for microservices with a flat classpath (including "far jars").
+This is a S2I builder image for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including "far jars").
 
-This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia)  agent. See below
-how to configure this.
+This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia)  agent. See below how to configure this.
 
 The following environment variables can be used to influence the behaviour of this builder image:
 
@@ -22,3 +20,5 @@ The following environment variables can be used to influence the behaviour of th
 {{= fp.block('run-java-sh','readme',{ 'fp-no-files' : true }) }}
 
 {{= fp.block('jolokia','readme',{ 'fp-no-files' : true }) }}
+
+Application arguments can be provided by setting the variable **JAVA_ARGS** to the corresponding value.

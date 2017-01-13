@@ -1,10 +1,8 @@
 # JBoss S2I Java builder image with OpenJDK 8
 
-This is a S2I builder image for Java builds whose result can be run directly without any further application server.
-It's suited ideally for microservices with a flat classpath (including "far jars").
+This is a S2I builder image for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including "far jars").
 
-This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia)  agent. See below
-how to configure this.
+This image also provides an easy integration with an [Jolokia](https://github.com/rhuss/jolokia)  agent. See below how to configure this.
 
 The following environment variables can be used to influence the behaviour of this builder image:
 
@@ -85,4 +83,8 @@ Some options for integration in various environments:
 * **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on client authentication for OpenShift TSL communication. The value of this 
   parameter can be a relative distinguished name which must be contained in a presented client certificate. Enabling this
   parameter will automatically switch Jolokia into https communication mode. The default CA cert is set to 
-  `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
+  `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt` 
+
+
+
+Application arguments can be provided by setting the variable **JAVA_ARGS** to the corresponding value.
