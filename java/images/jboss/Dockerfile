@@ -25,10 +25,12 @@ RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/secu
 # Add jboss user to the root group
 RUN usermod -g root -G jboss jboss
 
-# Install Maven via SCL
 
-RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
+# Dowload Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-3.3.3 /opt/maven \
+ && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 
 # Jolokia agent

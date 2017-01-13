@@ -1,6 +1,7 @@
 {{
   var mavenRepo =
     (fp.param.base === "rhel" ? "https://repository.jboss.org/nexus/content/repositories/fs-releases" : null);
+  var mavenVersion = fp.config.base.lib.version.maven;
 }}FROM {{= fp.config.base.from }}
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
@@ -39,8 +40,11 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{??}}
-RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
+# Dowload Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
+ && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 {{?}}
 
 
@@ -50,7 +54,7 @@ RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven \
             mavenRepo: mavenRepo,
             userGroupMode: "root",
             version: fp.config.base.lib.version.jolokia }) }}
-            
+
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*

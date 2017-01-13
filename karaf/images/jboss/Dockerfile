@@ -31,8 +31,11 @@ RUN usermod -g root -G jboss jboss
 
 # Install Maven via SCL
 
-RUN yum install -y centos-release-scl && yum install -y rh-maven33-maven \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
+# Dowload Maven from Apache
+RUN curl https://archive.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz | \
+    tar -xzf - -C /opt \
+ && ln -s /opt/apache-maven-3.3.3 /opt/maven \
+ && ln -s /opt/maven/bin/mvn /usr/bin/mvn
 
 
 
@@ -48,7 +51,7 @@ RUN chmod 444 /opt/jolokia/jolokia.jar \
 
 EXPOSE 8778
 
-            
+
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
