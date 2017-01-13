@@ -25,8 +25,8 @@ RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/secu
 # Add jboss user to the root group
 RUN usermod -g root -G jboss jboss
 
-# Install Maven via SCL
 
+# Install Maven via SCL
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
 RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && yum clean all \
