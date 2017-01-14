@@ -79,5 +79,5 @@ if [ "x$mxmem" != x ]; then
 fi
 extra_opts=`echo $(diagnostics) $(cpu_core_tunning) | awk '$1=$1'`
 if [ "x$extra_opts" != x ]; then
-  export EXTRA_JAVA_OPTS=$extra_opts
+  export EXTRA_JAVA_OPTS="${extra_opts} ${JAVA_OPTIONS}"
 fi
