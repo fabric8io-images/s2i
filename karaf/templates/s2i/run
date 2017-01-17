@@ -22,6 +22,17 @@ if [ -f "${DEPLOYMENTS_DIR}/debug-options" ]; then
   fi
 fi
 
+# check if karaf fileinstall cfg file is present and dynamic deployment supported,
+# it is disabled by default and the cfg file is removed if present
+if [ -f "${DEPLOYMENTS_DIR}/karaf/etc/org.apache.felix.fileinstall-deploy.cfg" ]; then
+  if [ "x${KARAF_DEPLOY}" = "x" ]; then
+    rm -f "${DEPLOYMENTS_DIR}/karaf/etc/org.apache.felix.fileinstall-deploy.cfg"
+  else
+    echo "Dynamic deployments enabled in ${DEPLOYMENTS_DIR}/karaf/deploy"
+    mkdir -p ${DEPLOYMENTS_DIR}/karaf/deploy
+  fi
+fi
+
 # Output from assemble script
 echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
 export DEPLOYMENTS_DIR
