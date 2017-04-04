@@ -2,7 +2,7 @@ FROM jboss/base-jdk:8
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV JOLOKIA_VERSION="1.3.5" \
+ENV JOLOKIA_VERSION="1.3.6" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -11,7 +11,7 @@ ENV JOLOKIA_VERSION="1.3.5" \
 EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="1.3.5" \
+      io.fabric8.s2i.version.jolokia="1.3.6" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
@@ -41,7 +41,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-mav
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.3.5/jolokia-jvm-1.3.5-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.3.6/jolokia-jvm-1.3.6-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
