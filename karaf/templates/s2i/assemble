@@ -175,7 +175,7 @@ chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/"*.cfg
 chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/config.properties"
 # make scripts in karaf bin dir executable to avoid an f-m-p issue with file permissions on MS Windows
 chmod 755 "${DEPLOYMENTS_DIR}/karaf/bin/*"
-chmod 744 "${DEPLOYMENTS_DIR}/karaf/bin/*.bat"
+chmod 644 "${DEPLOYMENTS_DIR}/karaf/bin/*.bat"
 
 if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
     rm -rf "${S2I_ARTIFACTS_DIR}/m2"
