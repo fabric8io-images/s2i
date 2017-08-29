@@ -173,6 +173,9 @@ chmod a+rwx "${DEPLOYMENTS_DIR}/karaf/etc"
 chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/"*.cfg
 # make etc/config.properties writable to avoid warnings about unwritable shutdown command
 chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/config.properties"
+# make scripts in karaf bin dir executable to avoid an f-m-p issue with file permissions on MS Windows
+chmod 755 "${DEPLOYMENTS_DIR}/karaf/bin/*"
+chmod 644 "${DEPLOYMENTS_DIR}/karaf/bin/*.bat"
 
 if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
     rm -rf "${S2I_ARTIFACTS_DIR}/m2"

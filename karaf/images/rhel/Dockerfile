@@ -1,4 +1,4 @@
-FROM jboss-base-7/jdk8:1.2-28
+FROM jboss/openjdk18-rhel7:1.0-11
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
