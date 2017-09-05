@@ -30,6 +30,7 @@ The run script can be influenced by the following environment variables:
 * **JAVA_APP_NAME** Name to use for the process
 * **JAVA_CLASSPATH** the classpath to use. If not given, the startup script checks for a file `${JAVA_APP_DIR}/classpath` and use its content literally as classpath. If this file doesn't exists all jars in the app dir are added (`classes:${JAVA_APP_DIR}/*`).
 * **JAVA_DEBUG** If set remote debugging will be switched on
+* **JAVA_DEBUG_SUSPEND** If set enables suspend mode in remote debugging
 * **JAVA_DEBUG_PORT** Port used for remote debugging. Default: 5005
 
 If neither `$JAVA_APP_JAR` nor `$JAVA_MAIN_CLASS` is given, `$JAVA_APP_DIR` is checked for a single JAR file which is taken as `$JAVA_APP_JAR`. If no or more then one jar file is found, an error is thrown.
@@ -88,3 +89,41 @@ Some options for integration in various environments:
 
 
 Application arguments can be provided by setting the variable **JAVA_ARGS** to the corresponding value.
+
+## Spring Boot Automatic Restarts 
+
+This image also supports detecting jars with [Spring Boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools) included, which allows automatic restarts when files on the classpath are updated. Files can be easily updated in OpenShift using command [`oc rsync`](https://docs.openshift.org/latest/dev_guide/copy_files_to_container.html). 
+
+To enable automatic restarts, three things are required: 
+
+1. Add Spring Boot devtools dependency:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-devtools</artifactId>
+        <optional>true</optional>
+    </dependency>
+</dependencies>
+```
+
+2. Add dependency to the generated fat jar by setting `excludeDevtools` configuration property to false:
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <configuration>
+                <excludeDevtools>false</excludeDevtools>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+3. Set environment variables `JAVA_DEBUG=true` or `DEBUG=true` and optionally `JAVA_DEBUG_PORT=<port-number>` or `DEBUG_PORT=<port-number>`, which defaults to 5005. Since the `DEBUG` variable clashes with Spring Boot's recognition of the same variable to enable Spring Boot debug logging, use `SPRINGBOOT_DEBUG` instead. 
+
+WARNING: Do not use devtools in production!!! This can be accomplished in maven using a custom profile.
