@@ -29,20 +29,15 @@ fi
 if [ -f "${DEPLOYMENTS_DIR}/META-INF/MANIFEST.MF" ]; then
 	echo "SpringBoot exploded archive detected..."
 	if [ "x${JAVA_DEBUG}" != x ]; then
-		# does archive container spring devtools in lib
-		devtools_present=`ls "${DEPLOYMENTS_DIR}"/BOOT-INF/lib/spring-boot-devtools-*.jar 2>/dev/null | wc -l | tr -d '[[:space:]]'`
-		if [ ${devtools_present} = 1 ]; then
-			echo "SpringBoot developer tools library detected..."
-			# setup classpath and start class as main class
-			if [ "x${JAVA_CLASSPATH}" = x ]; then
-				JAVA_CLASSPATH="${DEPLOYMENTS_DIR}/BOOT-INF/lib/*"
-			else
-				JAVA_CLASSPATH="${DEPLOYMENTS_DIR}/BOOT-INF/lib/*:${JAVA_CLASSPATH}"
-			fi
-			export JAVA_CLASSPATH="${DEPLOYMENTS_DIR}/BOOT-INF/classes/:${JAVA_CLASSPATH}"
-			# setup start class as main class
-			main_class=`sed -n 's/Start-Class: \(.*\)$/\1/p' "${DEPLOYMENTS_DIR}/META-INF/MANIFEST.MF" | tr -d '[[:space:]]'`
+		# setup classpath and start class as main class
+		if [ "x${JAVA_CLASSPATH}" = x ]; then
+			JAVA_CLASSPATH="${DEPLOYMENTS_DIR}/BOOT-INF/lib/*"
+		else
+			JAVA_CLASSPATH="${DEPLOYMENTS_DIR}/BOOT-INF/lib/*:${JAVA_CLASSPATH}"
 		fi
+		export JAVA_CLASSPATH="${DEPLOYMENTS_DIR}/BOOT-INF/classes/:${JAVA_CLASSPATH}"
+		# setup start class as main class
+		main_class=`sed -n 's/Start-Class: \(.*\)$/\1/p' "${DEPLOYMENTS_DIR}/META-INF/MANIFEST.MF" | tr -d '[[:space:]]'`
 	fi
 	# default to SpringBoot's Main-Class
 	if [ "x${main_class}" = x ]; then
