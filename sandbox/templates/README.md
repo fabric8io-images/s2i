@@ -46,7 +46,7 @@ behaviour of this builder image:
 {{= fp.block('run-java-sh','readme',{ 'fp-no-files' : true }) }}
 
 The environment variables are best set in `.sti/environment` top in
-you project. This file is picked up bei STI during building and running.  
+you project. This file is picked up by STI during building and running.  
 
 You can also put a `sti.env` file holding theses environment variables into `${OUTPUT_DIR}` or
 `${OUTPUT_DIR}/classes` which will be picked up during startup of generated application.  

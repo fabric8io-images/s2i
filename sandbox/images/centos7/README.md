@@ -84,14 +84,14 @@ this script is located and in `${JAVA_APP_DIR}`, whereas environment
 variables in the latter override the ones in `run-env.sh` from the script 
 directory.
 
-This script also checks for a command `run-java-options`. If existant it will be
+This script also checks for a command `run-java-options`. If existent it will be
 called and the output is added to the environment variable `$JAVA_OPTIONS`.
 
 Any arguments given during startup are taken over as arguments to the
 Java app. 
 
 The environment variables are best set in `.sti/environment` top in
-you project. This file is picked up bei STI during building and running.  
+you project. This file is picked up by STI during building and running.  
 
 You can also put a `sti.env` file holding theses environment variables into `${OUTPUT_DIR}` or
 `${OUTPUT_DIR}/classes` which will be picked up during startup of generated application.  

@@ -50,11 +50,11 @@ The classpath is build up with the following parts:
 
 These variables can be also set in a shell config file `run-env.sh`, which will be sourced by the startup script. This file can be located in the directory where the startup script is located and in `${JAVA_APP_DIR}`, whereas environment variables in the latter override the ones in `run-env.sh` from the script directory.
 
-This startup script also checks for a command `run-java-options`. If existant it will be called and the output is added to the environment variable `$JAVA_OPTIONS`.
+This startup script also checks for a command `run-java-options`. If existent it will be called and the output is added to the environment variable `$JAVA_OPTIONS`.
 
 The startup script also exposes some environment variables describing container limits which can be used by applications:
 
-* **CONTAINER_CORE_LIMIT** a calculated core limit as desribed in https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt
+* **CONTAINER_CORE_LIMIT** a calculated core limit as described in https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt
 * **CONTAINER_MAX_MEMORY** memory limit given to the container
 
 Any arguments given during startup are taken over as arguments to the Java app.
@@ -126,4 +126,4 @@ To enable automatic restarts, three things are required:
 
 3. Set environment variables `JAVA_DEBUG=true` or `DEBUG=true` and optionally `JAVA_DEBUG_PORT=<port-number>` or `DEBUG_PORT=<port-number>`, which defaults to 5005. Since the `DEBUG` variable clashes with Spring Boot's recognition of the same variable to enable Spring Boot debug logging, use `SPRINGBOOT_DEBUG` instead. 
 
-WARNING: Do not use devtools in production!!! This can be accomplished in maven using a custom profile.
+WARNING: Do not use devtools in production!!! This can be accomplished in Maven using a custom profile.
