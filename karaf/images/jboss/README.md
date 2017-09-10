@@ -25,7 +25,7 @@ The location of the Karaf4 or hawt-app assembly built by the Maven project can b
 
 ## Customizing the build
 
-It may be possible that the Maven build needs to be customized. For example:
+It may be possible that the maven build needs to be customized. For example:
 
 - To invoke custom goals.
 - To skip tests.

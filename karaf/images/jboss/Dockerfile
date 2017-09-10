@@ -17,7 +17,7 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
       io.openshift.s2i.destination="/tmp" \
       io.openshift.tags="builder,karaf" \
-      org.jboss.deployments-dir="/deployments"
+      org.jboss.deployments-dir="/deployments/karaf"
 
 # Temporary switch to root
 USER root
