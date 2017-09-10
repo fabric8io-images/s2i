@@ -3,7 +3,7 @@ fish-pepper:
   params:
     - base
   name: "fabric8/s2i-java"
-  build: "2.0.0"
+  build: "2.0.2"
 
 # Used for escaping in 'agent-bond-opts' where the same delimiters are used
 abSepOpen: "{{"
