@@ -2,7 +2,7 @@
 
 An image that can be used with Openshift's [Source To Image](https://docs.openshift.com/enterprise/3.0/creating_images/s2i.html) in order to build
 [Karaf4 custom assembly](https://karaf.apache.org/manual/latest/developers-guide/custom-distribution.html) or
-[Hawt-app](https://github.com/jboss-fuse/hawt-app) based maven projects.
+[Hawt-app](https://github.com/jboss-fuse/hawt-app) based Maven projects.
 
 ## Usage:
 
@@ -17,7 +17,7 @@ Using oc command:
 
 ## Configuring the Karaf4 or hawt-app assembly
 
-The location of the Karaf4 or hawt-app assembly built by the maven project can be provided in multiple ways.
+The location of the Karaf4 or hawt-app assembly built by the Maven project can be provided in multiple ways.
 
 - Default assembly file `*.tar.gz` in output directory, which is `target` by default.
 - By using the `-e` flag in sti or oc command (e.g. `sti build -e "FUSE_ASSEMBLY=my-artifactId-1.0-SNAPSHOT.tar.gz"` ....).
@@ -43,7 +43,7 @@ Hawt-App:
 
     package hawt-app:build -DskipTests -e
 
-You can override the `MAVEN_ARGS` like in the example below we tell maven to just build the project with groupId "some.groupId" and artifactId "some.artifactId" and all its module dependencies.
+You can override the `MAVEN_ARGS` like in the example below we tell Maven to just build the project with groupId "some.groupId" and artifactId "some.artifactId" and all its module dependencies.
 
     s2i build -e "MAVEN_ARGS=install -pl some.groupId:some.artifactId -am" <git repo url> fabric8/s2i-karaf <target image name>
 

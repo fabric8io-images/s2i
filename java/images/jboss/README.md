@@ -8,8 +8,8 @@ The following environment variables can be used to influence the behaviour of th
 
 ## Build Time
 
-* **MAVEN_ARGS** Arguments to use when calling maven, replacing the default `package hawt-app:build -DskipTests -e`. Please be sure to run the `hawt-app:build` goal (when not already bound to the `package` execution phase), otherwise the startup scripts won't work.
-* **MAVEN_ARGS_APPEND** Additional Maven  arguments, useful for temporary adding arguments like `-X` or `-am -pl ..`
+* **MAVEN_ARGS** Arguments to use when calling Maven, replacing the default `package hawt-app:build -DskipTests -e`. Please be sure to run the `hawt-app:build` goal (when not already bound to the `package` execution phase), otherwise the startup scripts won't work.
+* **MAVEN_ARGS_APPEND** Additional Maven arguments, useful for temporary adding arguments like `-X` or `-am -pl ..`
 * **ARTIFACT_DIR** Path to `target/` where the jar files are created for multi module builds. These are added to `${MAVEN_ARGS}`
 * **ARTIFACT_COPY_ARGS** Arguments to use when copying artifacts from the output dir to the application dir. Useful to specify which artifacts will be part of the image. It defaults to `-r hawt-app/*` when a `hawt-app` dir is found on the build directory, otherwise jar files only will be included (`*.jar`).
 * **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artifact is built. This is useful for keeping
@@ -50,11 +50,11 @@ The classpath is build up with the following parts:
 
 These variables can be also set in a shell config file `run-env.sh`, which will be sourced by the startup script. This file can be located in the directory where the startup script is located and in `${JAVA_APP_DIR}`, whereas environment variables in the latter override the ones in `run-env.sh` from the script directory.
 
-This startup script also checks for a command `run-java-options`. If existant it will be called and the output is added to the environment variable `$JAVA_OPTIONS`.
+This startup script also checks for a command `run-java-options`. If existent it will be called and the output is added to the environment variable `$JAVA_OPTIONS`.
 
 The startup script also exposes some environment variables describing container limits which can be used by applications:
 
-* **CONTAINER_CORE_LIMIT** a calculated core limit as desribed in https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt
+* **CONTAINER_CORE_LIMIT** a calculated core limit as described in https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt
 * **CONTAINER_MAX_MEMORY** memory limit given to the container
 
 Any arguments given during startup are taken over as arguments to the Java app.
@@ -126,4 +126,4 @@ To enable automatic restarts, three things are required:
 
 3. Set environment variables `JAVA_DEBUG=true` or `DEBUG=true` and optionally `JAVA_DEBUG_PORT=<port-number>` or `DEBUG_PORT=<port-number>`, which defaults to 5005. Since the `DEBUG` variable clashes with Spring Boot's recognition of the same variable to enable Spring Boot debug logging, use `SPRINGBOOT_DEBUG` instead. 
 
-WARNING: Do not use devtools in production!!! This can be accomplished in maven using a custom profile.
+WARNING: Do not use devtools in production!!! This can be accomplished in Maven using a custom profile.
