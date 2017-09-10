@@ -45,6 +45,7 @@ RUN chmod 444 /opt/jolokia/jolokia.jar \
 
 EXPOSE 8778
 
+
 # Install rsync
 RUN yum install -y rsync
 

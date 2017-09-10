@@ -1,7 +1,7 @@
 ---
 
 # Who to blame
-maintainer: "rhuss@redhat.com"
+maintainer: "dbokde@redhat.com"
 
 # Meta info influencing the build
 fish-pepper:
@@ -14,9 +14,9 @@ blocks:
   - type: "git"
     url: "https://github.com/fabric8io/run-java-sh.git"
     path: "fish-pepper"
-    tag: "v1.0.0"
+    tag: "v1.0.2"
   # jolokia integration taken from agent-bond
   - type: "git"
     url: "https://github.com/fabric8io/agent-bond.git"
     path: "fish-pepper"
-    tag: "v1.0.0"
+    tag: "v1.0.2"
