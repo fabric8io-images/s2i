@@ -19,6 +19,7 @@ config:
         version:
           maven: "3.3.3"
           jolokia: "1.3.6"
+          karaf: "4.0.8"
     rhel:
       from: "jboss/openjdk18-rhel7:1.0-11"
       user: "jboss"
@@ -27,3 +28,4 @@ config:
         version:
           maven: "3.3.3-1.el7"
           jolokia: "1.3.6.redhat-1"
+          karaf: "6.3.0.redhat-187"
