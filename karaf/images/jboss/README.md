@@ -54,7 +54,7 @@ You can also just override the `MAVEN_ARGS_APPEND` environment variable with:
 
 #### Jolokia configuration
 
-* **AB_JOLOKIA_OFF** : If set disables activation of Jolokia (i.e. echos an empty value). By default, Jolokia is enabled.
+* **AB_JOLOKIA_OFF** : If set disables activation of Joloka (i.e. echos an empty value). By default, Jolokia is enabled.
 * **AB_JOLOKIA_CONFIG** : If set uses this file (including path) as Jolokia JVM agent properties (as described 
   in Jolokia's [reference manual](http://www.jolokia.org/reference/html/agents.html#agents-jvm)). If not set, 
   the `/opt/jolokia/etc/jolokia.properties` will be created using the settings as defined in this document, otherwise
