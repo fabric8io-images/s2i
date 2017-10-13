@@ -3,6 +3,7 @@ FROM jboss/base-jdk:8
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV JOLOKIA_VERSION="1.3.6" \
+    KARAF_FRAMEWORK_VERSION="4.0.8" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -12,12 +13,13 @@ EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
       io.fabric8.s2i.version.jolokia="1.3.6" \
+      io.fabric8.s2i.version.karaf="4.0.8" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
       io.openshift.s2i.destination="/tmp" \
       io.openshift.tags="builder,karaf" \
-      org.jboss.deployments-dir="/deployments"
+      org.jboss.deployments-dir="/deployments/karaf"
 
 # Temporary switch to root
 USER root
