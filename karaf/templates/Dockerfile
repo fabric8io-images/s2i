@@ -7,6 +7,7 @@
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
+    KARAF_FRAMEWORK_VERSION="{{= fp.config.base.lib.version.karaf }}" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -16,6 +17,7 @@ EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
       io.fabric8.s2i.version.jolokia="{{= fp.config.base.lib.version.jolokia }}" \
+      io.fabric8.s2i.version.karaf="{{= fp.config.base.lib.version.karaf }}" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
