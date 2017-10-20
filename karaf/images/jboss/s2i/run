@@ -43,7 +43,7 @@ fi
 echo "Executing ${DEPLOYMENTS_DIR}/karaf/bin/karaf server ..."
 export DEPLOYMENTS_DIR
 if [ -z "${KARAF_OPTS}" ]; then
-  KARAF_OPTS=$(/opt/jolokia/jolokia-opts)
+  KARAF_OPTS="$(/opt/jolokia/jolokia-opts) $(/opt/prometheus/prometheus-opts)"
   export KARAF_OPTS
 fi
 

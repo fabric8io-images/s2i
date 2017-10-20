@@ -7,7 +7,7 @@ args="$*"
 source `dirname "$0"`/s2i-setup
 
 # Always include jolokia-opts, which can be empty if switched off via env
-JAVA_OPTIONS="${JAVA_OPTIONS:+${JAVA_OPTIONS} }$(/opt/jolokia/jolokia-opts)"
+JAVA_OPTIONS="${JAVA_OPTIONS:+${JAVA_OPTIONS} }$(/opt/jolokia/jolokia-opts) $(/opt/prometheus/prometheus-opts)"
 
 # Temporary options variable until the harmonization hawt-app PR #5 has been applied (hopefully)
 JVM_ARGS="${JVM_ARGS:+${JVM_ARGS} }${JAVA_OPTIONS}"
