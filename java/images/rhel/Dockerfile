@@ -1,6 +1,7 @@
 FROM jboss/openjdk18-rhel7:1.0-11
 
 ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
+    PROMETHEUS_JMX_EXPORTER_VERSION="0.10" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -9,6 +10,7 @@ ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
       io.fabric8.s2i.version.jolokia="1.3.6.redhat-1" \
+      io.fabric8.s2i.version.prometheus.jmx_exporter="0.10" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -31,6 +33,21 @@ COPY jboss.repo /etc/yum.repos.d/jboss.repo
 RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
+
+
+# Prometheus JMX exporter agent
+ RUN mkdir -p /opt/prometheus/etc \
+  && curl https://repository.jboss.org/nexus/content/repositories/fs-releases/io/prometheus/jmx/jmx_prometheus_javaagent/0.10/jmx_prometheus_javaagent-0.10.jar \
+          -o /opt/prometheus/jmx_prometheus_javaagent.jar
+ ADD prometheus-opts /opt/prometheus/prometheus-opts
+ ADD prometheus-config.yml /opt/prometheus/prometheus-config.yml
+ RUN chmod 444 /opt/prometheus/jmx_prometheus_javaagent.jar \
+  && chmod 444 /opt/prometheus/prometheus-config.yml \
+  && chmod 755 /opt/prometheus/prometheus-opts \
+  && chmod 775 /opt/prometheus/etc \
+  && chgrp root /opt/prometheus/etc
+
+EXPOSE 9779
 
 
 # Jolokia agent
