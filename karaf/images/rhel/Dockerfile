@@ -3,7 +3,7 @@ FROM jboss/openjdk18-rhel7:1.0-11
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
-    KARAF_FRAMEWORK_VERSION="6.3.0.redhat-187" \
+    KARAF_FRAMEWORK_VERSION="6.3.0.redhat-310" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -13,7 +13,7 @@ EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
       io.fabric8.s2i.version.jolokia="1.3.6.redhat-1" \
-      io.fabric8.s2i.version.karaf="6.3.0.redhat-187" \
+      io.fabric8.s2i.version.karaf="6.3.0.redhat-310" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
@@ -42,7 +42,7 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl https://repository.jboss.org/nexus/content/repositories/fs-releases/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
+ && curl http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-common-build/latest/maven/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
