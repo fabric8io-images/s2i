@@ -6,7 +6,7 @@ source `dirname "$0"`/s2i-setup
 # Maven arguments setting up the environment
 maven_env_args="-Dmaven.repo.local=${S2I_ARTIFACTS_DIR}/m2"
 
-DEFAULT_KARAF_MAVEN_ARGS="install -DskipTests -e -Dfabric8.skip=true"
+DEFAULT_KARAF_MAVEN_ARGS="install -DskipTests -e -Dfabric8.skip=true -B"
 
 # Helper functions:
 function check_error() {
