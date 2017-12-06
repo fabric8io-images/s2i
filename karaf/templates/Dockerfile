@@ -25,7 +25,10 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
       io.openshift.s2i.destination="/tmp" \
       io.openshift.tags="builder,karaf" \
-      org.jboss.deployments-dir="/deployments/karaf"
+      org.jboss.deployments-dir="/deployments/karaf" \
+      com.redhat.deployments-dir="/deployments/karaf" \
+      com.redhat.dev-mode="DEV_MODE:false" \
+      com.redhat.dev-mode.port="DEBUG_PORT:5005"
 
 # Temporary switch to root
 USER root

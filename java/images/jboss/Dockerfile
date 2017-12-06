@@ -16,7 +16,10 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
       io.openshift.tags="builder,java" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
       io.openshift.s2i.destination="/tmp" \
-      org.jboss.deployments-dir="/deployments"
+      org.jboss.deployments-dir="/deployments" \
+      com.redhat.deployments-dir="/deployments" \
+      com.redhat.dev-mode="DEV_MODE:false" \
+      com.redhat.dev-mode.port="DEBUG_PORT:5005"
 
 # Temporary switch to root
 USER root
