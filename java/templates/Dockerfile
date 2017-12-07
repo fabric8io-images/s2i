@@ -28,11 +28,10 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups.
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
+# Use /dev/urandom to speed up startups & Add jboss user to the root group
 
-# Add jboss user to the root group
-RUN usermod -g root -G jboss jboss
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+ && usermod -g root -G jboss jboss
 
 {{? fp.param.base === "rhel"}}
 # Install Maven via SCL
@@ -65,6 +64,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binar
 # Install rsync
 RUN yum install -y rsync
 {{?}}
+
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
@@ -90,8 +90,6 @@ USER 1000
 RUN mkdir -p /opt/jboss/.m2
 COPY settings.xml /opt/jboss/.m2/settings.xml
 {{?}}
-
-RUN mkdir -p /deployments/data
 
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)

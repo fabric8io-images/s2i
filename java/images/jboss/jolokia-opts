@@ -3,7 +3,7 @@
 # Check whether a given config is contained in AB_JOLOKIA_OPTS
 is_in_jolokia_opts() {
   local prop=$1
-  if [ -n "${AB_JOLOKIA_OPTS}" ] && [ x"${AB_JOLOKIA_OPTS}" != x"${AB_JOLOKIA_OPTS/${prop}/}" ]; then
+  if [ -n "${AB_JOLOKIA_OPTS:-}" ] && [ "${AB_JOLOKIA_OPTS}" != "${AB_JOLOKIA_OPTS/${prop}/}" ]; then
      echo "yes"
   else
      echo "no"
@@ -14,24 +14,24 @@ get_jolokia_properties() {
 
   echo "host=${AB_JOLOKIA_HOST:-*}"
   echo "port=${AB_JOLOKIA_PORT:-8778}"
-  echo "discoveryEnabled=${AB_JOLOKIA_DISCOVERY_ENABLED:=false}"
+  echo "discoveryEnabled=${AB_JOLOKIA_DISCOVERY_ENABLED:-false}"
 
-  if [ -n "$AB_JOLOKIA_PASSWORD" ]; then
+  if [ -n "${AB_JOLOKIA_PASSWORD:-}" ]; then
      echo "user=${AB_JOLOKIA_USER:-jolokia}"
      echo "password=${AB_JOLOKIA_PASSWORD}"
   fi
-  if [ -n "$AB_JOLOKIA_HTTPS" ]; then
+  if [ -n "${AB_JOLOKIA_HTTPS:-}" ]; then
      echo "protocol=https"
      use_https=1
   fi
 
   # Integration with OpenShift client cert auth is enabled
   # by default if not explicitly turned off by setting to 'false'
-  if [ "x${AB_JOLOKIA_AUTH_OPENSHIFT}" != "xfalse" ] && [ -f "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" ]; then
+  if [ "${AB_JOLOKIA_AUTH_OPENSHIFT:-}" != "false" ] && [ -f "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" ]; then
      echo "useSslClientAuthentication=true"
      echo "extraClientCheck=true"
 
-     if [ -z ${use_https+x} ]; then
+     if [ -n "${use_https:-}" ]; then
        echo "protocol=https"
      fi
      if [ $(is_in_jolokia_opts "caCert") != "yes" ]; then
@@ -39,9 +39,9 @@ get_jolokia_properties() {
      fi
 
      if [ $(is_in_jolokia_opts "clientPrincipal") != "yes" ]; then
-        if [  x"${AB_JOLOKIA_AUTH_OPENSHIFT}" != x"${AB_JOLOKIA_AUTH_OPENSHIFT/=/}" ]; then
+        if [  "${AB_JOLOKIA_AUTH_OPENSHIFT}" != "${AB_JOLOKIA_AUTH_OPENSHIFT/=/}" ]; then
            # Supposed to contain a principal name to check
-           echo "clientPrincipal=`echo ${AB_JOLOKIA_AUTH_OPENSHIFT} | sed -e 's/ /\\\\ /g'`"
+           echo "clientPrincipal=$(echo ${AB_JOLOKIA_AUTH_OPENSHIFT} | sed -e 's/ /\\\\ /g')"
         else
            echo "clientPrincipal=cn=system:master-proxy"
         fi
@@ -49,7 +49,7 @@ get_jolokia_properties() {
   fi
 
   # Add extra opts
-  if [ -n "${AB_JOLOKIA_OPTS}" ]; then
+  if [ -n "${AB_JOLOKIA_OPTS:-}" ]; then
      echo "${AB_JOLOKIA_OPTS}" | tr "," "\n"
   fi
 
@@ -60,12 +60,12 @@ write_jolokia_properties() {
 
   # Setup Jolokia to accept basic auth, using a randomly generated password that is stored
   # in the container in the ${DEPLOYMENTS_DIR}/jolokia.pw file.
-  if [ "$AB_JOLOKIA_PASSWORD_RANDOM" == "true" ]; then
+  if [ "${AB_JOLOKIA_PASSWORD_RANDOM:-}" == "true" ]; then
     pw_file="/opt/jolokia/etc/jolokia.pw"
     if [ -f "${pw_file}" ] ; then
-      AB_JOLOKIA_PASSWORD=`cat "${pw_file}"`
+      AB_JOLOKIA_PASSWORD=$(cat "${pw_file}")
     else
-      AB_JOLOKIA_PASSWORD=`tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1`
+      AB_JOLOKIA_PASSWORD=$(tr -cd '[:alnum:]' < /dev/urandom | fold -w30 | head -n1)
       touch "${pw_file}"
       chmod 660 "${pw_file}"
       cat > "${pw_file}" <<EOF
@@ -83,8 +83,8 @@ EOF
 
 }
 
-if [ -z "${AB_JOLOKIA_OFF+x}" ]; then
-  if [ -z "${AB_JOLOKIA_CONFIG}" ]; then
+if [ -z "${AB_JOLOKIA_OFF:-}" ]; then
+  if [ -z "${AB_JOLOKIA_CONFIG:-}" ]; then
     AB_JOLOKIA_CONFIG="/opt/jolokia/etc/jolokia.properties"
     write_jolokia_properties "$AB_JOLOKIA_CONFIG"
   fi

@@ -3,7 +3,7 @@
 # Check whether a given config is contained in AB_PROMETHEUS_OPTS
 is_in_prometheus_opts() {
   local prop=$1
-  if [ -n "${AB_JMX_EXPORTER_OPTS}" ] && [ x"${AB_JMX_EXPORTER_OPTS}" != x"${AB_JMX_EXPORTER_OPTS/${prop}/}" ]; then
+  if [ -n "${AB_JMX_EXPORTER_OPTS:-}" ] && [ "${AB_JMX_EXPORTER_OPTS}" != "${AB_JMX_EXPORTER_OPTS/${prop}/}" ]; then
      echo "yes"
   else
      echo "no"
@@ -15,10 +15,10 @@ get_prometheus_properties() {
   echo "port=${AB_JMX_EXPORTER_PORT:-9779}"
   echo "config=${AB_JMX_EXPORTER_CONFIG:-/opt/prometheus/prometheus-config.yml}"
 
-  if [ -n "${AB_PROMETHEUS_OPTS}" ]; then
+  if [ -n "${AB_PROMETHEUS_OPTS:-}" ]; then
      echo "${AB_PROMETHEUS_OPTS}" | tr "," "\n"
   fi
- 
+
 }
 
 write_prometheus_properties() {
@@ -32,21 +32,21 @@ EOF
 
 }
 
-if [ -z "${AB_PROMETHEUS_PORT+x}" ]; then
+if [ -z "${AB_PROMETHEUS_PORT:-}" ]; then
    AB_PROMETHEUS_PORT="9779"
    export AB_PROMETHEUS_PORT
 fi
 
-if [ -z "${AB_JMX_EXPORTER_CONFIG+x}" ]; then
+if [ -z "${AB_JMX_EXPORTER_CONFIG:-}" ]; then
     AB_JMX_EXPORTER_CONFIG="/opt/prometheus/prometheus-config.yml"
     export AB_PROMETHEUS_CONFIG
 fi
 
-if [ -z "${AB_PROMETHEUS_OFF+x}" ]; then
-  write_prometheus_properties "/opt/prometheus/etc/prometheus.properties" 
- 
-  if [ -z "${AB_JMX_EXPORTER_OPTS+x}" ]; then
-    if [ -z "${AB_PROMETHEUS_HOST+x}" ]; then
+if [ -z "${AB_PROMETHEUS_OFF:-}" ]; then
+  write_prometheus_properties "/opt/prometheus/etc/prometheus.properties"
+
+  if [ -z "${AB_JMX_EXPORTER_OPTS:-}" ]; then
+    if [ -z "${AB_PROMETHEUS_HOST:-}" ]; then
       echo "-javaagent:/opt/prometheus/jmx_prometheus_javaagent.jar=${AB_PROMETHEUS_PORT}:${AB_JMX_EXPORTER_CONFIG}"
     else
       echo "-javaagent:/opt/prometheus/jmx_prometheus_javaagent.jar=${AB_PROMETHEUS_HOST}:${AB_PROMETHEUS_PORT}:${AB_JMX_EXPORTER_CONFIG}"

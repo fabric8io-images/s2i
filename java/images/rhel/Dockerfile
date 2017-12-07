@@ -24,11 +24,10 @@ LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups.
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
+# Use /dev/urandom to speed up startups & Add jboss user to the root group
 
-# Add jboss user to the root group
-RUN usermod -g root -G jboss jboss
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+ && usermod -g root -G jboss jboss
 
 
 # Install Maven via SCL
@@ -66,14 +65,15 @@ RUN chmod 444 /opt/jolokia/jolokia.jar \
 EXPOSE 8778
 
 
+
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
 
 # Add run script as /opt/run-java/run-java.sh and make it executable
-COPY run-java.sh debug-options container-limits java-default-options /opt/run-java/
-RUN chmod 755 /opt/run-java/run-java.sh /opt/run-java/java-default-options /opt/run-java/container-limits /opt/run-java/debug-options
+COPY run-java.sh /opt/run-java/
+RUN chmod 755 /opt/run-java/run-java.sh
 
 # Adding run-env.sh to set app dir
 COPY run-env.sh /opt/run-java/run-env.sh
@@ -90,8 +90,6 @@ USER 185
 RUN mkdir -p /home/jboss/.m2
 COPY settings.xml /home/jboss/.m2/settings.xml
 
-
-RUN mkdir -p /deployments/data
 
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)
