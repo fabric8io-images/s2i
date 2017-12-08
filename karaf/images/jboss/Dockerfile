@@ -23,8 +23,8 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
       io.openshift.tags="builder,karaf" \
       org.jboss.deployments-dir="/deployments/karaf" \
       com.redhat.deployments-dir="/deployments/karaf" \
-      com.redhat.dev-mode="DEV_MODE:false" \
-      com.redhat.dev-mode.port="DEBUG_PORT:5005"
+      com.redhat.dev-mode="JAVA_DEBUG:false" \
+      com.redhat.dev-mode.port="JAVA_DEBUG_PORT:5005"
 
 # Temporary switch to root
 USER root
