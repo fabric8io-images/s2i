@@ -1,6 +1,6 @@
 {{
   var mavenRepo =
-    (fp.param.base === "rhel" ? "https://repository.jboss.org/nexus/content/repositories/fs-releases" : null);
+    (fp.param.base === "rhel" ? "https://maven.repository.redhat.com/ga" : null);
   var mavenVersion = fp.config.base.lib.version.maven;
 }}FROM {{= fp.config.base.from }}
 
@@ -57,7 +57,6 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binar
 {{=
   fp.block("jmxexporter", "install",
           { dest: "/opt/prometheus/prometheus-opts",
-            mavenRepo: mavenRepo,
             userGroupMode: "root",
             version: fp.config.base.lib.version.jmxexporter }) }}
 
@@ -84,6 +83,9 @@ RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /depl
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments
+{{? fp.param.base === "rhel"}}
+RUN chmod -R "g+rwX" /home/jboss && chown -R jboss:root /home/jboss
+{{?}}
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 {{? fp.param.base === "rhel"}}
