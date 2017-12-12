@@ -121,6 +121,16 @@ function build_maven() {
   # Default args: no tests, if a module is specified, only build this module
   local maven_args=${MAVEN_ARGS:-package -DskipTests -e -Dfabric8.skip=true}
 
+  # Configure default memory options for Maven
+  if [ -f "/opt/run-java/container-limits" ] && [ -f "/opt/run-java/java-default-options" ]; then
+    source /opt/run-java/container-limits
+    export MAVEN_OPTS="${MAVEN_OPTS:-$(/opt/run-java/java-default-options)}"
+  fi
+
+  if [ ! -z "${MAVEN_OPTS}" ]; then
+    echo "Using MAVEN_OPTS '${MAVEN_OPTS}'"
+  fi
+
   echo "Found pom.xml ... "
   echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
 
