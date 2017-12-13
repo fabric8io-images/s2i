@@ -1,7 +1,7 @@
 FROM jboss/base-jdk:8
 
-ENV JOLOKIA_VERSION="1.3.6" \
-    PROMETHEUS_JMX_EXPORTER_VERSION="0.10" \
+ENV JOLOKIA_VERSION="1.3.7" \
+    PROMETHEUS_JMX_EXPORTER_VERSION="0.1.0" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -9,8 +9,8 @@ ENV JOLOKIA_VERSION="1.3.6" \
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="1.3.6" \
-      io.fabric8.s2i.version.prometheus.jmx_exporter="0.10" \
+      io.fabric8.s2i.version.jolokia="1.3.7" \
+      io.fabric8.s2i.version.prometheus.jmx_exporter="0.1.0" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -24,11 +24,10 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups.
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
+# Use /dev/urandom to speed up startups & Add jboss user to the root group
 
-# Add jboss user to the root group
-RUN usermod -g root -G jboss jboss
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+ && usermod -g root -G jboss jboss
 
 
 # Dowload Maven from Apache
@@ -40,7 +39,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-mav
 
 # Prometheus JMX exporter agent
  RUN mkdir -p /opt/prometheus/etc \
-  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.10/jmx_prometheus_javaagent-0.10.jar \
+  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.1.0/jmx_prometheus_javaagent-0.1.0.jar \
           -o /opt/prometheus/jmx_prometheus_javaagent.jar
  ADD prometheus-opts /opt/prometheus/prometheus-opts
  ADD prometheus-config.yml /opt/prometheus/prometheus-config.yml
@@ -55,7 +54,7 @@ EXPOSE 9779
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.3.6/jolokia-jvm-1.3.6-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.3.7/jolokia-jvm-1.3.7-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
@@ -69,14 +68,15 @@ EXPOSE 8778
 # Install rsync
 RUN yum install -y rsync
 
+
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
 
 # Add run script as /opt/run-java/run-java.sh and make it executable
-COPY run-java.sh debug-options container-limits java-default-options /opt/run-java/
-RUN chmod 755 /opt/run-java/run-java.sh /opt/run-java/java-default-options /opt/run-java/container-limits /opt/run-java/debug-options
+COPY run-java.sh /opt/run-java/
+RUN chmod 755 /opt/run-java/run-java.sh
 
 # Adding run-env.sh to set app dir
 COPY run-env.sh /opt/run-java/run-env.sh
@@ -93,8 +93,6 @@ USER 1000
 RUN mkdir -p /opt/jboss/.m2
 COPY settings.xml /opt/jboss/.m2/settings.xml
 
-
-RUN mkdir -p /deployments/data
 
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)
