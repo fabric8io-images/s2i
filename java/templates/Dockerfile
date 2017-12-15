@@ -1,6 +1,6 @@
 {{
   var mavenRepo =
-    (fp.param.base === "rhel" ? "https://repository.jboss.org/nexus/content/repositories/fs-releases" : null);
+    (fp.param.base === "rhel" ? "https://maven.repository.redhat.com/ga" : null);
   var mavenVersion = fp.config.base.lib.version.maven;
 }}FROM {{= fp.config.base.from }}
 

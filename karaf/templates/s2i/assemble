@@ -100,6 +100,28 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     exit 1
   fi
 
+  # Configure default memory options for Maven
+  if [ -f "${DEPLOYMENTS_DIR}/container-limits" ] && [ -f "${DEPLOYMENTS_DIR}/java-default-options" ]; then
+    source "${DEPLOYMENTS_DIR}/container-limits"
+    source "${DEPLOYMENTS_DIR}/java-default-options"
+
+    if [ ! -z "${JAVA_MIN_MEM}" ]; then
+      MEMORY_OPTS="-Xms${JAVA_MIN_MEM}"
+    fi
+
+    if [ ! -z "${JAVA_MAX_MEM}" ]; then
+      MEMORY_OPTS="${MEMORY_OPTS} -Xmx${JAVA_MAX_MEM}"
+    fi
+
+    if [ ! -z "${MEMORY_OPTS}" ]; then
+      export MAVEN_OPTS="${MAVEN_OPTS:-${MEMORY_OPTS}}"
+    fi
+  fi
+
+  if [ ! -z "${MAVEN_OPTS}" ]; then
+    echo "Using MAVEN_OPTS '${MAVEN_OPTS}'"
+  fi
+
   echo "Found pom.xml ... "
   echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
 
