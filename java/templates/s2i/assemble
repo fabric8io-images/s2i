@@ -193,8 +193,8 @@ else
   check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
 fi
 
-# check if this is a SpringBoot executable archive, which can be exploded
-echo "Checking for SpringBoot archive..."
+# check if this is a fat jar executable archive. SpringBoot fat jars can be exploded
+echo "Checking for fat jar archive..."
 old_dir=`pwd`
 cd "${DEPLOYMENTS_DIR}"
 nr_jars=`ls *.jar 2>/dev/null | grep -v '^original-' | wc -l | tr -d '[[:space:]]'`
