@@ -39,7 +39,7 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
 
 # Prometheus JMX exporter agent
  RUN mkdir -p /opt/prometheus/etc \
-  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.10/jmx_prometheus_javaagent-0.10.jar \
+  && curl http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-common-build/latest/maven/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
           -o /opt/prometheus/jmx_prometheus_javaagent.jar
  ADD prometheus-opts /opt/prometheus/prometheus-opts
  ADD prometheus-config.yml /opt/prometheus/prometheus-config.yml
@@ -54,7 +54,7 @@ EXPOSE 9779
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl https://maven.repository.redhat.com/ga/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
+ && curl http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-common-build/latest/maven/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
