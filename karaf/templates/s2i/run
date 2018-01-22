@@ -47,6 +47,11 @@ if [ -z "${KARAF_OPTS}" ]; then
   export KARAF_OPTS
 fi
 
+# Update the jboss user UID entry in /etc/passwd
+sed "/^jboss/s/[^:]*/$(id -u)/3" /etc/passwd > /tmp/passwd
+cat /tmp/passwd > /etc/passwd
+rm /tmp/passwd
+
 # force karaf to exec java process so docker runs a single process with PID 1
 export KARAF_EXEC=exec
 

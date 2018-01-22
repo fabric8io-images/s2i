@@ -188,4 +188,7 @@ sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DEPLOYMENTS_DIR}/karaf/et
 # allow overriding defaults in setenv
 sed -i 's/^\(JAVA_.*\)=\([^ ]*\)/\1=${\1:-\2}/' ${DEPLOYMENTS_DIR}/karaf/bin/setenv
 
+# Remove java temporary hsperfdata directory owned by the jboss user
+rm -rf /tmp/hsperfdata_jboss
+
 echo "...done!"

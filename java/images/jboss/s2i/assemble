@@ -216,4 +216,7 @@ if [ ${nr_jars} = 1 ]; then
 fi
 cd "${old_dir}"
 
+# Remove java temporary hsperfdata directory owned by the jboss user
+rm -rf /tmp/hsperfdata_jboss
+
 echo "... done"

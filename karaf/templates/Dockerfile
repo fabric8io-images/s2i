@@ -82,10 +82,10 @@ COPY deploy-and-run.sh container-limits debug-options java-default-options /depl
 RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /deployments/debug-options /deployments/java-default-options \
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
- && chown -R jboss:root /deployments
-{{? fp.param.base === "rhel"}}
-RUN chmod -R "g+rwX" /home/jboss && chown -R jboss:root /home/jboss
-{{?}}
+ && chown -R jboss:root /deployments \
+ && chmod -R "g+rwX" /home/jboss \
+ && chown -R jboss:root /home/jboss \
+ && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 {{? fp.param.base === "rhel"}}
