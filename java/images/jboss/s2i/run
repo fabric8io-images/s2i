@@ -47,6 +47,11 @@ if [ -f "${DEPLOYMENTS_DIR}/META-INF/MANIFEST.MF" ]; then
 	export JAVA_MAIN_CLASS="${main_class}"
 fi
 
+# Update the jboss user UID entry in /etc/passwd
+sed "/^jboss/s/[^:]*/$(id -u)/3" /etc/passwd > /tmp/passwd
+cat /tmp/passwd > /etc/passwd
+rm /tmp/passwd
+
 if [ -f "${DEPLOYMENTS_DIR}/bin/run.sh" ]; then
     echo "Starting the application using the bundled ${DEPLOYMENTS_DIR}/bin/run.sh ..."
     exec ${DEPLOYMENTS_DIR}/bin/run.sh $args ${JAVA_ARGS}

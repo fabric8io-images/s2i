@@ -82,7 +82,10 @@ RUN chmod 755 /opt/run-java/run-env.sh
 # Necessary to permit running with a randomised UID
 RUN mkdir -p /deployments/data \
  && chmod -R "g+rwX" /deployments \
- && chown -R jboss:root /deployments
+ && chown -R jboss:root /deployments \
+ && chmod -R "g+rwX" /home/jboss \
+ && chown -R jboss:root /home/jboss \
+ && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 
