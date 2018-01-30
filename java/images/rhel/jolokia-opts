@@ -31,7 +31,7 @@ get_jolokia_properties() {
      echo "useSslClientAuthentication=true"
      echo "extraClientCheck=true"
 
-     if [ -n "${use_https:-}" ]; then
+     if [ -z ${use_https+x} ]; then
        echo "protocol=https"
      fi
      if [ $(is_in_jolokia_opts "caCert") != "yes" ]; then
