@@ -14,7 +14,7 @@ config:
       lib:
         version:
           maven: "3.3.3"
-          jolokia: "1.3.7"
+          jolokia: "1.4.0"
           jmxexporter: "0.1.0"
     rhel:
       from: "jboss/openjdk18-rhel7:1.0-11"

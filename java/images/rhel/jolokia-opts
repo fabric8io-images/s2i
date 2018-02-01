@@ -22,7 +22,7 @@ get_jolokia_properties() {
   fi
   if [ -n "${AB_JOLOKIA_HTTPS:-}" ]; then
      echo "protocol=https"
-     use_https=1
+     https_used=1
   fi
 
   # Integration with OpenShift client cert auth is enabled
@@ -31,7 +31,9 @@ get_jolokia_properties() {
      echo "useSslClientAuthentication=true"
      echo "extraClientCheck=true"
 
-     if [ -n "${use_https:-}" ]; then
+     # Check if the 'protocol' property has already been set to 'https'
+     # If not, then defaults to using HTTPS
+     if [ -z ${https_used+x} ]; then
        echo "protocol=https"
      fi
      if [ $(is_in_jolokia_opts "caCert") != "yes" ]; then
