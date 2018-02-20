@@ -22,7 +22,7 @@ config:
           karaf: "4.0.8"
           jmxexporter: "0.10"
     rhel:
-      from: "jboss/openjdk18-rhel7:1.0-11"
+      from: "jboss/openjdk18-rhel7:1.1-7"
       user: "jboss"
       description: "RHEL S2I Karaf builder image with OpenJDK 8"
       lib:

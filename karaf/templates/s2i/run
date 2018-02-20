@@ -3,30 +3,53 @@
 # Global S2I variable setup
 source `dirname "$0"`/s2i-setup
 
-# Read in container limits and export them as environment variables
-if [ -f "${DEPLOYMENTS_DIR}/container-limits" ]; then
-  source "${DEPLOYMENTS_DIR}/container-limits"
-fi
-
-# set java default options
-if [ -f "${DEPLOYMENTS_DIR}/java-default-options" ]; then
-  source "${DEPLOYMENTS_DIR}/java-default-options"
-fi
-
 # support JBoss Tools OpenShift debug environment variables
 export JAVA_DEBUG="${JAVA_DEBUG:-${DEBUG}}"
 if [ "x${JAVA_DEBUG}" != x ]; then
   export JAVA_DEBUG_PORT="${JAVA_DEBUG_PORT:-${DEBUG_PORT}}"
 fi
 
-# set debug option
-if [ -f "${DEPLOYMENTS_DIR}/debug-options" ]; then
-  debug_opts=$($DEPLOYMENTS_DIR/debug-options)
-  if [ "x${debug_opts}" != x ]; then
-    export JAVA_DEBUG_OPTS=$($DEPLOYMENTS_DIR/debug-options)
+if [ -f ${RUN_JAVA_DIR}/run-java.sh ]; then
+
+  # set karaf debug options
+  debug_opts=$(${RUN_JAVA_DIR}/run-java.sh options --debug)
+  if [ ! -z "${debug_opts}" ]; then
+    export JAVA_DEBUG_OPTS=${debug_opts}
     export KARAF_DEBUG="true"
   fi
+
+  # set karaf memory limits
+  memory_opts=$(${RUN_JAVA_DIR}/run-java.sh options --memory)
+  if [ ! -z "${memory_opts}" ]; then
+    for opt in ${memory_opts}; do
+      if [[ "${opt}" == -Xms* ]]; then
+        export JAVA_MIN_MEM="${opt#*-Xms}"
+      fi
+
+      if [[ "${opt}" == -Xmx* ]]; then
+        export JAVA_MAX_MEM="${opt#*-Xmx}"
+      fi
+    done
+  fi
+
+  # set karaf additional options
+  extra_opts=$(${RUN_JAVA_DIR}/run-java.sh options --diagnostics --cpu)
+  if [ ! -z "${extra_opts}" ]; then
+    export EXTRA_JAVA_OPTS="${extra_opts} ${JAVA_OPTIONS}"
+  fi
 fi
+
+# set default karaf EXTRA_JAVA_OPTS if required
+if [ -z "${EXTRA_JAVA_OPTS}" ]; then
+  export EXTRA_JAVA_OPTS="${JAVA_OPTIONS}"
+fi
+
+# set default karaf JAVA_MIN_MEM if required
+if [ -z "${JAVA_MIN_MEM}" ]; then
+  export JAVA_MIN_MEM=64M
+fi
+
+#############################################################################
 
 # check if karaf fileinstall cfg file is present and dynamic deployment supported,
 # it is disabled by default and the cfg file is removed if present
