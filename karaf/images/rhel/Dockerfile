@@ -1,4 +1,4 @@
-FROM jboss/openjdk18-rhel7:1.0-11
+FROM jboss/openjdk18-rhel7:1.1-7
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
@@ -78,13 +78,17 @@ COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
 
+# Add run script as /opt/run-java/run-java.sh and make it executable
+COPY run-java.sh /opt/run-java/
+RUN chmod 755 /opt/run-java/run-java.sh
+
 # ===================
 # Karaf specific code
 
 # Copy deploy-and-run.sh for standalone images
 # Necessary to permit running with a randomised UID
-COPY deploy-and-run.sh container-limits debug-options java-default-options /deployments/
-RUN chmod a+x /deployments/deploy-and-run.sh /deployments/container-limits /deployments/debug-options /deployments/java-default-options \
+COPY deploy-and-run.sh /deployments/
+RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments \

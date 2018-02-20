@@ -100,6 +100,15 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     exit 1
   fi
 
+  # If there is no user provided MAVEN_OPTS, use options from run-java.sh
+  if [ -f ${RUN_JAVA_DIR}/run-java.sh -a -z "${MAVEN_OPTS}" ]; then
+    export MAVEN_OPTS=$(${RUN_JAVA_DIR}/run-java.sh options)
+  fi
+
+  if [ ! -z "${MAVEN_OPTS}" ]; then
+    echo "Using MAVEN_OPTS '${MAVEN_OPTS}'"
+  fi
+
   echo "Found pom.xml ... "
   echo "Running 'mvn ${maven_env_args} ${MAVEN_ARGS} ${MAVEN_ARGS_APPEND}'"
 

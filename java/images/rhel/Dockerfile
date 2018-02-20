@@ -1,4 +1,4 @@
-FROM jboss/openjdk18-rhel7:1.0-11
+FROM jboss/openjdk18-rhel7:1.1-7
 
 ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.10" \
