@@ -78,8 +78,8 @@ RUN chmod 755 /opt/run-java/run-env.sh
 RUN mkdir -p /deployments/data \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments \
- && chmod -R "g+rwX" /home/jboss \
- && chown -R jboss:root /home/jboss \
+ && chmod -R "g+rwX" {{= fp.config.base.home }} \
+ && chown -R jboss:root {{= fp.config.base.home }} \
  && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image

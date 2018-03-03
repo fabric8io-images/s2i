@@ -10,6 +10,7 @@ config:
     jboss:
       from: "jboss/base-jdk:8"
       user: "jboss"
+      home: "/opt/jboss"
       description: "JBoss S2I Java builder image with OpenJDK 8"
       lib:
         version:
@@ -19,6 +20,7 @@ config:
     rhel:
       from: "jboss/openjdk18-rhel7:1.1-7"
       user: "jboss"
+      home: "/home/jboss"
       description: "RHEL S2I Java builder image with OpenJDK 8"
       lib:
         version:
