@@ -17,7 +17,7 @@ function check_error() {
   fi
 }
 
-function get_output_dir() {
+function get_maven_output_dir() {
   local dir=""
 
   # If multi module build and no ARTIFACT_DIR is set --> error
@@ -44,6 +44,32 @@ function get_output_dir() {
     echo "Please specify an existing build directory ARTIFACT_DIR (tried '$(dirname "${dir}")' which does not exist)"
     exit 1
   fi
+  echo ${dir}
+}
+
+function get_gradle_output_dir() {
+  local dir=""
+
+  # If multi module build and no ARTIFACT_DIR is set --> error
+  if [ x"${ARTIFACT_DIR}" = x ]; then
+    dir="${S2I_SOURCE_DIR}/build/libs"
+  else
+    if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
+       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
+       exit 1
+    fi
+    dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
+  fi
+
+  # Normalize dir
+  # TODO how do you get this to check not one but two (../..) up?
+#  dir=$(echo ${dir} | tr -s /)
+#  dir=${dir%/}
+#  # The parent must exist but build/libs/ won't exist yet
+#  if [ ! -d $(dirname "${dir}"}) ]; then
+#    echo "Please specify an existing build directory ARTIFACT_DIR (tried '$(dirname "${dir}")' which does not exist)"
+#    exit 1
+#  fi
   echo ${dir}
 }
 
@@ -74,7 +100,6 @@ function copy_artifacts() {
 }
 
 function setup_maven() {
-
   if [ -n "$HTTP_PROXY_HOST" -a -n "$HTTP_PROXY_PORT" ]; then
     xml="<proxy>\
          <id>genproxy</id>\
@@ -111,6 +136,10 @@ function setup_maven() {
   fi
 }
 
+function setup_gradle() {
+  echo "TODO ;) set up possibly HTTP proxy server for Gradle build (not yet implemented)..."
+}
+
 function build_maven() {
   # Where artifacts are created during build
   local build_dir=$1
@@ -131,7 +160,6 @@ function build_maven() {
   fi
 
   echo "Found pom.xml ... "
-  echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
 
   local old_dir=$(pwd)
   cd ${S2I_SOURCE_DIR}
@@ -139,6 +167,7 @@ function build_maven() {
 
   # =========
   # Run Maven
+  echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
   mvn ${maven_env_args} --version
   mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
@@ -160,6 +189,51 @@ function build_maven() {
   cd ${old_dir}
 }
 
+function build_gradle() {
+  # Where artifacts are created during build
+  local build_dir=$1
+
+  # Where to put the artifacts
+  local app_dir=$2
+
+  # Default args
+  local gradle_args=${GRADLE_ARGS:-build -x test}
+
+  # If there is no user provided GRADLE_OPTS, use options from run-java.sh
+  if [ -f ${RUN_JAVA_DIR}/run-java.sh -a -z "${GRADLE_OPTS}" ]; then
+    export GRADLE_OPTS=$(${RUN_JAVA_DIR}/run-java.sh options)
+  fi
+
+  if [ ! -z "${GRADLE_OPTS}" ]; then
+    echo "Using GRADLE_OPTS '${GRADLE_OPTS}'"
+  fi
+
+  local old_dir=$(pwd)
+  cd ${S2I_SOURCE_DIR}
+  check_error "changing directory to ${S2I_SOURCE_DIR}" $?
+
+  # =========
+  # Run Gradle
+  echo "Running './gradlew ${gradle_args} ${GRADLE_ARGS_APPEND}'"
+  ./gradlew ${gradle_args} ${GRADLE_ARGS_APPEND}
+  check_error "Gradle build" $?
+
+  # ==============
+  # Copy artifacts
+  echo "Copying Gradle artifacts from ${build_dir} to ${app_dir} ..."
+  copy_artifacts ${build_dir} ${app_dir}
+  check_error "copying artifacts from ${build_dir} to ${app_dir}" $?
+
+  # ======================
+  # TODO Remove repo if desired
+#  if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
+#    rm -rf "${S2I_ARTIFACTS_DIR}/m2"
+#    check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
+#  fi
+
+  cd ${old_dir}
+}
+
 # =========================================================================
 # Main
 
@@ -168,7 +242,7 @@ echo "Starting S2I Java Build ....."
 mkdir -p ${DEPLOYMENTS_DIR}
 if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   echo "S2I source build for Maven detected"
-  build_dir=$(get_output_dir)
+  build_dir=$(get_maven_output_dir)
   check_error "Cannot get output dir: $build_dir" $?
   # If a pom.xml is present use maven
   setup_maven
@@ -189,6 +263,12 @@ elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ]; then
   echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
   copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
   check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
+elif ls ${S2I_SOURCE_DIR}/*.gradle* &> /dev/null; then
+  echo "S2I source build for Gradle detected, due to presence of a *.gradle* in ${S2I_SOURCE_DIR}"
+  build_dir=$(get_gradle_output_dir)
+  check_error "Cannot get output dir: $build_dir" $?
+  setup_gradle
+  build_gradle ${build_dir} ${DEPLOYMENTS_DIR}
 else
   echo "S2I source build with plain binaries detected"
   if [ -d "${S2I_SOURCE_DIR}/deployments" ]; then
