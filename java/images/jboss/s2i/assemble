@@ -69,8 +69,8 @@ function copy_artifacts() {
             cp_args="*.jar"
         fi
     fi
-    echo "Running: cp ${cp_args} ${dest}"
-    cp ${cp_args} ${dest}
+    echo "Running: cp -v ${cp_args} ${dest}"
+    cp -v ${cp_args} ${dest}
 }
 
 function setup_maven() {
