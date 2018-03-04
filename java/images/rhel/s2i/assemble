@@ -119,7 +119,7 @@ function build_maven() {
   local app_dir=$2
 
   # Default args: no tests, if a module is specified, only build this module
-  local maven_args=${MAVEN_ARGS:-package -DskipTests -e -Dfabric8.skip=true -B}
+  local maven_args=${MAVEN_ARGS:-package -DskipTests -Dmaven.javadoc.skip=true -Dmaven.site.skip=true -Dmaven.source.skip=true -Djacoco.skip=true -Dcheckstyle.skip=true -Dfindbugs.skip=true -Dpmd.skip=true -Dfabric8.skip=true -e -B}
 
   # If there is no user provided MAVEN_OPTS, use options from run-java.sh
   if [ -f ${RUN_JAVA_DIR}/run-java.sh -a -z "${MAVEN_OPTS}" ]; then
