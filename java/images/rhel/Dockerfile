@@ -1,5 +1,8 @@
 FROM jboss/openjdk18-rhel7:1.1-7
 
+ARG EXPOSE_PORT=8080
+EXPOSE ${EXPOSE_PORT}
+
 ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.10" \
     PATH=$PATH:"/usr/local/s2i" \
