@@ -3,6 +3,9 @@
   var mavenVersion = fp.config.base.version.maven;
 }}FROM {{= fp.config.base.from }}
 
+ARG EXPOSE_PORT=8080
+EXPOSE ${EXPOSE_PORT}
+
 ENV JOLOKIA_VERSION="{{= fp.config.base.version.jolokia }}" \
     PROMETHEUS_JMX_EXPORTER_VERSION="{{= fp.config.base.version.jmxexporter }}" \
     PATH=$PATH:"/usr/local/s2i" \

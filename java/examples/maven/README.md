@@ -37,8 +37,6 @@ To do the same as above directly inside your OpenShift instance like this:
     oc status
     minishift openshift service s2i-java-example --in-browser
 
-**TODO this is still NOK due to a missing EXPOSE 8080 in the Dockerfile of fabric8/s2i-java, see https://github.com/fabric8io-images/s2i/issues/115 :-(**
-
 _NB that you cannot really build from "the latest sources from the local filesystems", because there is no `s2i build --copy` equivalent; attempting to do e.g. `oc new-app fabric8/s2i-java~.` just fetches from the first git remote of `./.git` ... :-(_
 
 
