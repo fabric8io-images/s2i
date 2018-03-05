@@ -1,5 +1,8 @@
 FROM jboss/base-jdk:8
 
+ARG EXPOSE_PORT=8080
+EXPOSE ${EXPOSE_PORT}
+
 ENV JOLOKIA_VERSION="1.4.0" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.1.0" \
     PATH=$PATH:"/usr/local/s2i" \
@@ -86,8 +89,8 @@ RUN chmod 755 /opt/run-java/run-env.sh
 RUN mkdir -p /deployments/data \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments \
- && chmod -R "g+rwX" /home/jboss \
- && chown -R jboss:root /home/jboss \
+ && chmod -R "g+rwX" /opt/jboss \
+ && chown -R jboss:root /opt/jboss \
  && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
