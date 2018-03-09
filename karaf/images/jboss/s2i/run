@@ -44,6 +44,12 @@ if [ -z "${EXTRA_JAVA_OPTS}" ]; then
   export EXTRA_JAVA_OPTS="${JAVA_OPTIONS}"
 fi
 
+# set Karaf4 console logging level, if not set
+if [ -z "${KARAF_LOG_CONSOLE}" ]; then
+  export KARAF_LOG_CONSOLE=ALL
+fi
+export EXTRA_JAVA_OPTS="${EXTRA_JAVA_OPTS} -Dkaraf.log.console=${KARAF_LOG_CONSOLE}"
+
 # set default karaf JAVA_MIN_MEM if required
 if [ -z "${JAVA_MIN_MEM}" ]; then
   export JAVA_MIN_MEM=64M

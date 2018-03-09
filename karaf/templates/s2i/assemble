@@ -191,7 +191,7 @@ if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
     check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
 fi
 
-# send log output to stdout
+# send log output to stdout for Karaf2, 'run' script sets karaf.log.console for Karaf4
 sed -i 's/^\(.*rootLogger.*\), *out *,/\1, stdout,/' ${DEPLOYMENTS_DIR}/karaf/etc/org.ops4j.pax.logging.cfg
 
 # allow overriding defaults in setenv
