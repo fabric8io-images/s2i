@@ -99,8 +99,8 @@ RUN chmod a+x /deployments/deploy-and-run.sh \
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 
 USER 185
+
 RUN mkdir -p /home/jboss/.m2
 COPY settings.xml /home/jboss/.m2/settings.xml
-
 
 CMD ["usage"]
