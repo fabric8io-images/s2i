@@ -93,15 +93,15 @@ RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments \
- && chmod -R "g+rwX" /home/jboss \
- && chown -R jboss:root /home/jboss \
+ && chmod -R "g+rwX" /opt/jboss \
+ && chown -R jboss:root /opt/jboss \
  && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 
 USER 1000
+
 RUN mkdir -p /opt/jboss/.m2
 COPY settings.xml /opt/jboss/.m2/settings.xml
-
 
 CMD ["usage"]

@@ -84,19 +84,17 @@ RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod a+x /usr/local/s2i/* \
  && chmod -R "g+rwX" /deployments \
  && chown -R jboss:root /deployments \
- && chmod -R "g+rwX" /home/jboss \
- && chown -R jboss:root /home/jboss \
+ && chmod -R "g+rwX" {{= fp.config.base.home }} \
+ && chown -R jboss:root {{= fp.config.base.home }} \
  && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 {{? fp.param.base === "rhel"}}
 USER 185
-RUN mkdir -p /home/jboss/.m2
-COPY settings.xml /home/jboss/.m2/settings.xml
 {{??}}
 USER 1000
-RUN mkdir -p /opt/jboss/.m2
-COPY settings.xml /opt/jboss/.m2/settings.xml
 {{?}}
+RUN mkdir -p {{= fp.config.base.home }}/.m2
+COPY settings.xml {{= fp.config.base.home }}/.m2/settings.xml
 
 CMD ["usage"]
