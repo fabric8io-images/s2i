@@ -1,0 +1,5 @@
+# Main class not really required as already in the pom.xml,
+# it's just for illustration.  For all the optional available here,
+# see https://github.com/fabric8io-images/s2i/tree/master/java/images/jboss
+
+JAVA_MAIN_CLASS=ch.vorburger.openshift.s2i.example.Server
