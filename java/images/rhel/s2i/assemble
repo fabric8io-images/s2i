@@ -220,7 +220,9 @@ if [ ${nr_jars} = 1 ]; then
       unzip -q "${single_jar}"
       # remove fat jar, run script will setup main class, etc. for run-java.sh
       rm "${single_jar}"
-      # to support 'oc rsh', set group permissions to be same as user in unzipped files
+      # to support 'oc rsh', set group permissions to be same as the user and set the group to
+      # the root group
+      chgrp -R 0 .
       chmod -R g=u .
     fi
   fi
