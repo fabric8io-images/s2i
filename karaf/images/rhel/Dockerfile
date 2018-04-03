@@ -2,8 +2,8 @@ FROM jboss/openjdk18-rhel7:1.1-7
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
-    KARAF_FRAMEWORK_VERSION="6.3.0.redhat-187" \
+ENV JOLOKIA_VERSION="1.5.0" \
+    KARAF_FRAMEWORK_VERSION="4.2.0.fuse-000201" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.10" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
@@ -13,8 +13,8 @@ ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
 EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
-      io.fabric8.s2i.version.jolokia="1.3.6.redhat-1" \
-      io.fabric8.s2i.version.karaf="6.3.0.redhat-187" \
+      io.fabric8.s2i.version.jolokia="1.5.0" \
+      io.fabric8.s2i.version.karaf="4.2.0.fuse-000201" \
       io.fabric8.s2i.version.prometheus.jmx_exporter="0.10" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
@@ -39,14 +39,15 @@ RUN usermod -g root -G jboss jboss
 # Install Maven via SCL
 
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum --disableplugin=subscription-manager install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 
 
 # Prometheus JMX exporter agent
  RUN mkdir -p /opt/prometheus/etc \
-  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.10/jmx_prometheus_javaagent-0.10.jar \
+  && curl http://central.maven.org/maven/org/jolokia/jolokia-jvm/1.5.0/jolokia-jvm-1.5.0-agent.jar \
           -o /opt/prometheus/jmx_prometheus_javaagent.jar
  ADD prometheus-opts /opt/prometheus/prometheus-opts
  ADD prometheus-config.yml /opt/prometheus/prometheus-config.yml
@@ -62,7 +63,7 @@ EXPOSE 9779
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl https://maven.repository.redhat.com/ga/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
+ && curl http://central.maven.org/maven/org/jolokia/jolokia-jvm/1.5.0/jolokia-jvm-1.5.0-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
