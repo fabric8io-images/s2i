@@ -30,6 +30,6 @@ config:
       lib:
         version:
           maven: "3.3.3-1.el7"
-          jolokia: "1.3.6.redhat-1"
+          jolokia: "1.5.0.redhat-1"
           karaf: "6.3.0.redhat-187"
           jmxexporter: "0.10"
