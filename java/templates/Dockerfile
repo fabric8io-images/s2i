@@ -1,6 +1,5 @@
 {{
-  var mavenRepo =
-    (fp.param.base === "rhel" ? "https://maven.repository.redhat.com/ga" : null);
+  var mavenRepo = fp.config.base.mavenRepo;
   var mavenVersion = fp.config.base.lib.version.maven;
 }}FROM {{= fp.config.base.from }}
 
