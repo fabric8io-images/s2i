@@ -5,11 +5,10 @@ cd java ; fish-pepper ; cd ..
 
 docker build java/images/jboss/ -t fabric8/s2i-java
 
-# Initially intentionally building without incremental
-s2i build --copy java/example fabric8/s2i-java fabric8/s2i-java-example
+s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-example
 
 # Now rebuild incrementally, it should not re-download .m2
-s2i build --copy java/example fabric8/s2i-java fabric8/s2i-java-example --incremental
+s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-example --incremental
 
 CONTAINER_ID=$(docker run --name s2i-java-example-test -d -p 8080 fabric8/s2i-java-example)
 
