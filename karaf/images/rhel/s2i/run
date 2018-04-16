@@ -33,7 +33,7 @@ if [ -f ${RUN_JAVA_DIR}/run-java.sh ]; then
   fi
 
   # set karaf additional options
-  extra_opts=$(${RUN_JAVA_DIR}/run-java.sh options --diagnostics --cpu)
+  extra_opts=$(${RUN_JAVA_DIR}/run-java.sh options --diagnostics --cpu --jit)
   if [ ! -z "${extra_opts}" ]; then
     export EXTRA_JAVA_OPTS="${extra_opts} ${JAVA_OPTIONS}"
   fi
