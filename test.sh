@@ -13,10 +13,10 @@ s2i build --copy java/example fabric8/s2i-java fabric8/s2i-java-example --increm
 
 CONTAINER_ID=$(docker run -d -p 8080:8080 fabric8/s2i-java-example)
 
-# sleep 1s is required because after docker run returns, the container is up but our server may not quite be yet
-sleep 1
+# sleep is required because after docker run returns, the container is up but our server may not quite be yet
+sleep 5
 
-HTTP_REPLY=$(curl http://localhost:8080)
+HTTP_REPLY=$(curl --silent --show-error http://localhost:8080)
 
 docker rm -f "$CONTAINER_ID"
 
