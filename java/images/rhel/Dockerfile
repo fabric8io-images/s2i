@@ -52,8 +52,8 @@ RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
 
 # Add run script as /opt/run-java/run-java.sh and make it executable
-COPY run-java.sh debug-options container-limits java-default-options /opt/run-java/
-RUN chmod 755 /opt/run-java/run-java.sh /opt/run-java/java-default-options /opt/run-java/container-limits /opt/run-java/debug-options
+COPY run-java.sh /opt/run-java/
+RUN chmod 755 /opt/run-java/run-java.sh
 
 # Adding run-env.sh to set app dir
 COPY run-env.sh /opt/run-java/run-env.sh

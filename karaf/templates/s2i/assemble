@@ -192,7 +192,7 @@ ln -s "${DEPLOYMENTS_DIR}/${KARAF_ASSEMBLY_DIR##*/}" "${DEPLOYMENTS_DIR}/karaf"
 chmod a+rwx "${DEPLOYMENTS_DIR}/karaf"
 chmod -R a+rwx "${DEPLOYMENTS_DIR}/karaf/data"
 chmod a+rwx "${DEPLOYMENTS_DIR}/karaf/etc"
-chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/"*.cfg
+find "${DEPLOYMENTS_DIR}/karaf/etc/" -name *.cfg -exec chmod a+rw {} \;
 # make etc/config.properties writable to avoid warnings about unwritable shutdown command
 chmod a+rw "${DEPLOYMENTS_DIR}/karaf/etc/config.properties"
 # make scripts in karaf bin dir executable to avoid an f-m-p issue with file permissions on MS Windows
