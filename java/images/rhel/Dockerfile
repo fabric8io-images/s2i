@@ -79,6 +79,15 @@ RUN chmod 755 /opt/run-java/run-java.sh
 COPY run-env.sh /opt/run-java/run-env.sh
 RUN chmod 755 /opt/run-java/run-env.sh
 
+
+# Copy licenses
+RUN mkdir -p /opt/fuse/licenses
+COPY licenses.css /opt/fuse/licenses
+COPY licenses.xml /opt/fuse/licenses
+COPY licenses.html /opt/fuse/licenses
+COPY apache_software_license_version_2.0-apache-2.0.txt /opt/fuse/licenses
+
+
 # Necessary to permit running with a randomised UID
 RUN mkdir -p /deployments/data \
  && chmod -R "g+rwX" /deployments \

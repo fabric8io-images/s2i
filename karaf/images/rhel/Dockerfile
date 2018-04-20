@@ -78,6 +78,14 @@ COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*
 ADD README.md /usr/local/s2i/usage.txt
 
+# Copy licenses
+RUN mkdir -p /opt/fuse/licenses
+COPY licenses.css /opt/fuse/licenses
+COPY licenses.xml /opt/fuse/licenses
+COPY licenses.html /opt/fuse/licenses
+COPY apache_software_license_version_2.0-apache-2.0.txt /opt/fuse/licenses
+
+
 # Add run script as /opt/run-java/run-java.sh and make it executable
 COPY run-java.sh /opt/run-java/
 RUN chmod 755 /opt/run-java/run-java.sh
