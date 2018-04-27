@@ -32,7 +32,8 @@ RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/secu
 
 # Install Maven via SCL
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum --disableplugin=subscription-manager install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 
