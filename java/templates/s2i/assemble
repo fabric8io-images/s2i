@@ -61,15 +61,6 @@ function get_gradle_output_dir() {
     dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
   fi
 
-  # Normalize dir
-  # TODO how do you get this to check not one but two (../..) up?
-#  dir=$(echo ${dir} | tr -s /)
-#  dir=${dir%/}
-#  # The parent must exist but build/libs/ won't exist yet
-#  if [ ! -d $(dirname "${dir}"}) ]; then
-#    echo "Please specify an existing build directory ARTIFACT_DIR (tried '$(dirname "${dir}")' which does not exist)"
-#    exit 1
-#  fi
   echo ${dir}
 }
 
@@ -134,10 +125,6 @@ function setup_maven() {
     maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/configuration/settings.xml"
     echo "Using custom maven settings from ${S2I_SOURCE_DIR}/configuration/settings.xml"
   fi
-}
-
-function setup_gradle() {
-  echo "TODO ;) set up possibly HTTP proxy server for Gradle build (not yet implemented)..."
 }
 
 function build_maven() {
@@ -225,11 +212,11 @@ function build_gradle() {
   check_error "copying artifacts from ${build_dir} to ${app_dir}" $?
 
   # ======================
-  # TODO Remove repo if desired
-#  if [ "x${MAVEN_CLEAR_REPO}" != "x" ]; then
-#    rm -rf "${S2I_ARTIFACTS_DIR}/m2"
-#    check_error "Cannot remove local Maven repository ${S2I_ARTIFACTS_DIR}/m2" $?
-#  fi
+  # Remove repo if desired
+  if [ "x${GRADLE_CLEAR_REPO}" != "x" ]; then
+    rm -rf "${S2I_ARTIFACTS_DIR}/gradle"
+    check_error "Cannot remove local Gradle repository ${S2I_ARTIFACTS_DIR}/gradle" $?
+  fi
 
   cd ${old_dir}
 }
@@ -267,7 +254,6 @@ elif ls ${S2I_SOURCE_DIR}/*.gradle* &> /dev/null; then
   echo "S2I source build for Gradle detected, due to presence of a *.gradle* in ${S2I_SOURCE_DIR}"
   build_dir=$(get_gradle_output_dir)
   check_error "Cannot get output dir: $build_dir" $?
-  setup_gradle
   build_gradle ${build_dir} ${DEPLOYMENTS_DIR}
 else
   echo "S2I source build with plain binaries detected"
