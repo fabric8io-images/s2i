@@ -42,6 +42,16 @@ s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-exa
 test_container "s2i-java-maven-example"
 
 
+# Gradle
+# --------------------------------------------------------------------------------------------------------------
+
+s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-example
+
+s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-example --incremental
+
+test_container "s2i-java-gradle-example"
+
+
 # Binary
 # --------------------------------------------------------------------------------------------------------------
 

@@ -7,6 +7,7 @@ If you have a project with Java sources, you are probably more interested in usi
 
 ## Usage
 
+    mvn -f ../maven/ clean package
     cp ../maven/target/*.jar deployments/
     s2i build --copy . fabric8/s2i-java s2i-java-binary-example
     docker run -p 8080:8080 s2i-java-binary-example
