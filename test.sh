@@ -40,3 +40,15 @@ s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-exa
 s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-example --incremental
 
 test_container "s2i-java-maven-example"
+
+
+# Binary
+# --------------------------------------------------------------------------------------------------------------
+
+mvn -f java/examples/maven/ clean package
+cp java/examples/maven/target/*.jar java/examples/binary/deployments/
+
+s2i build --copy java/examples/binary/ fabric8/s2i-java fabric8/s2i-java-binary-example
+rm java/examples/binary/deployments/*
+
+test_container "s2i-java-binary-example"
