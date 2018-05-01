@@ -165,6 +165,7 @@ function build_maven() {
 
 echo "=================================================================="
 echo "Starting S2I Java Build ....."
+mkdir -p ${DEPLOYMENTS_DIR}
 if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   echo "S2I source build for Maven detected"
   build_dir=$(get_output_dir)
