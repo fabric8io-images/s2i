@@ -8,7 +8,7 @@ dependencies:
 
 test:
   override:
-    - echo Heureka
+    - test ./test.sh
 
 deployment:
   latest:
