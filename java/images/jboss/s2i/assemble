@@ -135,6 +135,11 @@ function build_maven() {
   cd ${S2I_SOURCE_DIR}
   check_error "changing directory to ${S2I_SOURCE_DIR}" $?
 
+  local mvn="mvn"
+  if [ -f "mvnw" ]; then
+    mvn="./mvnw"
+  fi
+
   # =========
   # Run Maven
   echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
