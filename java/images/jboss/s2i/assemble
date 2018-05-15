@@ -191,7 +191,7 @@ function build_gradle() {
   local gradle_args=${GRADLE_ARGS:-build -x test}
 
   # If there is no user provided GRADLE_OPTS, use options from run-java.sh
-  if [ -f ${RUN_JAVA_DIR}/run-java.sh -a -z "${GRADLE_OPTS}" ]; then
+  if [ -f "${RUN_JAVA_DIR}/run-java.sh" ] && [ -z "${GRADLE_OPTS}" ]; then
     export GRADLE_OPTS=$(${RUN_JAVA_DIR}/run-java.sh options)
   fi
 
