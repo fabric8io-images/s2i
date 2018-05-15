@@ -1,4 +1,4 @@
-# s2i-java-binary-example
+# s2i-java-maven-wrapper-example
 
 This S2I example illustrates how to use the Maven wrapper when a newer version of Maven than the one included in base image is required.
 

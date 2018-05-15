@@ -136,11 +136,13 @@ function build_maven() {
   check_error "changing directory to ${S2I_SOURCE_DIR}" $?
 
   local mvn="mvn"
+
   if [ -f "mvnw" ]; then
     echo "Using local mvnw"
     ./mvnw --version
     mvn="./mvnw"
   fi
+
 
   # =========
   # Run Maven
