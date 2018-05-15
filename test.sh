@@ -5,8 +5,7 @@ cd java ; fish-pepper ; cd ..
 
 docker build java/images/jboss/ -t fabric8/s2i-java
 
-
-# --------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 function test_container() {
   local name=$1
@@ -31,7 +30,7 @@ function test_container() {
 }
 
 
-# --------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 # Maven
 
 s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-example
@@ -42,8 +41,10 @@ s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-exa
 test_container "s2i-java-maven-example"
 
 
+# --------------------------------------------------------------------------------
 # Gradle
-# --------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------
+
 
 s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-example
 
@@ -52,8 +53,9 @@ s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-e
 test_container "s2i-java-gradle-example"
 
 
+# ----------------------------------------------------------------------------------
 # Binary
-# --------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------
 
 mvn -f java/examples/maven/ clean package
 cp java/examples/maven/target/*.jar java/examples/binary/deployments/
@@ -62,3 +64,10 @@ s2i build --copy java/examples/binary/ fabric8/s2i-java fabric8/s2i-java-binary-
 rm java/examples/binary/deployments/*
 
 test_container "s2i-java-binary-example"
+
+# ----------------------------------------------------------------------------------
+# Maven Wrapper
+# ----------------------------------------------------------------------------------
+
+s2i build --copy java/examples/maven-wrapper fabric8/s2i-java fabric8/s2i-java-maven-wrapper-example
+s2i build --copy java/examples/maven-wrapper fabric8/s2i-java fabric8/s2i-java-maven-wrapper-example --incremental
