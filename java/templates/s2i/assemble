@@ -137,14 +137,16 @@ function build_maven() {
 
   local mvn="mvn"
   if [ -f "mvnw" ]; then
+    echo "Using local mvnw"
+    ./mvnw --version
     mvn="./mvnw"
   fi
 
   # =========
   # Run Maven
   echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
-  mvn ${maven_env_args} --version
-  mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
+  ${mvn} ${maven_env_args} --version
+  ${mvn} ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
 
   # ==============
