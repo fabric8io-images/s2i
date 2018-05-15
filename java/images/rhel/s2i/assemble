@@ -17,7 +17,7 @@ function check_error() {
   fi
 }
 
-function get_output_dir() {
+function get_maven_output_dir() {
   local dir=""
 
   # If multi module build and no ARTIFACT_DIR is set --> error
@@ -74,7 +74,6 @@ function copy_artifacts() {
 }
 
 function setup_maven() {
-
   if [ -n "$HTTP_PROXY_HOST" -a -n "$HTTP_PROXY_PORT" ]; then
     xml="<proxy>\
          <id>genproxy</id>\
@@ -131,7 +130,6 @@ function build_maven() {
   fi
 
   echo "Found pom.xml ... "
-  echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
 
   local old_dir=$(pwd)
   cd ${S2I_SOURCE_DIR}
@@ -139,6 +137,7 @@ function build_maven() {
 
   # =========
   # Run Maven
+  echo "Running 'mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}'"
   mvn ${maven_env_args} --version
   mvn ${maven_env_args} ${maven_args} ${MAVEN_ARGS_APPEND}
   check_error "Maven build" $?
@@ -160,14 +159,18 @@ function build_maven() {
   cd ${old_dir}
 }
 
+
+
+
 # =========================================================================
 # Main
 
 echo "=================================================================="
 echo "Starting S2I Java Build ....."
+mkdir -p ${DEPLOYMENTS_DIR}
 if [ -f "${S2I_SOURCE_DIR}/pom.xml" ]; then
   echo "S2I source build for Maven detected"
-  build_dir=$(get_output_dir)
+  build_dir=$(get_maven_output_dir)
   check_error "Cannot get output dir: $build_dir" $?
   # If a pom.xml is present use maven
   setup_maven
@@ -188,6 +191,7 @@ elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ]; then
   echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
   copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
   check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
+
 else
   echo "S2I source build with plain binaries detected"
   if [ -d "${S2I_SOURCE_DIR}/deployments" ]; then
