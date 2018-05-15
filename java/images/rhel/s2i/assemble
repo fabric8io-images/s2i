@@ -47,8 +47,6 @@ function get_maven_output_dir() {
   echo ${dir}
 }
 
-
-
 function copy_dir() {
   local src=$1
   local dest=$2
@@ -160,6 +158,7 @@ function build_maven() {
 
   cd ${old_dir}
 }
+
 
 
 

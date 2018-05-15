@@ -47,25 +47,6 @@ function get_maven_output_dir() {
   echo ${dir}
 }
 
-{{? fp.param.base != "rhel"}}
-function get_gradle_output_dir() {
-  local dir=""
-
-  # If multi module build and no ARTIFACT_DIR is set --> error
-  if [ x"${ARTIFACT_DIR}" = x ]; then
-    dir="${S2I_SOURCE_DIR}/build/libs"
-  else
-    if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
-       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
-       exit 1
-    fi
-    dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
-  fi
-
-  echo ${dir}
-}
-{{?}}
-
 function copy_dir() {
   local src=$1
   local dest=$2
@@ -178,7 +159,27 @@ function build_maven() {
   cd ${old_dir}
 }
 
-{{? fp.param.base != "rhel"}}
+{{? fp.config.base.withGradle }}
+# =========================================================================
+# Gradle support
+
+function get_gradle_output_dir() {
+  local dir=""
+
+  # If multi module build and no ARTIFACT_DIR is set --> error
+  if [ x"${ARTIFACT_DIR}" = x ]; then
+    dir="${S2I_SOURCE_DIR}/build/libs"
+  else
+    if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
+       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
+       exit 1
+    fi
+    dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
+  fi
+
+  echo ${dir}
+}
+
 function build_gradle() {
   # Where artifacts are created during build
   local build_dir=$1
@@ -225,6 +226,7 @@ function build_gradle() {
 }
 {{?}}
 
+
 # =========================================================================
 # Main
 
@@ -254,7 +256,7 @@ elif [ -f "${S2I_SOURCE_DIR}/Dockerfile" ]; then
   echo "Copying binaries from ${binary_dir} to ${DEPLOYMENTS_DIR} ..."
   copy_dir ${binary_dir} ${DEPLOYMENTS_DIR}
   check_error "copying ${binary_dir} to ${DEPLOYMENTS_DIR}" $?
-{{? fp.param.base != "rhel"}}
+{{? fp.config.base.withGradle }}
 elif ls ${S2I_SOURCE_DIR}/*.gradle* &> /dev/null; then
   echo "S2I source build for Gradle detected, due to presence of a *.gradle* in ${S2I_SOURCE_DIR}"
   build_dir=$(get_gradle_output_dir)

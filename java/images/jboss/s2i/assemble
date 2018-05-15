@@ -47,25 +47,6 @@ function get_maven_output_dir() {
   echo ${dir}
 }
 
-
-function get_gradle_output_dir() {
-  local dir=""
-
-  # If multi module build and no ARTIFACT_DIR is set --> error
-  if [ x"${ARTIFACT_DIR}" = x ]; then
-    dir="${S2I_SOURCE_DIR}/build/libs"
-  else
-    if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
-       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
-       exit 1
-    fi
-    dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
-  fi
-
-  echo ${dir}
-}
-
-
 function copy_dir() {
   local src=$1
   local dest=$2
@@ -179,6 +160,26 @@ function build_maven() {
 }
 
 
+# =========================================================================
+# Gradle support
+
+function get_gradle_output_dir() {
+  local dir=""
+
+  # If multi module build and no ARTIFACT_DIR is set --> error
+  if [ x"${ARTIFACT_DIR}" = x ]; then
+    dir="${S2I_SOURCE_DIR}/build/libs"
+  else
+    if [ "${ARTIFACT_DIR:0:1}" = "/" ]; then
+       echo "ARTIFACT_DIR \"${ARTIFACT_DIR}\" must not be absolute but relative to the source directory"
+       exit 1
+    fi
+    dir="${S2I_SOURCE_DIR}/${ARTIFACT_DIR}"
+  fi
+
+  echo ${dir}
+}
+
 function build_gradle() {
   # Where artifacts are created during build
   local build_dir=$1
@@ -223,6 +224,7 @@ function build_gradle() {
 
   cd ${old_dir}
 }
+
 
 
 # =========================================================================

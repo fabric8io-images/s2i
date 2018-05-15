@@ -8,6 +8,7 @@ fish-pepper:
 config:
   base:
     jboss:
+      withGradle: true
       from: "jboss/base-jdk:8"
       user: "jboss"
       home: "/opt/jboss"
@@ -18,6 +19,7 @@ config:
           jolokia: "1.5.0"
           jmxexporter: "0.1.0"
     rhel:
+      withGradle: false
       from: "jboss/openjdk18-rhel7:1.1-7"
       user: "jboss"
       home: "/home/jboss"
