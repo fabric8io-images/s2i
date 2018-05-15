@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+repositories {
+    jcenter()
+}
+
+mainClassName = 'ch.vorburger.openshift.s2i.example.Server'
+
+jar {
+  manifest {
+    attributes(
+      'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+      'Main-Class': "$mainClassName"
+    )
+  }
+}
