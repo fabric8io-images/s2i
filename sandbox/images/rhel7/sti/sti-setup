@@ -1,4 +1,0 @@
-# Local vars setup with defaults
-STI_DIR=${STI_DIR:-/tmp}
-STI_SOURCE_DIR=${STI_SOURCE_DIR:-${STI_DIR}/src}
-STI_ARTIFACTS_DIR=${STI_ARTIFACTS_DIR:-${STI_DIR}/artifacts}
