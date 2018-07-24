@@ -462,7 +462,8 @@ proxy_options() {
 
   local noProxy="${no_proxy:-${NO_PROXY:-}}"
   if [ -n "$noProxy" ] ; then
-    ret="$ret -Dhttp.nonProxyHosts=\"$(echo $noProxy | sed -e 's/,[[:space:]]*/|/g')\""
+    # Replace separator "," by "|" and prefix hosts with a wildcard '*' (ex: '.svc' -> '*.svc') because OpenShift doesn't allow wildcards in  $no_proxy
+    ret="$ret -Dhttp.nonProxyHosts=\"$(echo $noProxy | sed -e 's/,[[:space:]]*/|/g' | sed -e 's/^\./*./g'  | sed -e 's/|\./|*./g')\""
   fi
   echo "$ret"
 }
