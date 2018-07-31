@@ -1,4 +1,4 @@
-# JBoss S2I Karaf builder image with OpenJDK 8
+# CentOS S2I Karaf builder image with OpenJDK 8
 
 An image that can be used with Openshift's [Source To Image](https://docs.openshift.com/enterprise/3.0/creating_images/s2i.html) in order to build
 [Karaf4 custom assembly](https://karaf.apache.org/manual/latest/developers-guide/custom-distribution.html) or
