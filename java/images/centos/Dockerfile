@@ -1,16 +1,16 @@
-FROM jboss/base-jdk:8
+FROM centos:7.5.1804
 
-ENV JOLOKIA_VERSION="1.5.0" \
-    PROMETHEUS_JMX_EXPORTER_VERSION="0.1.0" \
+ENV JOLOKIA_VERSION="1.6.0" \
+    PROMETHEUS_JMX_EXPORTER_VERSION="0.3.1" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
     JAVA_DATA_DIR="/deployments/data"
 
 # Some version information
-LABEL io.fabric8.s2i.version.maven="3.3.3" \
-      io.fabric8.s2i.version.jolokia="1.5.0" \
-      io.fabric8.s2i.version.prometheus.jmx_exporter="0.1.0" \
+LABEL io.fabric8.s2i.version.maven="3.5.4" \
+      io.fabric8.s2i.version.jolokia="1.6.0" \
+      io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -24,22 +24,30 @@ LABEL io.fabric8.s2i.version.maven="3.3.3" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups & Add jboss user to the root group
-
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
- && usermod -g root -G jboss jboss
 
 
 # Dowload Maven from Apache
-RUN curl https://archive.apache.org/dist/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz | \
+RUN yum install -y \
+       java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5 \
+       java-1.8.0-openjdk-devel-1.8.0.181-3.b13.el7_5 \
+  && curl https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz | \
     tar -xzf - -C /opt \
- && ln -s /opt/apache-maven-3.3.3 /opt/maven \
- && ln -s /opt/maven/bin/mvn /usr/bin/mvn
+  && ln -s /opt/apache-maven-3.5.4 /opt/maven \
+  && ln -s /opt/maven/bin/mvn /usr/bin/mvn \
+  && groupadd -r jboss -g 1000 \
+  && useradd -u 1000 -r -g jboss -m -d /opt/jboss -s /sbin/nologin -c "JBoss user" jboss \
+  && chmod 755 /opt/jboss
 
+ENV JAVA_HOME /etc/alternatives/jre
+
+
+# Use /dev/urandom to speed up startups & Add jboss user to the root group
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+ && usermod -g root -G jboss jboss
 
 # Prometheus JMX exporter agent
  RUN mkdir -p /opt/prometheus/etc \
-  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.1.0/jmx_prometheus_javaagent-0.1.0.jar \
+  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.3.1/jmx_prometheus_javaagent-0.3.1.jar \
           -o /opt/prometheus/jmx_prometheus_javaagent.jar
  ADD prometheus-opts /opt/prometheus/prometheus-opts
  ADD prometheus-config.yml /opt/prometheus/prometheus-config.yml
@@ -54,7 +62,7 @@ EXPOSE 9779
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.5.0/jolokia-jvm-1.5.0-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.6.0/jolokia-jvm-1.6.0-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \

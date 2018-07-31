@@ -1,4 +1,4 @@
-# JBoss S2I Java builder image with OpenJDK 8
+# CentOS S2I Java builder image with OpenJDK 8
 
 This is a S2I builder image for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including "far jars").
 

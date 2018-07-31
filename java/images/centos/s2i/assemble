@@ -137,12 +137,6 @@ function build_maven() {
 
   local mvn="mvn"
 
-  if [ -f "mvnw" ]; then
-    echo "Using local mvnw"
-    ./mvnw --version
-    mvn="./mvnw"
-  fi
-
 
   # =========
   # Run Maven

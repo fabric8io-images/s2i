@@ -16,12 +16,11 @@ config:
       user: "jboss"
       home: "/opt/jboss"
       description: "JBoss S2I Karaf builder image with OpenJDK 8"
-      lib:
-        version:
-          maven: "3.3.3"
-          jolokia: "1.3.6"
-          karaf: "4.0.8"
-          jmxexporter: "0.10"
+      version:
+        maven: "3.3.3"
+        jolokia: "1.3.6"
+        karaf: "4.0.8"
+        jmxexporter: "0.10"
     rhel:
       from: "jboss/openjdk18-rhel7:1.1-7"
       user: "jboss"
@@ -29,11 +28,10 @@ config:
       description: "RHEL S2I Karaf builder image with OpenJDK 8"
       # Re-enable when productised version of jolokia is available
       # mavenRepo: "https://maven.repository.redhat.com/ga"
-      lib:
-        version:
-          maven: "3.3.3-1.el7"
-          # Re-enable when productised version is available:
-          # jolokia: "1.5.0.redhat-1"
-          jolokia: 1.5.0
-          karaf: "6.3.0.redhat-187"
-          jmxexporter: "0.10"
+      version:
+        maven: "3.3.3-1.el7"
+        # Re-enable when productised version is available:
+        # jolokia: "1.5.0.redhat-1"
+        jolokia: 1.5.0
+        karaf: "6.3.0.redhat-187"
+        jmxexporter: "0.10"

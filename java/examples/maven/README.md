@@ -46,7 +46,7 @@ _NB that you cannot really build from "the latest sources from the local filesys
 
 ### Container options
 
-All JVM options documented on https://github.com/fabric8io-images/s2i/tree/master/java/images/jboss
+All JVM options documented on https://github.com/fabric8io-images/s2i/tree/master/java/images/centos
 are typically specified in [`.s2i/environment`](.s2i/environment), but  for quick testing can obviously also be specified on the `docker run` CLI like so:
 
     docker run -e "JAVA_MAIN_CLASS=ch.vorburger.openshift.s2i.example.Server" -p 8080:8080 vorburger:s2i-java-example
@@ -56,21 +56,21 @@ are typically specified in [`.s2i/environment`](.s2i/environment), but  for quic
 
 If you want to use latest fabric8/s2i-java from source instead of an older image on hub.docker.com, then you can do that.  Here's how for local Docker:
 
-    docker build https://github.com/fabric8io-images/s2i.git#master:java/images/jboss
+    docker build https://github.com/fabric8io-images/s2i.git#master:java/images/centos
 
 or:
 
     git clone https://github.com/fabric8io-images/s2i.git
-    cd java/images/jboss
+    cd java/images/centos
     docker build . -t fabric8/s2i-java
 
 and inside OpenShift:
 
-    oc new-build https://github.com/fabric8io-images/s2i.git --context-dir=java/images/jboss
+    oc new-build https://github.com/fabric8io-images/s2i.git --context-dir=java/images/centos
 
 _NB As above, you cannot really build from "the latest sources from the local filesystems", but you can push in-development changes to a remote and test that, like this:_
 
-    oc new-build https://github.com/YOURID/s2i.git#GITBRANCH --context-dir=java/images/jboss
+    oc new-build https://github.com/YOURID/s2i.git#GITBRANCH --context-dir=java/images/centos
 
 and then test using that like this:
 
@@ -98,6 +98,6 @@ and then test using that like this:
 ## More background
 
 * https://github.com/fabric8io-images/s2i
-* https://github.com/fabric8io-images/s2i/tree/master/java/images/jboss
+* https://github.com/fabric8io-images/s2i/tree/master/java/images/centos
 * https://github.com/fabric8io-images/s2i/issues/112
 * https://github.com/openshift/source-to-image

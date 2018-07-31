@@ -4,7 +4,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven</artifactId>
-      <version>{{= fp.config.base.lib.version.maven }}</version>
+      <version>{{= fp.config.base.version.maven }}</version>
       <licenses>
         <license>
           <name>Apache Software License, Version 2.0</name>
@@ -16,7 +16,7 @@
     <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia</artifactId>
-      <version>{{= fp.config.base.lib.version.jolokia }}</version>
+      <version>{{= fp.config.base.version.jolokia }}</version>
       <licenses>
         <license>
           <name>Apache Software License, Version 2.0</name>
@@ -28,7 +28,7 @@
     <dependency>
       <groupId>io.prometheus.jmx</groupId>
       <artifactId>jmx_prometheus_javaagent</artifactId>
-      <version>{{= fp.config.base.lib.version.jmxexporter }}</version>
+      <version>{{= fp.config.base.version.jmxexporter }}</version>
       <licenses>
         <license>
           <name>Apache Software License, Version 2.0</name>
