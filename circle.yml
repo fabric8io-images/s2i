@@ -18,7 +18,7 @@ deployment:
     commands:
       - |
         test -n "$CI_PULL_REQUEST" || \
-          ( cd java/images/master \
+          ( cd java/images/centos \
             && docker build -t fabric8/s2i-java:latest . | cat -  \
             && docker push fabric8/s2i-java:latest | cat -  \
             && cd ../../../karaf \
