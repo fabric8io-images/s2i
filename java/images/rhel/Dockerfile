@@ -24,10 +24,6 @@ LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups & Add jboss user to the root group
-
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
- && usermod -g root -G jboss jboss
 
 
 # Install Maven via SCL
@@ -36,6 +32,10 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 
+
+# Use /dev/urandom to speed up startups & Add jboss user to the root group
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+ && usermod -g root -G jboss jboss
 
 # Prometheus JMX exporter agent
  RUN mkdir -p /opt/prometheus/etc \

@@ -1,13 +1,13 @@
 {{
   var mavenRepo = fp.config.base.mavenRepo;
-  var mavenVersion = fp.config.base.lib.version.maven;
+  var mavenVersion = fp.config.base.version.maven;
 }}FROM {{= fp.config.base.from }}
 
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
-ENV JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
-    KARAF_FRAMEWORK_VERSION="{{= fp.config.base.lib.version.karaf }}" \
-    PROMETHEUS_JMX_EXPORTER_VERSION="{{= fp.config.base.lib.version.jmxexporter }}" \
+ENV JOLOKIA_VERSION="{{= fp.config.base.version.jolokia }}" \
+    KARAF_FRAMEWORK_VERSION="{{= fp.config.base.version.karaf }}" \
+    PROMETHEUS_JMX_EXPORTER_VERSION="{{= fp.config.base.version.jmxexporter }}" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -15,10 +15,10 @@ ENV JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
 # Expose jolokia port
 EXPOSE 8778
 
-LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
-      io.fabric8.s2i.version.jolokia="{{= fp.config.base.lib.version.jolokia }}" \
-      io.fabric8.s2i.version.karaf="{{= fp.config.base.lib.version.karaf }}" \
-      io.fabric8.s2i.version.prometheus.jmx_exporter="{{= fp.config.base.lib.version.jmxexporter }}" \
+LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.version.maven }}" \
+      io.fabric8.s2i.version.jolokia="{{= fp.config.base.version.jolokia }}" \
+      io.fabric8.s2i.version.karaf="{{= fp.config.base.version.karaf }}" \
+      io.fabric8.s2i.version.prometheus.jmx_exporter="{{= fp.config.base.version.jmxexporter }}" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
@@ -57,7 +57,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binar
   fp.block("jmxexporter", "install",
           { dest: "/opt/prometheus/prometheus-opts",
             userGroupMode: "root",
-            version: fp.config.base.lib.version.jmxexporter }) }}
+            version: fp.config.base.version.jmxexporter }) }}
 
 
 {{=
@@ -65,7 +65,7 @@ RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binar
           { dest: "/opt/jolokia/jolokia-opts",
             mavenRepo: mavenRepo,
             userGroupMode: "root",
-            version: fp.config.base.lib.version.jolokia }) }}
+            version: fp.config.base.version.jolokia }) }}
 
 # S2I scripts + README
 COPY s2i /usr/local/s2i

@@ -1,19 +1,19 @@
 {{
   var mavenRepo = fp.config.base.mavenRepo;
-  var mavenVersion = fp.config.base.lib.version.maven;
+  var mavenVersion = fp.config.base.version.maven;
 }}FROM {{= fp.config.base.from }}
 
-ENV JOLOKIA_VERSION="{{= fp.config.base.lib.version.jolokia }}" \
-    PROMETHEUS_JMX_EXPORTER_VERSION="{{= fp.config.base.lib.version.jmxexporter }}" \
+ENV JOLOKIA_VERSION="{{= fp.config.base.version.jolokia }}" \
+    PROMETHEUS_JMX_EXPORTER_VERSION="{{= fp.config.base.version.jmxexporter }}" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
     JAVA_DATA_DIR="/deployments/data"
 
 # Some version information
-LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
-      io.fabric8.s2i.version.jolokia="{{= fp.config.base.lib.version.jolokia }}" \
-      io.fabric8.s2i.version.prometheus.jmx_exporter="{{= fp.config.base.lib.version.jmxexporter }}" \
+LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.version.maven }}" \
+      io.fabric8.s2i.version.jolokia="{{= fp.config.base.version.jolokia }}" \
+      io.fabric8.s2i.version.prometheus.jmx_exporter="{{= fp.config.base.version.jmxexporter }}" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -27,10 +27,6 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.lib.version.maven }}" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups & Add jboss user to the root group
-
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
- && usermod -g root -G jboss jboss
 
 {{? fp.param.base === "rhel"}}
 # Install Maven via SCL
@@ -40,24 +36,36 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{??}}
 # Dowload Maven from Apache
-RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
+RUN yum install -y \
+       java-1.8.0-openjdk-{{= fp.config.base.version.java}} \
+       java-1.8.0-openjdk-devel-{{= fp.config.base.version.java}} \
+  && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
     tar -xzf - -C /opt \
- && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
- && ln -s /opt/maven/bin/mvn /usr/bin/mvn
+  && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
+  && ln -s /opt/maven/bin/mvn /usr/bin/mvn \
+  && groupadd -r jboss -g 1000 \
+  && useradd -u 1000 -r -g jboss -m -d /opt/jboss -s /sbin/nologin -c "JBoss user" jboss \
+  && chmod 755 /opt/jboss
+
+ENV JAVA_HOME /etc/alternatives/jre
 {{?}}
+
+# Use /dev/urandom to speed up startups & Add jboss user to the root group
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+ && usermod -g root -G jboss jboss
 
 {{=
   fp.block("jmxexporter", "install",
           { dest: "/opt/prometheus/prometheus-opts",
             userGroupMode: "root",
-            version: fp.config.base.lib.version.jmxexporter }) }}
+            version: fp.config.base.version.jmxexporter }) }}
 
 {{=
   fp.block("jolokia", "install",
           { dest: "/opt/jolokia/jolokia-opts",
             mavenRepo: mavenRepo,
             userGroupMode: "root",
-            version: fp.config.base.lib.version.jolokia }) }}
+            version: fp.config.base.version.jolokia }) }}
 {{? fp.param.base != "rhel"}}
 # Install rsync
 RUN yum install -y rsync
