@@ -32,13 +32,6 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.version.maven }}" \
 # Temporary switch to root
 USER root
 
-# Use /dev/urandom to speed up startups.
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
-
-# Add jboss user to the root group
-RUN usermod -g root -G jboss jboss
-
-
 # Install Maven via SCL
 {{? fp.param.base === "rhel"}}
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
@@ -47,11 +40,25 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{??}}
 # Dowload Maven from Apache
-RUN curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
+RUN yum install -y \
+       java-1.8.0-openjdk-{{= fp.config.base.version.java}} \
+       java-1.8.0-openjdk-devel-{{= fp.config.base.version.java}} \
+  && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
     tar -xzf - -C /opt \
- && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
- && ln -s /opt/maven/bin/mvn /usr/bin/mvn
+  && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
+  && ln -s /opt/maven/bin/mvn /usr/bin/mvn \
+  && groupadd -r jboss -g 1000 \
+  && useradd -u 1000 -r -g jboss -m -d /opt/jboss -s /sbin/nologin -c "JBoss user" jboss \
+  && chmod 755 /opt/jboss
+
+ENV JAVA_HOME /etc/alternatives/jre
 {{?}}
+
+# Use /dev/urandom to speed up startups.
+RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
+
+# Add jboss user to the root group
+RUN usermod -g root -G jboss jboss
 
 {{=
   fp.block("jmxexporter", "install",

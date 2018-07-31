@@ -3,7 +3,7 @@ fish-pepper:
   params:
     - base
   name: "fabric8/s2i-java"
-  build: "2.2.0"
+  build: "2.3.0"
 
 config:
   base:
