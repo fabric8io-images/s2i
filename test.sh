@@ -3,7 +3,7 @@ set -ex
 
 cd java ; fish-pepper ; cd ..
 
-docker build java/images/jboss/ -t fabric8/s2i-java
+docker build java/images/centos/ -t fabric8/s2i-java
 
 # ----------------------------------------------------------------------------------
 
