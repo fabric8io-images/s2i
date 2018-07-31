@@ -1,0 +1,84 @@
+version: 2
+
+jobs:
+  java-latest:
+    docker:
+      - image: 18.10-curl-browsers
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build S2I Java
+          command: |
+              cd java/images/centos
+              docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+              docker build -t fabric8/s2i-java:latest .
+              docker push fabric8/s2i-java:latest
+  karaf-latest:
+    docker:
+      - image: 18.10-curl-browsers
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build S2I Karaf
+          command: |
+              cd karaf/images/centos
+              docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+              docker build -t fabric8/s2i-karaf:latest .
+              docker push fabric8/s2i-karaf:latest
+  java-tag:
+    docker:
+      - image: 18.10-curl-browsers
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build S2I Java for $CIRCLE_TAG
+          command: |
+              cd java/images/centos
+              docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+              docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/} .
+              docker push fabric8/s2i-java:${CIRCLE_TAG/#v/}
+              docker tag fabric8/s2i-java:${CIRCLE_TAG/#v/} fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+              docker push fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+  karaf-tag:
+    docker:
+      - image: 18.10-curl-browsers
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build S2I Karaf for $CIRCLE_TAG
+          command: |
+              cd karaf/images/centos
+              docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+              docker build -t fabric8/s2i-karaf:${CIRCLE_TAG/#v/} .
+              docker push fabric8/s2i-karaf:${CIRCLE_TAG/#v/}
+              docker tag fabric8/s2i-karaf:${CIRCLE_TAG/#v/} fabric8/s2i-karaf:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+              docker push fabric8/s2i-karaf:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+
+workflows:
+  version: 2
+  images:
+    jobs:
+      - java-latest:
+          filters:
+            branches:
+              only: master
+      - karaf-latest:
+          filters:
+            branches:
+              only: master
+      - java-tag:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+      - karaf-tag:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
