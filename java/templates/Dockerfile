@@ -98,6 +98,9 @@ RUN mkdir -p /deployments/data \
  && chown -R jboss:root {{= fp.config.base.home }} \
  && chmod 664 /etc/passwd
 
+# S2I scripts rely on {{= fp.config.base.home }} as working directory
+WORKDIR {{= fp.config.base.home }}
+
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 {{? fp.param.base === "rhel"}}
 USER 185

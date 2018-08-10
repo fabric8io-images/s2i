@@ -96,6 +96,9 @@ RUN mkdir -p /deployments/data \
  && chown -R jboss:root /home/jboss \
  && chmod 664 /etc/passwd
 
+# S2I scripts rely on /home/jboss as working directory
+WORKDIR /home/jboss
+
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
 
 USER 185
