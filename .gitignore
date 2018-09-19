@@ -1,2 +1,7 @@
 .DS_Store
 old
+
+# Eclipse
+.project
+.classpath
+.settings/

@@ -23,11 +23,13 @@ The following environment variables can be used to influence the behaviour of th
 
 Application arguments can be provided by setting the variable **JAVA_ARGS** to the corresponding value.
 
-## Spring Boot Automatic Restarts 
+## Spring Boot Automatic Restarts
 
-This image also supports detecting jars with [Spring Boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools) included, which allows automatic restarts when files on the classpath are updated. Files can be easily updated in OpenShift using command [`oc rsync`](https://docs.openshift.org/latest/dev_guide/copy_files_to_container.html). 
+This image also supports detecting jars with [Spring Boot devtools](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools) included, which allows automatic restarts when files on the classpath are updated. Files can be easily updated in OpenShift using command [`oc rsync`](https://docs.openshift.org/latest/dev_guide/copy_files_to_container.html).
 
-To enable automatic restarts, three things are required: 
+A [ready made example show case project](../../examples/spring-devtools) is here.
+
+To enable automatic restarts, three things are required:
 
 1. Add Spring Boot devtools dependency:
 
@@ -57,7 +59,7 @@ To enable automatic restarts, three things are required:
 </build>
 ```
 
-3. Set environment variables `JAVA_DEBUG=true` or `DEBUG=true` and optionally `JAVA_DEBUG_PORT=<port-number>` or `DEBUG_PORT=<port-number>`, which defaults to 5005. Since the `DEBUG` variable clashes with Spring Boot's recognition of the same variable to enable Spring Boot debug logging, use `SPRINGBOOT_DEBUG` instead. 
+3. Set environment variables `JAVA_DEBUG=true` or `DEBUG=true` and optionally `JAVA_DEBUG_PORT=<port-number>` or `DEBUG_PORT=<port-number>`, which defaults to 5005. Since the `DEBUG` variable clashes with Spring Boot's recognition of the same variable to enable Spring Boot debug logging, use `SPRINGBOOT_DEBUG` instead.
 
-WARNING: Do not use devtools in production!!! This can be accomplished in Maven using a custom profile. 
+WARNING: Do not use devtools in production!!! This can be accomplished in Maven using a custom profile.
 

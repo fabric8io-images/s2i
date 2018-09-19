@@ -32,6 +32,7 @@ function test_container() {
 
 # ----------------------------------------------------------------------------------
 # Maven
+# --------------------------------------------------------------------------------
 
 s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-example
 
@@ -44,7 +45,6 @@ test_container "s2i-java-maven-example"
 # --------------------------------------------------------------------------------
 # Gradle
 # --------------------------------------------------------------------------------
-
 
 s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-example
 
@@ -64,6 +64,16 @@ s2i build --copy java/examples/binary/ fabric8/s2i-java fabric8/s2i-java-binary-
 rm java/examples/binary/deployments/*
 
 test_container "s2i-java-binary-example"
+
+
+# ----------------------------------------------------------------------------------
+# Spring Boot Developer Tools
+# ----------------------------------------------------------------------------------
+
+s2i build --copy java/examples/spring-devtools fabric8/s2i-java fabric8/s2i-java-spring-devtools-example
+
+test_container "s2i-java-spring-devtools-example"
+
 
 # ----------------------------------------------------------------------------------
 # Maven Wrapper
