@@ -9,7 +9,7 @@ config:
   base:
     centos:
       withGradle: true
-      from: "centos:7.5.1804"
+      from: "centos:7"
       user: "jboss"
       home: "/opt/jboss"
       description: "CentOS S2I Java builder image with OpenJDK 8"
