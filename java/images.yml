@@ -32,4 +32,4 @@ config:
         # Re-enable when productised version is available:
         # jolokia: "1.5.0.redhat-1"
         jolokia: 1.5.0
-        jmxexporter: "0.10"
+        jmxexporter: "0.3.1"

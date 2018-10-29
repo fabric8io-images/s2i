@@ -35,4 +35,4 @@ config:
         # jolokia: "1.5.0.redhat-1"
         jolokia: 1.5.0
         karaf: "6.3.0.redhat-187"
-        jmxexporter: "0.10"
+        jmxexporter: "0.3.1"
