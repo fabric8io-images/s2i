@@ -4,7 +4,7 @@ MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV JOLOKIA_VERSION="1.5.0" \
     KARAF_FRAMEWORK_VERSION="6.3.0.redhat-187" \
-    PROMETHEUS_JMX_EXPORTER_VERSION="0.10" \
+    PROMETHEUS_JMX_EXPORTER_VERSION="0.3.1" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true"
@@ -15,7 +15,7 @@ EXPOSE 8778
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
       io.fabric8.s2i.version.jolokia="1.5.0" \
       io.fabric8.s2i.version.karaf="6.3.0.redhat-187" \
-      io.fabric8.s2i.version.prometheus.jmx_exporter="0.10" \
+      io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
       io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
@@ -45,7 +45,7 @@ RUN usermod -g root -G jboss jboss
 
 # Prometheus JMX exporter agent
  RUN mkdir -p /opt/prometheus/etc \
-  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.10/jmx_prometheus_javaagent-0.10.jar \
+  && curl http://central.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.3.1/jmx_prometheus_javaagent-0.3.1.jar \
           -o /opt/prometheus/jmx_prometheus_javaagent.jar
  ADD prometheus-opts /opt/prometheus/prometheus-opts
  ADD prometheus-config.yml /opt/prometheus/prometheus-config.yml
