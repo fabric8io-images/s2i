@@ -1,16 +1,12 @@
 #!/bin/sh
 set -ex
 
-cd java ; fish-pepper ; cd ..
-
-docker build java/images/centos/ -t fabric8/s2i-java
-
-# ----------------------------------------------------------------------------------
+# ==================================================================================
 
 function test_container() {
   local name=$1
 
-  CONTAINER_ID=$(docker run --name ${name}-test -d -p 8080 fabric8/${name})
+  CONTAINER_ID=$(docker run --name ${name}-test -d -p 8080 ${name})
 
   # sleep is required because after docker run returns, the container is up but our server may not quite be yet
   sleep 5
@@ -29,45 +25,59 @@ function test_container() {
   fi
 }
 
+# ==================================================================================
 
-# ----------------------------------------------------------------------------------
-# Maven
+function test_image() {
+  local dir=$1
+  local name=$2
 
-s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-example
+  docker build ${dir} -t ${name}
 
-# Now rebuild incrementally, it should not re-download .m2
-s2i build --copy java/examples/maven fabric8/s2i-java fabric8/s2i-java-maven-example --incremental
+  # ----------------------------------------------------------------------------------
+  # Maven
+  # ----------------------------------------------------------------------------------
 
-test_container "s2i-java-maven-example"
+  s2i build --copy java/examples/maven ${name} ${name}-maven-example
 
+  # Now rebuild incrementally, it should not re-download .m2
+  s2i build --copy java/examples/maven ${name} ${name}-maven-example --incremental
 
-# --------------------------------------------------------------------------------
-# Gradle
-# --------------------------------------------------------------------------------
-
-
-s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-example
-
-s2i build --copy java/examples/gradle fabric8/s2i-java fabric8/s2i-java-gradle-example --incremental
-
-test_container "s2i-java-gradle-example"
+  test_container "${name}-maven-example"
 
 
-# ----------------------------------------------------------------------------------
-# Binary
-# ----------------------------------------------------------------------------------
+  # --------------------------------------------------------------------------------
+  # Gradle
+  # --------------------------------------------------------------------------------
 
-mvn -f java/examples/maven/ clean package
-cp java/examples/maven/target/*.jar java/examples/binary/deployments/
+  s2i build --copy java/examples/gradle ${name} ${name}-gradle-example
 
-s2i build --copy java/examples/binary/ fabric8/s2i-java fabric8/s2i-java-binary-example
-rm java/examples/binary/deployments/*
+  s2i build --copy java/examples/gradle ${name} ${name}-gradle-example --incremental
 
-test_container "s2i-java-binary-example"
+  test_container "s2i-java-gradle-example"
 
-# ----------------------------------------------------------------------------------
-# Maven Wrapper
-# ----------------------------------------------------------------------------------
 
-s2i build --copy java/examples/maven-wrapper fabric8/s2i-java fabric8/s2i-java-maven-wrapper-example
-s2i build --copy java/examples/maven-wrapper fabric8/s2i-java fabric8/s2i-java-maven-wrapper-example --incremental
+  # ----------------------------------------------------------------------------------
+  # Binary
+  # ----------------------------------------------------------------------------------
+
+  mvn -f java/examples/maven/ clean package
+  cp java/examples/maven/target/*.jar java/examples/binary/deployments/
+
+  s2i build --copy java/examples/binary/ ${name} ${name}-binary-example
+  rm java/examples/binary/deployments/*
+
+  test_container "s2i-java-binary-example"
+
+
+  # ----------------------------------------------------------------------------------
+  # Maven Wrapper
+  # ----------------------------------------------------------------------------------
+
+  s2i build --copy java/examples/maven-wrapper ${name} ${name}-maven-wrapper-example
+  s2i build --copy java/examples/maven-wrapper ${name} ${name}-maven-wrapper-example --incremental
+}
+
+# ==================================================================================
+
+cd java ; fish-pepper ; cd ..
+test_image "java/images/centos/" "s2i-java"
