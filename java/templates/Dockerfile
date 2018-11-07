@@ -35,10 +35,10 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{??}}
-# Dowload Maven from Apache
+# Install Java package & download Maven from Apache
 RUN yum install -y \
-       java-1.8.0-openjdk-{{= fp.config.base.version.java}} \
-       java-1.8.0-openjdk-devel-{{= fp.config.base.version.java}} \
+       java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
+       java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
   && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
     tar -xzf - -C /opt \
   && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
