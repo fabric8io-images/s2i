@@ -51,7 +51,7 @@ ENV JAVA_HOME /etc/alternatives/jre
 {{?}}
 
 # Use /dev/urandom to speed up startups & Add jboss user to the root group
-RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security \
+RUN echo securerandom.source=file:/dev/urandom >> {{= fp.config.base.javaSecurity }} \
  && usermod -g root -G jboss jboss
 
 {{=

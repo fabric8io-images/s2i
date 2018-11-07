@@ -12,6 +12,7 @@ config:
       from: "centos:7.5.1804"
       user: "jboss"
       home: "/opt/jboss"
+      javaSecurity: "/usr/lib/jvm/java/jre/lib/security/java.security"
       description: "CentOS S2I Java builder image with OpenJDK 8"
       version:
         javaMajor: "1.8.0"
@@ -25,6 +26,7 @@ config:
       from: "jboss/openjdk18-rhel7:1.1-7"
       user: "jboss"
       home: "/home/jboss"
+      javaSecurity: "/usr/lib/jvm/java/jre/lib/security/java.security"
       description: "RHEL S2I Java builder image with OpenJDK 8"
       # Re-enable when productised version of jolokia is available
       # mavenRepo: "https://maven.repository.redhat.com/ga"
