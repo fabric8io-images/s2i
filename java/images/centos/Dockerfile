@@ -28,6 +28,7 @@ USER root
 
 # Install Java package & download Maven from Apache
 RUN yum install -y \
+       unzip \
        java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5 \
        java-1.8.0-openjdk-devel-1.8.0.181-3.b13.el7_5 \
   && curl https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz | \

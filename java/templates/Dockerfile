@@ -37,6 +37,7 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
 {{??}}
 # Install Java package & download Maven from Apache
 RUN yum install -y \
+       unzip \
        java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
        java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
   && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \

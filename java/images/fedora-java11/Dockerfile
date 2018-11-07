@@ -28,6 +28,7 @@ USER root
 
 # Install Java package & download Maven from Apache
 RUN yum install -y \
+       unzip \
        java-11-openjdk \
        java-11-openjdk-devel \
   && curl https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz | \
