@@ -43,6 +43,9 @@ RUN yum -y update \
 RUN yum -y update \
   && yum install -y --setopt=skip_missing_names_on_install=False \
        unzip rsync \
+{{? fp.config.base.version.javaMajor >= "11"}}
+       java-{{= fp.config.base.version.javaMajor}}-openjdk-jmods{{= fp.config.base.version.java}} \
+{{?}}
        java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
        java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
   && yum clean all \
