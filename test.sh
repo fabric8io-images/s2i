@@ -3,26 +3,62 @@ set -ex
 
 # ==================================================================================
 
-function test_container() {
+function test_app() {
   local name=$1
+  local port="8080"
 
-  CONTAINER_ID=$(docker run --name ${name}-test -d -p 8080 ${name})
+  local container_id=$(docker run --name ${name}-test -d -p ${port} ${name})
 
   # sleep is required because after docker run returns, the container is up but our server may not quite be yet
   sleep 5
 
-  HTTP_PORT="$(docker ps|grep ${name}-test|sed 's/.*0.0.0.0://g'|sed 's/->.*//g')"
-  HTTP_REPLY=$(curl --silent --show-error http://localhost:$HTTP_PORT)
+  local http_port="$(docker port ${container_id} ${port}|sed 's/0.0.0.0://')"
+  local http_reply=$(curl --silent --show-error http://localhost:$http_port)
 
-  docker rm -f "$CONTAINER_ID"
+  docker rm -f "$container_id"
 
-  if [ "$HTTP_REPLY" = 'hello, world' ]; then
-    echo "TEST PASSED"
+  if [ "$http_reply" = 'hello, world' ]; then
+    echo "APP TEST PASSED"
     return 0
   else
-    echo "TEST FAILED"
+    echo "APP TEST FAILED"
     return -123
   fi
+}
+
+# ==================================================================================
+
+function test_metrics() {
+  local name=$1
+  local port="9779"
+
+  local container_id=$(docker run --name ${name}-test -d -p ${port} ${name})
+
+  # sleep is required because after docker run returns, the container is up but our server may not quite be yet
+  sleep 5
+
+  local metrics_port="$(docker port ${container_id} ${port}|sed 's/0.0.0.0://')"
+  local metrics_reply=$(curl --silent --show-error http://localhost:$metrics_port/metrics)
+
+  docker rm -f "$container_id"
+
+  case $metrics_reply in
+    *"jvm_threads_current"*)
+      echo "METRICS TEST PASSED"
+      return 0
+      ;;
+    *)
+      echo "METRICS TEST FAILED"
+      return -123
+      ;;
+  esac
+}
+
+# ==================================================================================
+
+function test_container() {
+  test_app $1
+  test_metrics $1
 }
 
 # ==================================================================================
