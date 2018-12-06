@@ -94,7 +94,8 @@ function test_image() {
 
   s2i build --copy java/examples/gradle ${name} ${name}-gradle-example
 
-  s2i build --copy java/examples/gradle ${name} ${name}-gradle-example --incremental
+  # TODO https://github.com/fabric8io-images/s2i/issues/150
+  # s2i build --copy java/examples/gradle ${name} ${name}-gradle-example --incremental
 
   test_container "s2i-java-gradle-example"
 
