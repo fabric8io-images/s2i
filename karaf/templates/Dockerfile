@@ -43,6 +43,7 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_
 RUN yum install -y --setopt=skip_missing_names_on_install=False \
        java-1.8.0-openjdk \
        java-1.8.0-openjdk-devel \
+  && yum clean all \
   && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
     tar -xzf - -C /opt \
   && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \
