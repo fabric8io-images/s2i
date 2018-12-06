@@ -32,7 +32,7 @@ USER root
 # Install Maven via SCL
 
 # Dowload Maven from Apache
-RUN yum install -y \
+RUN yum install -y --setopt=skip_missing_names_on_install=False \
        java-1.8.0-openjdk \
        java-1.8.0-openjdk-devel \
   && curl https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz | \
