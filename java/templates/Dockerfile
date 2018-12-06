@@ -31,12 +31,12 @@ USER root
 {{? fp.param.base === "rhel"}}
 # Install Maven via SCL
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_install=False rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{??}}
 # Install Java package & download Maven from Apache
-RUN yum install -y \
+RUN yum install -y --setopt=skip_missing_names_on_install=False \
        unzip \
        java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
        java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
@@ -69,7 +69,7 @@ RUN echo securerandom.source=file:/dev/urandom >> {{= fp.config.base.javaSecurit
             version: fp.config.base.version.jolokia }) }}
 {{? fp.param.base != "rhel"}}
 # Install rsync
-RUN yum install -y rsync
+RUN yum install -y --setopt=skip_missing_names_on_install=False rsync
 {{?}}
 
 # S2I scripts + README
