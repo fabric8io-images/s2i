@@ -17,7 +17,6 @@ config:
       home: "/opt/jboss"
       description: "CentOS S2I Karaf builder image with OpenJDK 8"
       version:
-        java: "1.8.0.181-3.b13.el7_5"
         maven: "3.5.4"
         jolokia: "1.6.0"
         karaf: "4.0.8"
