@@ -1,6 +1,19 @@
 version: 2
 
 jobs:
+  java11-latest:
+    docker:
+      - image: circleci/buildpack-deps:18.10-curl-browsers
+    steps:
+      - setup_remote_docker
+      - checkout
+      - run:
+          name: Build S2I Java
+          command: |
+              cd java/images/centos-java11
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker build -t fabric8/s2i-java:latest-java11 .
+              docker push fabric8/s2i-java:latest-java11
   java-latest:
     docker:
       - image: circleci/buildpack-deps:18.10-curl-browsers
@@ -62,6 +75,10 @@ workflows:
   version: 2
   images:
     jobs:
+      - java11-latest:
+          filters:
+            branches:
+              only: master
       - java-latest:
           filters:
             branches:
