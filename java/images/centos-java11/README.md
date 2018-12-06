@@ -1,4 +1,4 @@
-# CentOS 7.5 S2I Java builder image with OpenJDK 8
+# CentOS 7.6 S2I Java builder image with OpenJDK 11
 
 This is a S2I builder image for Java builds whose result can be run directly without any further application server.It's suited ideally for microservices with a flat classpath (including "far jars").
 

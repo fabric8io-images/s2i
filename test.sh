@@ -124,5 +124,6 @@ function test_image() {
 # ==================================================================================
 
 cd java ; fish-pepper ; cd ..
-test_image "java/images/fedora-java11/" "s2i-java"
+test_image "java/images/centos-java11/" "s2i-java-11"
+test_image "java/images/fedora-java11/" "s2i-java-11-fedora"
 test_image "java/images/centos/" "s2i-java"

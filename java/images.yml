@@ -20,13 +20,26 @@ config:
         maven: "3.6.0"
         jolokia: "1.6.0"
         jmxexporter: "0.3.1"
+    centos-java11:
+      withGradle: true
+      from: "centos:7"
+      user: "jboss"
+      home: "/opt/jboss"
+      javaSecurity: "/usr/lib/jvm/java/conf/security/java.security"
+      description: "CentOS 7.6 S2I Java builder image with OpenJDK 11"
+      version:
+        javaMajor: "11"
+        java: "" # empty means latest
+        maven: "3.6.0"
+        jolokia: "1.6.0"
+        jmxexporter: "0.3.1"
     centos:
       withGradle: true
       from: "centos:7"
       user: "jboss"
       home: "/opt/jboss"
       javaSecurity: "/usr/lib/jvm/java/jre/lib/security/java.security"
-      description: "CentOS S2I Java builder image with OpenJDK 8"
+      description: "CentOS 7.5 S2I Java builder image with OpenJDK 8"
       version:
         javaMajor: "1.8.0"
         java: "" # empty means latest
