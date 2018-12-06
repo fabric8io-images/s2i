@@ -45,6 +45,7 @@ RUN yum -y update \
        unzip rsync \
        java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
        java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
+  && yum clean all \
   && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
     tar -xzf - -C /opt \
   && ln -s /opt/apache-maven-{{= mavenVersion }} /opt/maven \

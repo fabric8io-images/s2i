@@ -35,6 +35,7 @@ RUN yum -y update \
        unzip rsync \
        java-11-openjdk \
        java-11-openjdk-devel \
+  && yum clean all \
   && curl https://archive.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz | \
     tar -xzf - -C /opt \
   && ln -s /opt/apache-maven-3.6.0 /opt/maven \
