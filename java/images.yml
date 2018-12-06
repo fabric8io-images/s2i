@@ -29,7 +29,7 @@ config:
       description: "CentOS S2I Java builder image with OpenJDK 8"
       version:
         javaMajor: "1.8.0"
-        java: "-1.8.0.181-3.b13.el7_5"
+        java: "" # empty means latest
         maven: "3.5.4"
         jolokia: "1.6.0"
         jmxexporter: "0.3.1"
