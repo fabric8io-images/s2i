@@ -30,7 +30,8 @@ USER root
 
 
 # Install Java package & download Maven from Apache
-RUN yum install -y --setopt=skip_missing_names_on_install=False \
+RUN yum -y update \
+  && yum install -y --setopt=skip_missing_names_on_install=False \
        unzip rsync \
        java-11-openjdk \
        java-11-openjdk-devel \
