@@ -3,6 +3,9 @@
   var mavenVersion = fp.config.base.version.maven;
 }}FROM {{= fp.config.base.from }}
 
+ARG EXPOSE_PORT=8080
+EXPOSE ${EXPOSE_PORT}
+
 ENV JOLOKIA_VERSION="{{= fp.config.base.version.jolokia }}" \
     PROMETHEUS_JMX_EXPORTER_VERSION="{{= fp.config.base.version.jmxexporter }}" \
     PATH=$PATH:"/usr/local/s2i" \
@@ -116,6 +119,3 @@ COPY settings.xml /opt/jboss/.m2/settings.xml
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)
 CMD [ "/usr/local/s2i/run" ]
-
-# https://github.com/fabric8io-images/s2i/issues/115
-EXPOSE 8080
