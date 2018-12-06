@@ -32,7 +32,8 @@ USER root
 # Install Maven via SCL
 
 # Dowload Maven from Apache
-RUN yum install -y --setopt=skip_missing_names_on_install=False \
+RUN  yum -y update \
+  && yum install -y --setopt=skip_missing_names_on_install=False \
        java-1.8.0-openjdk \
        java-1.8.0-openjdk-devel \
   && yum clean all \

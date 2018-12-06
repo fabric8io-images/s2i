@@ -35,12 +35,14 @@ USER root
 # Install Maven via SCL
 {{? fp.param.base === "rhel"}}
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_install=False rh-maven33-maven \
+RUN yum -y update
+    && yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_install=False rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 {{??}}
 # Dowload Maven from Apache
-RUN yum install -y --setopt=skip_missing_names_on_install=False \
+RUN  yum -y update \
+  && yum install -y --setopt=skip_missing_names_on_install=False \
        java-1.8.0-openjdk \
        java-1.8.0-openjdk-devel \
   && yum clean all \
