@@ -31,7 +31,7 @@ USER root
 
 # Install Java package & download Maven from Apache
 RUN yum install -y --setopt=skip_missing_names_on_install=False \
-       unzip \
+       unzip rsync \
        java-11-openjdk \
        java-11-openjdk-devel \
   && curl https://archive.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz | \
@@ -75,10 +75,6 @@ RUN chmod 444 /opt/jolokia/jolokia.jar \
  && chgrp root /opt/jolokia/etc
 
 EXPOSE 8778
-
-
-# Install rsync
-RUN yum install -y --setopt=skip_missing_names_on_install=False rsync
 
 
 # S2I scripts + README

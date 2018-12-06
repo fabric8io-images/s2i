@@ -40,7 +40,7 @@ RUN yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_
 {{??}}
 # Install Java package & download Maven from Apache
 RUN yum install -y --setopt=skip_missing_names_on_install=False \
-       unzip \
+       unzip rsync \
        java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
        java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
   && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
@@ -70,10 +70,6 @@ RUN echo securerandom.source=file:/dev/urandom >> {{= fp.config.base.javaSecurit
             mavenRepo: mavenRepo,
             userGroupMode: "root",
             version: fp.config.base.version.jolokia }) }}
-{{? fp.param.base != "rhel"}}
-# Install rsync
-RUN yum install -y --setopt=skip_missing_names_on_install=False rsync
-{{?}}
 
 # S2I scripts + README
 COPY s2i /usr/local/s2i
