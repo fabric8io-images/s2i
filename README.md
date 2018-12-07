@@ -20,6 +20,10 @@ The Karaf S2I Builder image is used for creating S2I builds for
 
 #### Development
 
+##### Release Notes
+
+Please keep the [CHANGELOG.md](CHANGELOG.md) up-to-date.
+
 ##### Release Process
 
 Simply creating a tag (and pushing it remote) will [make Circle CI](.circleci/config.yml)
