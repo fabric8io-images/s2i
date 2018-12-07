@@ -16,3 +16,16 @@ for fetching dependencies and building up an appropriate classpath.
 
 The Karaf S2I Builder image is used for creating S2I builds for
 [Karaf](http://karaf.apache.org/) based applications.
+
+
+#### Development
+
+##### Release Process
+
+Simply creating a tag (and pushing it remote) will [make Circle CI](.circleci/config.yml)
+push a release of [fabric8/s2i-java to Docker Hub](https://hub.docker.com/r/fabric8/s2i-java/):
+
+    git tag -a v3.0.0 -m"release v3.0.0
+    git push origin v3.0.0
+
+We also automatically publish from the `master` branch to `latest-*` tags.
