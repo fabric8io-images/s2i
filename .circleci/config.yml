@@ -51,10 +51,15 @@ jobs:
           command: |
               cd java/images/centos
               docker login -u $DOCKER_USER -p $DOCKER_PASS
-              docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/} .
-              docker push fabric8/s2i-java:${CIRCLE_TAG/#v/}
-              docker tag fabric8/s2i-java:${CIRCLE_TAG/#v/} fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
-              docker push fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')
+              docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/}-java8 .
+              docker push fabric8/s2i-java:${CIRCLE_TAG/#v/}-java8
+              docker tag fabric8/s2i-java:${CIRCLE_TAG/#v/}-java8 fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')-java8
+              docker push fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')-java8
+              cd java/images/centos-java11
+              docker build -t fabric8/s2i-java:${CIRCLE_TAG/#v/}-java11 .
+              docker push fabric8/s2i-java:${CIRCLE_TAG/#v/}-java11
+              docker tag fabric8/s2i-java:${CIRCLE_TAG/#v/}-java11 fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')-java11
+              docker push fabric8/s2i-java:$(echo ${CIRCLE_TAG/#v/} | sed -e 's/\.[0-9][0-9]*$//')-java11
   karaf-tag:
     docker:
       - image: circleci/buildpack-deps:18.10-curl-browsers
