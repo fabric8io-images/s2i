@@ -1,4 +1,4 @@
-### Source-to-Image Builder images
+### Source-to-Image Builder images [![CircleCI](https://circleci.com/gh/fabric8io-images/s2i.svg?style=svg)](https://circleci.com/gh/fabric8io-images/s2i)
 
 This repo holds the source for the fabric8's
 [S2I](https://docs.openshift.com/enterprise/3.0/creating_images/s2i.html)
