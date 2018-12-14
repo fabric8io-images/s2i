@@ -1,4 +1,4 @@
-### Source-to-Image Builder images ![](https://img.shields.io/docker/pulls/fabric8/s2i-java.svg?style=for-the-badge) [![CircleCI](https://circleci.com/gh/fabric8io-images/s2i.svg?style=svg)](https://circleci.com/gh/fabric8io-images/s2i) 
+### Source-to-Image Builder images [![Docker Hub](https://img.shields.io/docker/pulls/fabric8/s2i-java.svg?style=for-the-badge)](https://hub.docker.com/r/fabric8/s2i-java/) [![CircleCI](https://circleci.com/gh/fabric8io-images/s2i.svg?style=svg)](https://circleci.com/gh/fabric8io-images/s2i) 
 
 This repo holds the source for the fabric8's
 [S2I](https://docs.openshift.com/enterprise/3.0/creating_images/s2i.html)
