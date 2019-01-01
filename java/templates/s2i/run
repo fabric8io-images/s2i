@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Command line arguments given to this script
-args="$*"
-
 # Global S2I variable setup
 source `dirname "$0"`/s2i-setup
 
@@ -54,8 +51,8 @@ rm /tmp/passwd
 
 if [ -f "${DEPLOYMENTS_DIR}/bin/run.sh" ]; then
     echo "Starting the application using the bundled ${DEPLOYMENTS_DIR}/bin/run.sh ..."
-    exec ${DEPLOYMENTS_DIR}/bin/run.sh $args ${JAVA_ARGS}
+    exec ${DEPLOYMENTS_DIR}/bin/run.sh "$@" ${JAVA_ARGS}
 else
     echo "Starting the Java application using /opt/run-java/run-java.sh ..."
-    exec /opt/run-java/run-java.sh $args ${JAVA_ARGS}
+    exec /opt/run-java/run-java.sh "$@" ${JAVA_ARGS}
 fi
