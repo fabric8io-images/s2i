@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -ex
 
 # ==================================================================================
@@ -56,6 +56,31 @@ function test_metrics() {
 
 # ==================================================================================
 
+function test_entrypoint() {
+  local name=$1
+  local entrypoint=$2
+
+  local container_id=$(docker run --name ${name}-test -d \
+                         -e LANG=en_US.UTF-8 -e PARAMETER_THAT_MAY_NEED_ESCAPING="&'\"|< é\\(" ${name} \
+                         ${entrypoint} --commandLineArgValueThatMayNeedEscaping="&'\"|< é\\(" --killDelay=1 --exitCode=0)
+
+  # sleep is required because after docker run returns, the container is up but our server may not quite be yet
+  local exitCode=$(docker wait ${container_id})
+
+  if [ "$exitCode" = '0' ]; then
+    echo "APP TEST PASSED (with entrypoint ${entrypoint})"
+    docker rm -f ${container_id}
+    return 0
+  else
+    echo "APP TEST FAILED (with entrypoint ${entrypoint})"
+    docker logs ${container_id}
+    docker rm -f ${container_id}
+  return -123
+  fi
+}
+
+# ==================================================================================
+
 function test_container() {
   test_app $1
   test_metrics $1
@@ -97,7 +122,7 @@ function test_image() {
   # TODO https://github.com/fabric8io-images/s2i/issues/150
   # s2i build --copy java/examples/gradle ${name} ${name}-gradle-example --incremental
 
-  test_container "s2i-java-gradle-example"
+  test_container "${name}-gradle-example"
 
 
   # ----------------------------------------------------------------------------------
@@ -110,8 +135,7 @@ function test_image() {
   s2i build --copy java/examples/binary/ ${name} ${name}-binary-example
   rm java/examples/binary/deployments/*
 
-  test_container "s2i-java-binary-example"
-
+  test_container "${name}-binary-example"
 
   # ----------------------------------------------------------------------------------
   # Maven Wrapper
@@ -119,6 +143,23 @@ function test_image() {
 
   s2i build --copy java/examples/maven-wrapper ${name} ${name}-maven-wrapper-example
   s2i build --copy java/examples/maven-wrapper ${name} ${name}-maven-wrapper-example --incremental
+
+  # ----------------------------------------------------------------------------------
+  # Entrypoint Binary
+  # ----------------------------------------------------------------------------------
+  local dir=$1
+  local name=$2
+
+  curl https://repo.spring.io/release/org/springframework/cloud/spring-cloud-deployer-spi-test-app/1.3.4.RELEASE/spring-cloud-deployer-spi-test-app-1.3.4.RELEASE-exec.jar \
+       -o java/examples/binary/deployments/app.jar
+
+  s2i build --copy java/examples/binary/ ${name} ${name}-entrypoint-binary-example
+  rm java/examples/binary/deployments/*
+
+  test_entrypoint "${name}-entrypoint-binary-example" "java -jar /deployments/app.jar"  # works
+  test_entrypoint "${name}-entrypoint-binary-example" /opt/run-java/run-java.sh         # will fail until https://github.com/fabric8io-images/run-java-sh/issues/75 is fixed
+  test_entrypoint "${name}-entrypoint-binary-example" /usr/local/s2i/run                # will fail until https://github.com/fabric8io-images/run-java-sh/issues/75 is fixed
+
 }
 
 # ==================================================================================
