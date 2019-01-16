@@ -86,6 +86,7 @@ function test_entrypoint() {
 
 function test_container() {
   test_app $1
+  test_app $1 "-e JAVA_DIAGNOSTICS=TRUE" # https://github.com/fabric8io-images/s2i/issues/213
   test_metrics $1
 }
 
