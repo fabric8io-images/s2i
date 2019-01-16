@@ -15,13 +15,14 @@ function test_app() {
   local http_port="$(docker port ${container_id} ${port}|sed 's/0.0.0.0://')"
   local http_reply=$(curl --silent --show-error http://localhost:$http_port)
 
-  docker rm -f "$container_id"
-
   if [ "$http_reply" = 'hello, world' ]; then
     echo "APP TEST PASSED"
+    docker rm -f ${container_id}
     return 0
   else
     echo "APP TEST FAILED"
+    docker logs ${container_id}
+    docker rm -f ${container_id}
     return -123
   fi
 }
@@ -40,15 +41,16 @@ function test_metrics() {
   local metrics_port="$(docker port ${container_id} ${port}|sed 's/0.0.0.0://')"
   local metrics_reply=$(curl --silent --show-error http://localhost:$metrics_port/metrics)
 
-  docker rm -f "$container_id"
-
   case $metrics_reply in
     *"jvm_threads_current"*)
       echo "METRICS TEST PASSED"
+      docker rm -f ${container_id}
       return 0
       ;;
     *)
       echo "METRICS TEST FAILED"
+      docker logs ${container_id}
+      docker rm -f ${container_id}
       return -123
       ;;
   esac
