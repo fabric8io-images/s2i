@@ -75,7 +75,7 @@ function test_entrypoint() {
     echo "APP TEST FAILED (with entrypoint ${entrypoint})"
     docker logs ${container_id}
     docker rm -f ${container_id}
-  return -123
+    return -123
   fi
 }
 
@@ -137,6 +137,7 @@ function test_image() {
 
   test_container "${name}-binary-example"
 
+
   # ----------------------------------------------------------------------------------
   # Maven Wrapper
   # ----------------------------------------------------------------------------------
@@ -144,11 +145,10 @@ function test_image() {
   s2i build --copy java/examples/maven-wrapper ${name} ${name}-maven-wrapper-example
   s2i build --copy java/examples/maven-wrapper ${name} ${name}-maven-wrapper-example --incremental
 
+
   # ----------------------------------------------------------------------------------
   # Entrypoint Binary
   # ----------------------------------------------------------------------------------
-  local dir=$1
-  local name=$2
 
   curl https://repo.spring.io/release/org/springframework/cloud/spring-cloud-deployer-spi-test-app/1.3.4.RELEASE/spring-cloud-deployer-spi-test-app-1.3.4.RELEASE-exec.jar \
        -o java/examples/binary/deployments/app.jar
@@ -159,7 +159,6 @@ function test_image() {
   test_entrypoint "${name}-entrypoint-binary-example" "java -jar /deployments/app.jar"  # works
   test_entrypoint "${name}-entrypoint-binary-example" /opt/run-java/run-java.sh         # will fail until https://github.com/fabric8io-images/run-java-sh/issues/75 is fixed
   test_entrypoint "${name}-entrypoint-binary-example" /usr/local/s2i/run                # will fail until https://github.com/fabric8io-images/run-java-sh/issues/75 is fixed
-
 }
 
 # ==================================================================================
