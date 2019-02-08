@@ -103,6 +103,15 @@ function test_image() {
 
   docker run --rm --name ${name}-test-unzip ${name} unzip
 
+  # --------------------------------------------------------------------------------
+  # Gradle Spring Boot WAR  <https://github.com/fabric8io-images/s2i/issues/123>
+  # --------------------------------------------------------------------------------
+
+  s2i build --copy java/examples/spring-gradle ${name} ${name}-spring-gradle
+
+  test_container "${name}-spring-gradle"
+
+
   # ----------------------------------------------------------------------------------
   # Maven
   # ----------------------------------------------------------------------------------
