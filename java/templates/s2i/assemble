@@ -65,6 +65,8 @@ function copy_artifacts() {
     if [ x"${cp_args}" = x ]; then
         if [ -d "hawt-app" ]; then
             cp_args="-r hawt-app/*"
+        elif ls *.war &> /dev/null; then
+            cp_args="*.war"
         else
             cp_args="*.jar"
         fi
