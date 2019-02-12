@@ -11,6 +11,7 @@ ENV JOLOKIA_VERSION="{{= fp.config.base.version.jolokia }}" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
+    JAVA_MAJOR_VERSION="{{= fp.config.base.version.javaMajor}}" \
     JAVA_DATA_DIR="/deployments/data"
 
 # Some version information
@@ -43,8 +44,8 @@ RUN yum -y update \
 RUN yum -y update \
   && yum install -y --setopt=skip_missing_names_on_install=False \
        unzip rsync \
-       java-{{= fp.config.base.version.javaMajor}}-openjdk{{= fp.config.base.version.java}} \
-       java-{{= fp.config.base.version.javaMajor}}-openjdk-devel{{= fp.config.base.version.java}} \
+       java-{{= fp.config.base.version.javaPackage}}-openjdk{{= fp.config.base.version.java}} \
+       java-{{= fp.config.base.version.javaPackage}}-openjdk-devel{{= fp.config.base.version.java}} \
   && yum clean all \
   && curl https://archive.apache.org/dist/maven/maven-3/{{= mavenVersion }}/binaries/apache-maven-{{= mavenVersion }}-bin.tar.gz | \
     tar -xzf - -C /opt \

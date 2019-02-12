@@ -8,6 +8,7 @@ ENV JOLOKIA_VERSION="1.6.0" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
+    JAVA_MAJOR_VERSION="8" \
     JAVA_DATA_DIR="/deployments/data"
 
 # Some version information
