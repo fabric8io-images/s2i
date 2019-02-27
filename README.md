@@ -29,7 +29,7 @@ Please keep the [CHANGELOG.md](CHANGELOG.md) up-to-date.
 Simply creating a tag (and pushing it remote) will [make Circle CI](.circleci/config.yml)
 push a release of [fabric8/s2i-java to Docker Hub](https://hub.docker.com/r/fabric8/s2i-java/):
 
-    git tag -a v3.0.0 -m"release v3.0.0
+    git tag -a v3.0.0 -m "release v3.0.0"
     git push origin v3.0.0
 
 We also automatically publish from the `master` branch to `latest-*` tags.
