@@ -37,8 +37,12 @@ To do the same as above directly inside your OpenShift instance like this:
     oc status
     minishift openshift service s2i-java-example --in-browser
 
-_NB that you cannot really build from "the latest sources from the local filesystems", because there is no `s2i build --copy` equivalent; attempting to do e.g. `oc new-app fabric8/s2i-java~.` just fetches from the first git remote of `./.git` ... :-(_
+NB: To build from "the latest sources from the local filesystems", you could use [OpenShift Binary Builds](https://docs.okd.io/latest/dev_guide/dev_tutorials/binary_builds.html) for something similar to `s2i build --copy`.  But note that attempting to do e.g. `oc new-app fabric8/s2i-java~.` just fetches from the first git remote of `./.git` ... you instead have to do, as documented in the linked OpenShift documentation section:
 
+    oc new-build --binary --docker-image fabric8/s2i-java --name s2i-java-example
+    oc start-build s2i-java-example --from-dir . --follow
+    oc new-app s2i-java-example
+    oc expose svc/s2i-java-example
 
 ## Advanced
 
