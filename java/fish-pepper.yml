@@ -14,7 +14,7 @@ blocks:
   - type: "git"
     url: "https://github.com/fabric8io/run-java-sh.git"
     path: "fish-pepper"
-    tag: "v1.2.2"
+    branch: "fuse-7.x.redhat"
   # jolokia integration taken from agent-bond
   - type: "git"
     url: "https://github.com/fabric8io/agent-bond.git"
