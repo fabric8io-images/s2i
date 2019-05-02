@@ -86,9 +86,10 @@ auto_detect_jar_file() {
   local old_dir="$(pwd)"
   cd ${dir}
   if [ $? = 0 ]; then
-    local nr_jars="$(ls 2>/dev/null | grep -e '.*\.jar$' | grep -v '^original-' | wc -l | awk '{print $1}')"
+    # NB: Find both (single) JAR *or* WAR <https://github.com/fabric8io-images/run-java-sh/issues/79>
+    local nr_jars="$(ls 2>/dev/null | grep -e '.*\.jar$' -e '.*\.war$' | grep -v '^original-' | wc -l | awk '{print $1}')"
     if [ "${nr_jars}" = 1 ]; then
-      ls *.jar | grep -v '^original-'
+      ls 2>/dev/null | grep -e '.*\.jar$' -e '.*\.war$' | grep -v '^original-'
       exit 0
     fi
     cd "${old_dir}"
@@ -305,6 +306,9 @@ calc_max_memory() {
       return
     fi
     calc_mem_opt "${CONTAINER_MAX_MEMORY}" "${JAVA_MAX_MEM_RATIO}" "mx"
+  # When JAVA_MAX_MEM_RATIO not set and JVM >= 10 no max_memory
+  elif [ "${JAVA_MAJOR_VERSION:-0}" -ge "10" ]; then
+    return
   elif [ "${CONTAINER_MAX_MEMORY}" -le 314572800 ]; then
     # Restore the one-fourth default heap size instead of the one-half below 300MB threshold
     # See https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/parallel.html#default_heap_size
@@ -351,6 +355,9 @@ c2_disabled() {
 }
 
 jit_options() {
+  if [ "${JAVA_MAJOR_VERSION:-0}" -ge "10" ]; then
+    return
+  fi
   # Check whether -XX:TieredStopAtLevel is already given in JAVA_OPTIONS
   if echo "${JAVA_OPTIONS:-}" | grep -q -- "-XX:TieredStopAtLevel"; then
     return
@@ -363,7 +370,11 @@ jit_options() {
 # Switch on diagnostics except when switched off
 diagnostics_options() {
   if [ -n "${JAVA_DIAGNOSTICS:-}" ]; then
-    echo "-XX:NativeMemoryTracking=summary -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UnlockDiagnosticVMOptions"
+    if [ "${JAVA_MAJOR_VERSION:-0}" -ge "11" ]; then
+      echo "-XX:NativeMemoryTracking=summary -Xlog:gc*:stdout:time -XX:+UnlockDiagnosticVMOptions"
+    else
+      echo "-XX:NativeMemoryTracking=summary -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps -XX:+UnlockDiagnosticVMOptions"
+    fi
   fi
 }
 
@@ -383,6 +394,11 @@ ci_compiler_count() {
 }
 
 cpu_options() {
+  # JVMs >= 10 know about CPU limits
+  if [ "${JAVA_MAJOR_VERSION:-0}" -ge "10" ]; then
+    return
+  fi
+
   local core_limit="${JAVA_CORE_LIMIT:-}"
   if [ "$core_limit" = "0" ]; then
     return
@@ -410,14 +426,19 @@ heap_ratio() {
 # -XX:GCTimeRatio=4
 # -XX:AdaptiveSizePolicyWeight=90
 gc_options() {
-    if echo "${JAVA_OPTIONS:-}" | grep -q -- "-XX:.*Use.*GC"; then
-      return
-    fi
-    local opts="-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 $(heap_ratio)"
-    if [ -z "${JAVA_MAJOR_VERSION:-}" ] || [ "${JAVA_MAJOR_VERSION:-}" != "7" ]; then
-      opts="${opts} -XX:+ExitOnOutOfMemoryError"
-    fi
-    echo $opts
+  if echo "${JAVA_OPTIONS:-}" | grep -q -- "-XX:.*Use.*GC"; then
+    return
+  fi
+
+  local opts=""
+  # for JVMs < 10 set GC settings
+  if [ -z "${JAVA_MAJOR_VERSION:-}" ] || [ "${JAVA_MAJOR_VERSION:-0}" -lt "10" ]; then
+    opts="${opts} -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 $(heap_ratio)"
+  fi
+  if [ -z "${JAVA_MAJOR_VERSION:-}" ] || [ "${JAVA_MAJOR_VERSION:-}" != "7" ]; then
+    opts="${opts} -XX:+ExitOnOutOfMemoryError"
+  fi
+  echo $opts
 }
 
 java_default_options() {
@@ -462,7 +483,7 @@ proxy_options() {
 
   local noProxy="${no_proxy:-${NO_PROXY:-}}"
   if [ -n "$noProxy" ] ; then
-    ret="$ret -Dhttp.nonProxyHosts=\"$(echo "|$noProxy" | sed -e 's/,[[:space:]]*/|/g' | sed -e 's/|\./|\*\./g' | cut -c 2-)\""
+    ret="$ret -Dhttp.nonProxyHosts=$(echo "|$noProxy" | sed -e 's/,[[:space:]]*/|/g' | sed -e 's/[[:space:]]//g' | sed -e 's/|\./|\*\./g' | cut -c 2-)"
   fi
   echo "$ret"
 }
@@ -571,17 +592,17 @@ run() {
   cd ${JAVA_APP_DIR}
   if [ -n "${JAVA_MAIN_CLASS:-}" ] ; then
      args="${JAVA_MAIN_CLASS}"
-  else
-     # Either JAVA_MAIN_CLASS or JAVA_APP_JAR has been set in load_env()
-     # So no ${JAVA_APP_JAR:-} safeguard is needed here. Actually its good when the script
-     # dies here if JAVA_APP_JAR would not be set for some reason (see option `set -u` above)
+  elif [ -n "${JAVA_APP_JAR:-}" ]; then
      args="-jar ${JAVA_APP_JAR}"
+  else
+     echo "Either JAVA_MAIN_CLASS or JAVA_APP_JAR needs to be given"
+     exit 1
   fi
   # Don't put ${args} in quotes, otherwise it would be interpreted as a single arg.
   # However it could be two args (see above). zsh doesn't like this btw, but zsh is not
   # supported anyway.
-  echo exec $(exec_args) java $(java_options) -cp "$(classpath)" ${args} $@
-  exec $(exec_args) java $(java_options) -cp "$(classpath)" ${args} $@
+  echo exec $(exec_args) java $(java_options) -cp "$(classpath)" ${args} "$@"
+  exec $(exec_args) java $(java_options) -cp "$(classpath)" ${args} "$@"
 }
 
 # =============================================================================
@@ -601,4 +622,4 @@ elif [ "${first_arg}" = "run" ]; then
   # as first argument to your
   shift
 fi
-run $@
+run "$@"
