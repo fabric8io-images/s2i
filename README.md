@@ -25,7 +25,7 @@ Instead:
 - download and install [fish-pepper](https://github.com/fabric8io-images/fish-pepper) from `master`.
 - run it like `path/to/fishpepperrepo/fish-pepper.js` both in `./java` and `.karaf` directories.
 
-If you have errors please remove `.fp-git-blocks/` direcoties under both `./java` and `.karaf`.
+If you have errors please remove `.fp-git-blocks/` directories under both `./java` and `.karaf`.
 
 
 ##### Release Notes
