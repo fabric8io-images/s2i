@@ -14,6 +14,10 @@ The following environment variables can be used to influence the behaviour of th
 * **ARTIFACT_COPY_ARGS** Arguments to use when copying artifacts from the output dir to the application dir. Useful to specify which artifacts will be part of the image. It defaults to `-r hawt-app/*` when a `hawt-app` dir is found on the build directory, otherwise jar files only will be included (`*.jar`).
 * **MAVEN_CLEAR_REPO** If set then the Maven repository is removed after the artifact is built. This is useful for keeping
   the created application image small, but prevents *incremental* builds. The default is `false`
+* **HTTP_PROXY_HOST** and **HTTP_PROXY_PORT** If both are not empty, a `<proxy>...</proxy>` is added to the provided `settings.xml`. By default no proxy is configured for Maven.
+* **HTTP_PROXY_NONPROXYHOSTS** If not empty and also proxy settings are provided the `<nonProxyHosts>...</nonProxyHosts>`  is added to the `<proxy/>`.
+* **HTTP_PROXY_USERNAME** and **HTTP_PROXY_PASSWORD** If both not empty and also proxy settings are provided the `<username>...</username>` and `<password>...</password>` is  added to the `<proxy/>`.
+* **MAVEN_MIRROR_URL** If not empty a `<mirror>...</mirror>` is added to the provided `settings.xml` with the given URL and `external:*` (everything not on the localhost and not file based) mirror configuration.
 
 ## Run Time
 
