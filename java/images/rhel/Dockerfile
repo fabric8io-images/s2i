@@ -1,6 +1,6 @@
-FROM jboss/openjdk18-rhel7:1.1-7
+FROM brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/jboss/openjdk18-rhel7:1.1
 
-ENV JOLOKIA_VERSION="1.5.0" \
+ENV JOLOKIA_VERSION="1.6.2.redhat-00001" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.3.1" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
@@ -9,7 +9,7 @@ ENV JOLOKIA_VERSION="1.5.0" \
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
-      io.fabric8.s2i.version.jolokia="1.5.0" \
+      io.fabric8.s2i.version.jolokia="1.6.2.redhat-00001" \
       io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
@@ -28,9 +28,10 @@ USER root
 
 # Install Maven via SCL
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum --disableplugin=subscription-manager install -y --enablerepo=jboss-rhel-rhscl rh-maven33 \
     && yum clean all \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
+    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn  \
+    && rm /etc/yum.repos.d/jboss.repo
 
 
 # Use /dev/urandom to speed up startups & Add jboss user to the root group
@@ -54,7 +55,7 @@ EXPOSE 9779
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.5.0/jolokia-jvm-1.5.0-agent.jar \
+ && curl http://indy.psi.redhat.com/api/group/builds-untested+shared-imports+public/org/jolokia/jolokia-jvm/1.6.2.redhat-00001/jolokia-jvm-1.6.2.redhat-00001-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
