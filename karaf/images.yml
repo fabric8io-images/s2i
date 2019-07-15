@@ -18,7 +18,7 @@ config:
       description: "CentOS S2I Karaf builder image with OpenJDK 8"
       version:
         maven: "3.5.4"
-        jolokia: "1.6.0"
+        jolokia: "1.6.2"
         karaf: "4.0.8"
         jmxexporter: "0.3.1"
     rhel:
@@ -28,6 +28,6 @@ config:
       description: "RHEL S2I Karaf builder image with OpenJDK 8"
       version:
         maven: "3.3.3-1.el7"
-        jolokia: 1.5.0
+        jolokia: "1.6.2"
         karaf: "6.3.0.redhat-187"
         jmxexporter: "0.10"
