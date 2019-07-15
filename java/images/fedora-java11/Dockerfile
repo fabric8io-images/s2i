@@ -3,7 +3,7 @@ FROM fedora:29
 ARG EXPOSE_PORT=8080
 EXPOSE ${EXPOSE_PORT}
 
-ENV JOLOKIA_VERSION="1.6.0" \
+ENV JOLOKIA_VERSION="1.6.2" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.3.1" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
@@ -13,7 +13,7 @@ ENV JOLOKIA_VERSION="1.6.0" \
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.6.1" \
-      io.fabric8.s2i.version.jolokia="1.6.0" \
+      io.fabric8.s2i.version.jolokia="1.6.2" \
       io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
@@ -69,7 +69,7 @@ EXPOSE 9779
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.6.0/jolokia-jvm-1.6.0-agent.jar \
+ && curl http://central.maven.org/maven2/org/jolokia/jolokia-jvm/1.6.2/jolokia-jvm-1.6.2-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
