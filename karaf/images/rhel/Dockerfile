@@ -32,7 +32,7 @@ USER root
 # Install Maven via SCL
 
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum -y update
+RUN yum -y update \
     && yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_install=False rh-maven33-maven \
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
