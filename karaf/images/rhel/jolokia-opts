@@ -45,7 +45,11 @@ get_jolokia_properties() {
            # Supposed to contain a principal name to check
            echo "clientPrincipal=$(echo ${AB_JOLOKIA_AUTH_OPENSHIFT} | sed -e 's/ /\\\\ /g')"
         else
-           echo "clientPrincipal=cn=system:master-proxy"
+           # Master API proxy for OpenShift 3
+           echo "clientPrincipal.1=cn=system:master-proxy"
+           # Default Hawtio and Fuse consoles for OpenShift 4
+           echo "clientPrincipal.2=cn=hawtio-online.hawtio.svc"
+           echo "clientPrincipal.3=cn=fuse-console.fuse.svc"
         fi
      fi
   fi
