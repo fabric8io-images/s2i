@@ -12,7 +12,7 @@ fish-pepper:
 blocks:
   # run-java.sh for starting up Java processes
   - type: "git"
-    url: "https://github.com/fabric8io/run-java-sh.git"
+    url: "https://github.com/fabric8io-images/run-java-sh.git"
     path: "fish-pepper"
     tag: "v1.2.2"
   # jolokia integration taken from agent-bond
