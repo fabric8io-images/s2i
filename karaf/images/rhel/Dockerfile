@@ -72,7 +72,6 @@ RUN chmod 444 /opt/jolokia/jolokia.jar \
 
 EXPOSE 8778
 
-
 # S2I scripts + README
 COPY s2i /usr/local/s2i
 RUN chmod 755 /usr/local/s2i/*

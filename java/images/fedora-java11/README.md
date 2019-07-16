@@ -16,7 +16,7 @@ The following environment variables can be used to influence the behaviour of th
   the created application image small, but prevents *incremental* builds. The default is `false`
 * **HTTP_PROXY_HOST** and **HTTP_PROXY_PORT** If both are not empty, a `<proxy>...</proxy>` is added to the provided `settings.xml`. By default no proxy is configured for Maven.
 * **HTTP_PROXY_NONPROXYHOSTS** If not empty and also proxy settings are provided the `<nonProxyHosts>...</nonProxyHosts>`  is added to the `<proxy/>`.
-* **HTTP_PROXY_USERNAME** and **HTTP_PROXY_PASSWORD** If both not empty and also proxy settings are provided the `<username>...</username>` and `<password>...</password>` is  added  to the `<proxy/>`.
+* **HTTP_PROXY_USERNAME** and **HTTP_PROXY_PASSWORD** If both not empty and also proxy settings are provided the `<username>...</username>` and `<password>...</password>` is  added to the `<proxy/>`.
 * **MAVEN_MIRROR_URL** If not empty a `<mirror>...</mirror>` is added to the provided `settings.xml` with the given URL and `external:*` (everything not on the localhost and not file based) mirror configuration.
 
 ## Run Time
@@ -148,8 +148,7 @@ Some options for integration in various environments:
 * **AB_JOLOKIA_AUTH_OPENSHIFT** : Switch on client authentication for OpenShift TSL communication. The value of this 
   parameter can be a relative distinguished name which must be contained in a presented client certificate. Enabling this
   parameter will automatically switch Jolokia into https communication mode. The default CA cert is set to 
-  `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt` 
-
+  `/var/run/secrets/kubernetes.io/serviceaccount/ca.crt`
 
 
 Application arguments can be provided by setting the variable **JAVA_ARGS** to the corresponding value.
