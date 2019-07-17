@@ -74,6 +74,14 @@ function copy_artifacts() {
 }
 
 function setup_maven() {
+  maven_settings=$HOME/.m2/settings.xml
+
+  if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
+    maven_settings=${S2I_SOURCE_DIR}/configuration/settings.xml
+    maven_env_args="${maven_env_args} -s $maven_settings"
+    echo "Using custom maven settings from $maven_settings"
+  fi
+
   if [ -n "$HTTP_PROXY_HOST" -a -n "$HTTP_PROXY_PORT" ]; then
     xml="<proxy>\
          <id>genproxy</id>\
@@ -92,7 +100,7 @@ function setup_maven() {
     fi
   xml="$xml\
        </proxy>"
-    sed -i "s|<!-- ### configured http proxy ### -->|$xml|" $HOME/.m2/settings.xml
+    sed -i "s|<!-- ### configured http proxy ### -->|$xml|" $maven_settings
   fi
 
   if [ -n "$MAVEN_MIRROR_URL" ]; then
@@ -101,12 +109,7 @@ function setup_maven() {
       <url>$MAVEN_MIRROR_URL</url>\
       <mirrorOf>external:*</mirrorOf>\
     </mirror>"
-    sed -i "s|<!-- ### configured mirrors ### -->|$xml|" $HOME/.m2/settings.xml
-  fi
-
-  if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
-    maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/configuration/settings.xml"
-    echo "Using custom maven settings from ${S2I_SOURCE_DIR}/configuration/settings.xml"
+    sed -i "s|<!-- ### configured mirrors ### -->|$xml|" $maven_settings
   fi
 }
 
