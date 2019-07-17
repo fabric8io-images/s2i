@@ -27,7 +27,7 @@ get_jolokia_properties() {
 
   # Integration with OpenShift client cert auth is enabled
   # by default if not explicitly turned off by setting to 'false'
-  if [ "${AB_JOLOKIA_AUTH_OPENSHIFT:-}" != "false" ] && [ -f "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt" ]; then
+  if [ "${AB_JOLOKIA_AUTH_OPENSHIFT:-}" != "false" ] && [ -f "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt" ]; then
      echo "useSslClientAuthentication=true"
      echo "extraClientCheck=true"
 
@@ -37,7 +37,7 @@ get_jolokia_properties() {
        echo "protocol=https"
      fi
      if [ $(is_in_jolokia_opts "caCert") != "yes" ]; then
-        echo "caCert=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        echo "caCert=/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
      fi
 
      if [ $(is_in_jolokia_opts "clientPrincipal") != "yes" ]; then
@@ -45,7 +45,11 @@ get_jolokia_properties() {
            # Supposed to contain a principal name to check
            echo "clientPrincipal=$(echo ${AB_JOLOKIA_AUTH_OPENSHIFT} | sed -e 's/ /\\\\ /g')"
         else
-           echo "clientPrincipal=cn=system:master-proxy"
+           # Master API proxy for OpenShift 3
+           echo "clientPrincipal.1=cn=system:master-proxy"
+           # Default Hawtio and Fuse consoles for OpenShift 4
+           echo "clientPrincipal.2=cn=hawtio-online.hawtio.svc"
+           echo "clientPrincipal.3=cn=fuse-console.fuse.svc"
         fi
      fi
   fi
