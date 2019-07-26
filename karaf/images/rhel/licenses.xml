@@ -16,7 +16,7 @@
     <dependency>
       <groupId>org.jolokia</groupId>
       <artifactId>jolokia</artifactId>
-      <version>1.5.0</version>
+      <version>1.6.2.redhat-00001</version>
       <licenses>
         <license>
           <name>Apache Software License, Version 2.0</name>

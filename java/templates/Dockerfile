@@ -31,9 +31,10 @@ USER root
 {{? fp.param.base === "rhel"}}
 # Install Maven via SCL
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum --disableplugin=subscription-manager install -y --enablerepo=jboss-rhel-rhscl rh-maven33 \
     && yum clean all \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
+    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn  \
+    && rm /etc/yum.repos.d/jboss.repo
 {{??}}
 # Dowload Maven from Apache
 RUN yum install -y \
