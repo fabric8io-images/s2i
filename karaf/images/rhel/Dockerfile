@@ -3,7 +3,7 @@ FROM brew-pulp-docker01.web.prod.ext.phx2.redhat.com:8888/jboss/openjdk18-rhel7:
 MAINTAINER Dhiraj Bokde <dhirajsb@gmail.com>
 
 ENV JOLOKIA_VERSION="1.6.2.redhat-00001" \
-    KARAF_FRAMEWORK_VERSION="unknown" \
+    KARAF_FRAMEWORK_VERSION="4.2.6.fuse-750005" \
     PROMETHEUS_JMX_EXPORTER_VERSION="0.3.1" \
     PATH="/usr/local/s2i:$PATH" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
@@ -14,7 +14,7 @@ EXPOSE 8778
 
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
       io.fabric8.s2i.version.jolokia="1.6.2.redhat-00001" \
-      io.fabric8.s2i.version.karaf="unknown" \
+      io.fabric8.s2i.version.karaf="4.2.6.fuse-750005" \
       io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
       io.k8s.description="Platform for building and running Apache Karaf OSGi applications" \
       io.k8s.display-name="Apache Karaf" \
@@ -32,7 +32,8 @@ USER root
 # Install Maven via SCL
 
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum --disableplugin=subscription-manager install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 
