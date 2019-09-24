@@ -1,6 +1,6 @@
 FROM jboss/openjdk18-rhel7:1.0-15
 
-ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
+ENV JOLOKIA_VERSION="1.5.0.redhat-1" \
     PATH=$PATH:"/usr/local/s2i" \
     AB_JOLOKIA_PASSWORD_RANDOM="true" \
     AB_JOLOKIA_AUTH_OPENSHIFT="true" \
@@ -8,7 +8,7 @@ ENV JOLOKIA_VERSION="1.3.6.redhat-1" \
 
 # Some version information
 LABEL io.fabric8.s2i.version.maven="3.3.3-1.el7" \
-      io.fabric8.s2i.version.jolokia="1.3.6.redhat-1" \
+      io.fabric8.s2i.version.jolokia="1.5.0.redhat-1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
       io.k8s.display-name="Java Applications" \
       io.openshift.tags="builder,java" \
@@ -28,14 +28,15 @@ RUN usermod -g root -G jboss jboss
 
 # Install Maven via SCL
 COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+RUN yum --disableplugin=subscription-manager install -y --enablerepo=jboss-rhel-rhscl rh-maven33-maven \
+
     && yum clean all \
     && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
 
 
 # Jolokia agent
 RUN mkdir -p /opt/jolokia/etc \
- && curl https://maven.repository.redhat.com/ga/org/jolokia/jolokia-jvm/1.3.6.redhat-1/jolokia-jvm-1.3.6.redhat-1-agent.jar \
+ && curl http://download-node-02.eng.bos.redhat.com/brewroot/repos/jb-common-build/latest/maven/org/jolokia/jolokia-jvm/1.5.0.redhat-1/jolokia-jvm-1.5.0.redhat-1-agent.jar \
          -o /opt/jolokia/jolokia.jar
 ADD jolokia-opts /opt/jolokia/jolokia-opts
 RUN chmod 444 /opt/jolokia/jolokia.jar \
