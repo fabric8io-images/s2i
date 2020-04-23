@@ -27,7 +27,7 @@ config:
       user: "jboss"
       home: "/opt/jboss"
       javaSecurity: "/usr/lib/jvm/java/conf/security/java.security"
-      description: "CentOS 7.6 S2I Java builder image with OpenJDK 11"
+      description: "CentOS 7.7 S2I Java builder image with OpenJDK 11"
       version:
         javaPackage: "11"
         javaMajor: "11"
@@ -41,7 +41,7 @@ config:
       user: "jboss"
       home: "/opt/jboss"
       javaSecurity: "/usr/lib/jvm/java/jre/lib/security/java.security"
-      description: "CentOS 7.5 S2I Java builder image with OpenJDK 8"
+      description: "CentOS 7.7 S2I Java builder image with OpenJDK 8"
       version:
         javaPackage: "1.8.0"
         javaMajor: "8"
