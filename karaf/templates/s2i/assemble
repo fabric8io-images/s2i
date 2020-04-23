@@ -41,6 +41,13 @@ mkdir -p ${DEPLOYMENTS_DIR}
 if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   echo "Maven build detected"
 
+  # Use a custom settings.xml if given
+  CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/configuration/settings.xml"
+  if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
+    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
+    cp ${CUSTOM_MAVEN_SETTINGS} $HOME/.m2/settings.xml
+  fi
+
   if [ -n "$HTTP_PROXY_HOST" -a -n "$HTTP_PROXY_PORT" ]; then
     xml="<proxy>\
          <id>genproxy</id>\
@@ -71,12 +78,6 @@ if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
     sed -i "s|<!-- ### configured mirrors ### -->|$xml|" $HOME/.m2/settings.xml
   fi
 
-  # Use a custom settings.xml if given
-  CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/configuration/settings.xml"
-  if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
-    echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
-    maven_env_args="${maven_env_args} -s ${CUSTOM_MAVEN_SETTINGS}"
-  fi
 
   pushd ${LOCAL_SOURCE_DIR} &> /dev/null
 
