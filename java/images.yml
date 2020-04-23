@@ -18,7 +18,7 @@ config:
         javaPackage: "11"
         javaMajor: "11"
         java: "" # empty means latest
-        maven: "3.6.2"
+        maven: "3.6.3"
         jolokia: "1.6.2"
         jmxexporter: "0.3.1"
     centos-java11:
@@ -32,7 +32,7 @@ config:
         javaPackage: "11"
         javaMajor: "11"
         java: "" # empty means latest
-        maven: "3.6.2"
+        maven: "3.6.3"
         jolokia: "1.6.2"
         jmxexporter: "0.3.1"
     centos:
