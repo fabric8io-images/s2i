@@ -12,7 +12,7 @@ ENV JOLOKIA_VERSION="1.6.2" \
     JAVA_DATA_DIR="/deployments/data"
 
 # Some version information
-LABEL io.fabric8.s2i.version.maven="3.6.2" \
+LABEL io.fabric8.s2i.version.maven="3.6.3" \
       io.fabric8.s2i.version.jolokia="1.6.2" \
       io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
       io.k8s.description="Platform for building and running plain Java applications (fat-jar and flat classpath)" \
@@ -37,9 +37,9 @@ RUN yum -y update \
        java-11-openjdk \
        java-11-openjdk-devel \
   && yum clean all \
-  && curl https://archive.apache.org/dist/maven/maven-3/3.6.2/binaries/apache-maven-3.6.2-bin.tar.gz | \
+  && curl https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz | \
     tar -xzf - -C /opt \
-  && ln -s /opt/apache-maven-3.6.2 /opt/maven \
+  && ln -s /opt/apache-maven-3.6.3 /opt/maven \
   && ln -s /opt/maven/bin/mvn /usr/bin/mvn \
   && groupadd -r jboss -g 1000 \
   && useradd -u 1000 -r -g jboss -m -d /opt/jboss -s /sbin/nologin -c "JBoss user" jboss \

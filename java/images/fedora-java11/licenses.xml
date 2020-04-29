@@ -4,7 +4,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven</artifactId>
-      <version>3.6.2</version>
+      <version>3.6.3</version>
       <licenses>
         <license>
           <name>Apache Software License, Version 2.0</name>
