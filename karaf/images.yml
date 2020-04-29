@@ -3,7 +3,7 @@ fish-pepper:
   params:
     - base
   name: "fabric8/s2i-karaf"
-  build: "2.3.0"
+  build: "3.1.0"
 
 # Used for escaping in 'agent-bond-opts' where the same delimiters are used
 abSepOpen: "{{"
@@ -17,8 +17,8 @@ config:
       home: "/opt/jboss"
       description: "CentOS S2I Karaf builder image with OpenJDK 8"
       version:
-        maven: "3.5.4"
-        jolokia: "1.6.2"
+        maven: "3.6.3"
+        jolokia: "1.6.3"
         karaf: "4.0.8"
         jmxexporter: "0.3.1"
     rhel:
