@@ -32,14 +32,6 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.version.maven }}" \
 # Temporary switch to root
 USER root
 
-# Install Maven via SCL
-{{? fp.param.base === "rhel"}}
-COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum -y update \
-    && yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_install=False rh-maven33-maven \
-    && yum clean all \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
-{{??}}
 # Dowload Maven from Apache
 RUN  yum -y update \
   && yum install -y --setopt=skip_missing_names_on_install=False \
@@ -55,7 +47,7 @@ RUN  yum -y update \
   && chmod 755 /opt/jboss
 
 ENV JAVA_HOME /etc/alternatives/jre
-{{?}}
+
 
 # Use /dev/urandom to speed up startups.
 RUN echo securerandom.source=file:/dev/urandom >> /usr/lib/jvm/java/jre/lib/security/java.security
@@ -106,12 +98,9 @@ RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
-{{? fp.param.base === "rhel"}}
-USER 185
-{{??}}
 USER 1000
-{{?}}
 RUN mkdir -p {{= fp.config.base.home }}/.m2
 COPY settings.xml {{= fp.config.base.home }}/.m2/settings.xml
+
 
 CMD ["usage"]

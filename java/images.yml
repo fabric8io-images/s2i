@@ -49,16 +49,3 @@ config:
         maven: "3.5.4"
         jolokia: "1.6.2"
         jmxexporter: "0.3.1"
-    rhel:
-      withGradle: false
-      withMavenWrapper: false
-      from: "jboss/openjdk18-rhel7:1.1-7"
-      user: "jboss"
-      home: "/home/jboss"
-      javaSecurity: "/usr/lib/jvm/java/jre/lib/security/java.security"
-      description: "RHEL S2I Java builder image with OpenJDK 8"
-      version:
-        javaMajor: "8"
-        maven: "3.3.3-1.el7"
-        jolokia: "1.6.2"
-        jmxexporter: "0.10"
