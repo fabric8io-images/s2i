@@ -29,7 +29,6 @@ LABEL io.fabric8.s2i.version.maven="3.6.3" \
 USER root
 
 
-
 # Install Java package & download Maven from Apache
 RUN yum -y update \
   && yum install -y --setopt=skip_missing_names_on_install=False \
@@ -113,7 +112,6 @@ RUN mkdir -p /deployments/data \
 WORKDIR /opt/jboss
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
-
 USER 1000
 RUN mkdir -p /opt/jboss/.m2
 COPY settings.xml /opt/jboss/.m2/settings.xml

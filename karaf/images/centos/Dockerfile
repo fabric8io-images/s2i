@@ -12,7 +12,7 @@ ENV JOLOKIA_VERSION="1.6.2" \
 # Expose jolokia port
 EXPOSE 8778
 
-LABEL io.fabric8.s2i.version.maven="3.5.4" \
+LABEL io.fabric8.s2i.version.maven="3.6.3" \
       io.fabric8.s2i.version.jolokia="1.6.2" \
       io.fabric8.s2i.version.karaf="4.0.8" \
       io.fabric8.s2i.version.prometheus.jmx_exporter="0.3.1" \
@@ -29,17 +29,15 @@ LABEL io.fabric8.s2i.version.maven="3.5.4" \
 # Temporary switch to root
 USER root
 
-# Install Maven via SCL
-
 # Dowload Maven from Apache
 RUN  yum -y update \
   && yum install -y --setopt=skip_missing_names_on_install=False \
        java-1.8.0-openjdk \
        java-1.8.0-openjdk-devel \
   && yum clean all \
-  && curl https://archive.apache.org/dist/maven/maven-3/3.5.4/binaries/apache-maven-3.5.4-bin.tar.gz | \
+  && curl https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz | \
     tar -xzf - -C /opt \
-  && ln -s /opt/apache-maven-3.5.4 /opt/maven \
+  && ln -s /opt/apache-maven-3.6.3 /opt/maven \
   && ln -s /opt/maven/bin/mvn /usr/bin/mvn \
   && groupadd -r jboss -g 1000 \
   && useradd -u 1000 -r -g jboss -m -d /opt/jboss -s /sbin/nologin -c "JBoss user" jboss \
@@ -114,10 +112,9 @@ RUN chmod a+x /deployments/deploy-and-run.sh \
  && chmod 664 /etc/passwd
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
-
 USER 1000
-
 RUN mkdir -p /opt/jboss/.m2
 COPY settings.xml /opt/jboss/.m2/settings.xml
+
 
 CMD ["usage"]
