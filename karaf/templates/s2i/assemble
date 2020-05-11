@@ -41,42 +41,51 @@ mkdir -p ${DEPLOYMENTS_DIR}
 if [ -f "${LOCAL_SOURCE_DIR}/pom.xml" ]; then
   echo "Maven build detected"
 
-  if [ -n "$HTTP_PROXY_HOST" -a -n "$HTTP_PROXY_PORT" ]; then
-    xml="<proxy>\
-         <id>genproxy</id>\
-         <active>true</active>\
-         <protocol>http</protocol>\
-         <host>$HTTP_PROXY_HOST</host>\
-         <port>$HTTP_PROXY_PORT</port>"
-    if [ -n "$HTTP_PROXY_USERNAME" -a -n "$HTTP_PROXY_PASSWORD" ]; then
-      xml="$xml\
-         <username>$HTTP_PROXY_USERNAME</username>\
-         <password>$HTTP_PROXY_PASSWORD</password>"
-    fi
-    if [ -n "$HTTP_PROXY_NONPROXYHOSTS" ]; then
-      xml="$xml\
-         <nonProxyHosts>$HTTP_PROXY_NONPROXYHOSTS</nonProxyHosts>"
-    fi
-  xml="$xml\
-       </proxy>"
-    sed -i "s|<!-- ### configured http proxy ### -->|$xml|" $HOME/.m2/settings.xml
-  fi
-
-  if [ -n "$MAVEN_MIRROR_URL" ]; then
-    xml="    <mirror>\
-      <id>mirror.default</id>\
-      <url>$MAVEN_MIRROR_URL</url>\
-      <mirrorOf>external:*</mirrorOf>\
-    </mirror>"
-    sed -i "s|<!-- ### configured mirrors ### -->|$xml|" $HOME/.m2/settings.xml
-  fi
-
   # Use a custom settings.xml if given
   CUSTOM_MAVEN_SETTINGS="${LOCAL_SOURCE_DIR}/configuration/settings.xml"
   if [ -f "${CUSTOM_MAVEN_SETTINGS}" ]; then
     echo "Using custom maven settings from ${CUSTOM_MAVEN_SETTINGS}"
-    maven_env_args="${maven_env_args} -s ${CUSTOM_MAVEN_SETTINGS}"
+    cp ${CUSTOM_MAVEN_SETTINGS} $HOME/.m2/settings.xml
   fi
+
+  if [ -n "$HTTP_PROXY_HOST" -a -n "$HTTP_PROXY_PORT" ]; then
+    if  grep -q "<!-- ### configured http proxy ### -->" $HOME/.m2/settings.xml; then
+      xml="<proxy>\
+           <id>genproxy</id>\
+           <active>true</active>\
+           <protocol>http</protocol>\
+           <host>$HTTP_PROXY_HOST</host>\
+           <port>$HTTP_PROXY_PORT</port>"
+      if [ -n "$HTTP_PROXY_USERNAME" -a -n "$HTTP_PROXY_PASSWORD" ]; then
+        xml="$xml\
+           <username>$HTTP_PROXY_USERNAME</username>\
+           <password>$HTTP_PROXY_PASSWORD</password>"
+      fi
+      if [ -n "$HTTP_PROXY_NONPROXYHOSTS" ]; then
+        xml="$xml\
+           <nonProxyHosts>$HTTP_PROXY_NONPROXYHOSTS</nonProxyHosts>"
+      fi
+      xml="$xml\
+         </proxy>"
+      sed -i "s|<!-- ### configured http proxy ### -->|$xml|" $HOME/.m2/settings.xml
+    else
+      echo "HTTP proxy environment variables have been provided but no placeholder found in ${S2I_SOURCE_DIR}/configuration/settings.xml. Ignoring the HTTP proxy setup for now"
+    fi
+  fi
+
+  if [ -n "$MAVEN_MIRROR_URL" ]; then
+    if  grep -q "<!-- ### configured mirrors ### -->" $HOME/.m2/settings.xml; then
+      xml="    <mirror>\
+        <id>mirror.default</id>\
+        <url>$MAVEN_MIRROR_URL</url>\
+        <mirrorOf>external:*</mirrorOf>\
+      </mirror>"
+      sed -i "s|<!-- ### configured mirrors ### -->|$xml|" $HOME/.m2/settings.xml
+    else
+      echo "MAVEN_MIRROR_URL environment variables have been provided but no placeholder found in ${S2I_SOURCE_DIR}/configuration/settings.xml. Ignoring the MAVEN_MIRROR_URL setup for now"
+    fi
+  fi
+
 
   pushd ${LOCAL_SOURCE_DIR} &> /dev/null
 
