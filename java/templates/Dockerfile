@@ -32,14 +32,6 @@ LABEL io.fabric8.s2i.version.maven="{{= fp.config.base.version.maven }}" \
 USER root
 
 
-{{? fp.param.base === "rhel"}}
-# Install Maven via SCL
-COPY jboss.repo /etc/yum.repos.d/jboss.repo
-RUN yum -y update \
-    && yum install -y --enablerepo=jboss-rhel-rhscl --setopt=skip_missing_names_on_install=False rh-maven33-maven \
-    && yum clean all \
-    && ln -s /opt/rh/rh-maven33/root/bin/mvn /usr/local/bin/mvn
-{{??}}
 # Install Java package & download Maven from Apache
 RUN yum -y update \
   && yum install -y --setopt=skip_missing_names_on_install=False \
@@ -56,7 +48,7 @@ RUN yum -y update \
   && chmod 755 /opt/jboss
 
 ENV JAVA_HOME /etc/alternatives/jre
-{{?}}
+
 
 # Use /dev/urandom to speed up startups & Add jboss user to the root group
 RUN echo securerandom.source=file:/dev/urandom >> {{= fp.config.base.javaSecurity }} \
@@ -106,15 +98,10 @@ RUN mkdir -p /deployments/data \
 WORKDIR {{= fp.config.base.home }}
 
 # S2I requires a numeric, non-0 UID. This is the UID for the jboss user in the base image
-{{? fp.param.base === "rhel"}}
-USER 185
-RUN mkdir -p /home/jboss/.m2
-COPY settings.xml /home/jboss/.m2/settings.xml
-{{??}}
 USER 1000
 RUN mkdir -p /opt/jboss/.m2
 COPY settings.xml /opt/jboss/.m2/settings.xml
-{{?}}
+
 
 # Use the run script as default since we are working as an hybrid image which can be
 # used directly to. (If we were a plain s2i image we would print the usage info here)
