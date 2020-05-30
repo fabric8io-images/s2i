@@ -20,4 +20,4 @@ config:
         maven: "3.6.3"
         jolokia: "1.6.2"
         karaf: "4.0.8"
-        jmxexporter: "0.3.1"
+        jmxexporter: "0.13.0"
