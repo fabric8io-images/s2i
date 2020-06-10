@@ -106,6 +106,15 @@ function setup_maven() {
     sed -i "s|<!-- ### configured mirrors ### -->|$xml|" $HOME/.m2/settings.xml
   fi
 
+  if [ -n "$SERVER_ID" -a -n "$SERVER_USERNAME" -a -n "$SERVER_PASSWORD" ]; then
+    xml="<server>\
+      <id>$SERVER_ID</id>\
+      <username>$SERVER_USERNAME</username>\
+      <password>$SERVER_PASSWORD</password>\
+    </server>"
+    sed -i "s|<!-- ### configured servers ### -->|$xml|" $HOME/.m2/settings.xml
+  fi
+
   if [ -f "${S2I_SOURCE_DIR}/configuration/settings.xml" ]; then
     maven_env_args="${maven_env_args} -s ${S2I_SOURCE_DIR}/configuration/settings.xml"
     echo "Using custom maven settings from ${S2I_SOURCE_DIR}/configuration/settings.xml"
