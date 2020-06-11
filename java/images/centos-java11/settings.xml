@@ -10,5 +10,9 @@
  <proxies>
    <!-- ### configured http proxy ### -->
  </proxies>
+
+ <servers>
+   <!-- ### configured servers ### -->
+ </servers>
  
 </settings>
