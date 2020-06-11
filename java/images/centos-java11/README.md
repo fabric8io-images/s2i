@@ -18,6 +18,7 @@ The following environment variables can be used to influence the behaviour of th
 * **HTTP_PROXY_NONPROXYHOSTS** If not empty and also proxy settings are provided the `<nonProxyHosts>...</nonProxyHosts>`  is added to the `<proxy/>`.
 * **HTTP_PROXY_USERNAME** and **HTTP_PROXY_PASSWORD** If both not empty and also proxy settings are provided the `<username>...</username>` and `<password>...</password>` is  added to the `<proxy/>`.
 * **MAVEN_MIRROR_URL** If not empty a `<mirror>...</mirror>` is added to the provided `settings.xml` with the given URL and `external:*` (everything not on the localhost and not file based) mirror configuration.
+* **SERVER_ID** and **SERVER_USERNAME** and **SERVER_PASSWORD** If these three are not empty a `<server>...</server>` is added to the provided `settings.xml` with the given server configuration.
 
 ## Run Time
 
