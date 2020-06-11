@@ -20,7 +20,7 @@ config:
         java: "" # empty means latest
         maven: "3.6.3"
         jolokia: "1.6.2"
-        jmxexporter: "0.3.1"
+        jmxexporter: "0.13.0"
     centos-java11:
       withGradle: true
       from: "centos:7"
@@ -34,7 +34,7 @@ config:
         java: "" # empty means latest
         maven: "3.6.3"
         jolokia: "1.6.2"
-        jmxexporter: "0.3.1"
+        jmxexporter: "0.13.0"
     centos:
       withGradle: true
       from: "centos:7"
@@ -48,4 +48,4 @@ config:
         java: "" # empty means latest
         maven: "3.5.4"
         jolokia: "1.6.2"
-        jmxexporter: "0.3.1"
+        jmxexporter: "0.13.0"
