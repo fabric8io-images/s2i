@@ -31,13 +31,6 @@ rules:
     labels:
       context: $1
       type: context
-  - pattern: 'org.apache.camel<context=([^,]+), type=context, name=([^,]+)><>ExchangesTotal'
-    name: org.apache.camel.ExchangesTotal
-    help: Exchanges Total
-    type: COUNTER
-    labels:
-      context: $1
-      type: context
   - pattern: 'org.apache.camel<context=([^,]+), type=context, name=([^,]+)><>FailuresHandled'
     name: org.apache.camel.FailuresHandled
     help: Failures Handled
@@ -130,14 +123,6 @@ rules:
   - pattern: 'org.apache.camel<context=([^,]+), type=routes, name=([^,]+)><>ExchangesInflight'
     name: org.apache.camel.ExchangesInflight
     help: Exchanges Inflight
-    type: COUNTER
-    labels:
-      context: $1
-      route: $2
-      type: routes
-  - pattern: 'org.apache.camel<context=([^,]+), type=routes, name=([^,]+)><>ExchangesTotal'
-    name: org.apache.camel.ExchangesTotal
-    help: Exchanges Total
     type: COUNTER
     labels:
       context: $1
@@ -252,14 +237,6 @@ rules:
   - pattern: 'org.apache.camel<context=([^,]+), type=processors, name=([^,]+)><>ExchangesInflight'
     name: org.apache.camel.ExchangesInflight
     help: Exchanges Inflight
-    type: COUNTER
-    labels:
-      context: $1
-      processor: $2
-      type: processors
-  - pattern: 'org.apache.camel<context=([^,]+), type=processors, name=([^,]+)><>ExchangesTotal'
-    name: org.apache.camel.ExchangesTotal
-    help: Exchanges Total
     type: COUNTER
     labels:
       context: $1
