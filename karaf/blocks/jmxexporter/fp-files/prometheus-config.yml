@@ -20,7 +20,7 @@ rules:
   - pattern: 'org.apache.camel<context=([^,]+), type=context, name=([^,]+)><>ExchangesInflight'
     name: org.apache.camel.ExchangesInflight
     help: Exchanges Inflight
-    type: COUNTER
+    type: GAUGE
     labels:
       context: $1
       type: context
@@ -86,7 +86,7 @@ rules:
     labels:
         context: $1
         type: context
-    type: GAUGE
+    type: COUNTER
   - pattern: 'org.apache.camel<context=([^,]+), type=context, name=([^,]+)><>TotalProcessingTime'
     name: org.apache.camel.TotalProcessingTime
     help: Total Processing Time
@@ -123,7 +123,7 @@ rules:
   - pattern: 'org.apache.camel<context=([^,]+), type=routes, name=([^,]+)><>ExchangesInflight'
     name: org.apache.camel.ExchangesInflight
     help: Exchanges Inflight
-    type: COUNTER
+    type: GAUGE
     labels:
       context: $1
       route: $2
@@ -199,7 +199,7 @@ rules:
         context: $1
         route: $2
         type: routes
-    type: GAUGE
+    type: COUNTER
   - pattern: 'org.apache.camel<context=([^,]+), type=routes, name=([^,]+)><>TotalProcessingTime'
     name: org.apache.camel.TotalProcessingTime
     help: Total Processing Time
@@ -237,7 +237,7 @@ rules:
   - pattern: 'org.apache.camel<context=([^,]+), type=processors, name=([^,]+)><>ExchangesInflight'
     name: org.apache.camel.ExchangesInflight
     help: Exchanges Inflight
-    type: COUNTER
+    type: GAUGE
     labels:
       context: $1
       processor: $2
@@ -313,7 +313,7 @@ rules:
         context: $1
         processor: $2
         type: processors
-    type: GAUGE
+    type: COUNTER
   - pattern: 'org.apache.camel<context=([^,]+), type=processors, name=([^,]+)><>TotalProcessingTime'
     name: org.apache.camel.TotalProcessingTime
     help: Total Processing Time
