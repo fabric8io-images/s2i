@@ -6,8 +6,9 @@ set -ex
 function test_app() {
   local name=$1
   local port="8080"
+  local extra_args=${2:-""}
 
-  local container_id=$(docker run --name ${name}-test -d -p ${port} ${name})
+  local container_id=$(docker run --name ${name}-test -d -p ${port} ${extra_args} ${name})
 
   # sleep is required because after docker run returns, the container is up but our server may not quite be yet
   sleep 5
@@ -85,6 +86,7 @@ function test_entrypoint() {
 
 function test_container() {
   test_app $1
+  test_app $1 "-e JAVA_DIAGNOSTICS=TRUE" # https://github.com/fabric8io-images/s2i/issues/213
   test_metrics $1
 }
 
